@@ -76,15 +76,16 @@ function QuantityField({ id, label, quantity, max, onCommit }: {
   );
 }
 
-function LineItem({ shop, line, info, issue, onRemove }: {
+function LineItem({ shop, line, info, loading, issue, onRemove }: {
   shop: string;
   line: CartLineInput;
   info: QuoteLine | undefined;
+  loading: boolean;
   issue: string | undefined;
   onRemove: () => void;
 }) {
   const id = useId();
-  const name = info?.name ?? line.variant_id;
+  const name = info?.name ?? (loading ? "Item" : line.variant_id);
   return (
     <li className={cs.line}>
       <div className={cs.thumb}>
@@ -104,7 +105,13 @@ function LineItem({ shop, line, info, issue, onRemove }: {
       </div>
       <div>
         <h3 className={cs.lineName}>
-          {info ? <Link href={productHref(shop, info.parent_id, info.variant_id)}>{info.product_name}</Link> : name}
+          {info ? (
+            <Link href={productHref(shop, info.parent_id, info.variant_id)}>{info.product_name}</Link>
+          ) : loading ? (
+            <span className={s.muted}>Loading…</span>
+          ) : (
+            name
+          )}
         </h3>
         {info?.attributes.length ? (
           <dl className={cs.attrs}>
@@ -309,6 +316,7 @@ export function CartView({ shop, shopName, notice }: { shop: string; shopName: s
                 shop={shop}
                 line={line}
                 info={byId.get(line.variant_id)}
+                loading={quote === null}
                 issue={issueFor(line.variant_id)}
                 onRemove={() => removeLine(shop, line.variant_id)}
               />
