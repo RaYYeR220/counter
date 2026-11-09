@@ -44,6 +44,8 @@ export interface CartView {
   customer?: Customer;
   shipping_options: CartShippingOption[];
   totals: CartTotalsView;
+  /** Codes of the discounts the shop applied, e.g. a negotiated offer id. */
+  discount_codes?: string[];
   /** PayPal Orders v2 id for this cart (`payment_method.token`), once the cart is valid. */
   paypal_order_id: string | null;
   /** The shop's validation issues, exactly as the shop sent them. */
@@ -79,6 +81,7 @@ export function cartView(shop: string, cart: StoreCart): CartView {
   const t = cart.totals;
   const status = cart.status ?? "INCOMPLETE";
   const validation = cart.validation_status ?? "INVALID";
+  const codes = [...new Set((cart.discounts?.applied ?? []).map((a) => a.code).filter((c): c is string => !!c))];
   const base: Omit<CartView, "next_step"> = {
     shop,
     cart_id: cart.id ?? "",
@@ -114,6 +117,7 @@ export function cartView(shop: string, cart: StoreCart): CartView {
       ...(t?.tax ? { tax: t.tax.value } : {}),
       total: t?.total?.value ?? "0.00",
     },
+    ...(codes.length ? { discount_codes: codes } : {}),
     paypal_order_id: token,
     validation_issues: cart.validation_issues ?? [],
   };

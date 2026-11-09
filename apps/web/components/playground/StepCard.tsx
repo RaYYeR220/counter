@@ -395,7 +395,10 @@ function CartBody({ cart }: { cart: CartView }) {
         </div>
         {cart.totals.discount && Number(cart.totals.discount) > 0 ? (
           <div data-tone="ok">
-            <dt>Negotiated discount</dt>
+            <dt>
+              Negotiated discount{" "}
+              {cart.discount_codes?.length ? <code className={s.id}>{cart.discount_codes.join(", ")}</code> : null}
+            </dt>
             <dd>−{usd(cart.totals.discount)}</dd>
           </div>
         ) : null}
