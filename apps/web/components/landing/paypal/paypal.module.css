@@ -1,0 +1,140 @@
+/* Which PayPal API does what, and what has run live. Tokens: lib/app-theme/tokens.css. */
+
+.apis {
+  margin-top: clamp(44px, 5vw, 72px);
+  border-top: 1px solid var(--cx-ink);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
+  align-items: baseline;
+  gap: 8px clamp(20px, 3vw, 48px);
+  padding: 20px 0;
+  border-bottom: 1px solid var(--cx-hair);
+}
+
+.row h3 {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.row h3 small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--cx-muted);
+}
+
+.status {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cx-muted);
+}
+
+.status::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.2px var(--cx-muted);
+}
+
+.status[data-live="true"] {
+  color: var(--cx-ink-2);
+}
+
+.status[data-live="true"]::before {
+  box-shadow: inset 0 0 0 1.3px var(--cx-ring);
+  background: radial-gradient(circle, var(--cx-ring) 0 2px, transparent 2.5px);
+}
+
+.eps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.eps code {
+  padding: 2px 8px;
+  border: 1px solid var(--cx-hair);
+  border-radius: var(--cx-radius-chip);
+  background: var(--cx-surface);
+  font-size: 11.5px;
+  color: var(--cx-ink);
+  white-space: nowrap;
+}
+
+.row p {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--cx-ink-2);
+  text-wrap: pretty;
+}
+
+.row p code {
+  font-size: 12px;
+}
+
+.row p em {
+  font-style: normal;
+  color: var(--cx-muted);
+}
+
+.live {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
+  align-items: start;
+  gap: 8px clamp(20px, 3vw, 48px);
+  margin-top: 36px;
+  font-size: 14.5px;
+  color: var(--cx-ink-2);
+}
+
+.live h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--cx-ink);
+}
+
+.live h3 i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cx-ring);
+  box-shadow: 0 0 0 3px var(--cx-ring-soft);
+}
+
+.live > div {
+  grid-column: 2 / -1;
+}
+
+.live p {
+  max-width: 52em;
+  text-wrap: pretty;
+}
+
+.live p + p {
+  margin-top: 8px;
+}
+
+@media (max-width: 980px) {
+  .row,
+  .live {
+    grid-template-columns: 1fr;
+  }
+  .live > div {
+    grid-column: auto;
+  }
+}
