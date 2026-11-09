@@ -17,6 +17,7 @@ import {
 } from "./partner";
 import { addTracking, type TrackingParams } from "./tracking";
 import { Transport } from "./transport";
+import { verifyWebhook } from "./webhooks";
 
 /**
  * PayPal REST client for the Counter platform app. Passing `merchantId` makes
@@ -74,6 +75,10 @@ export class PayPal {
 
   merchantIntegration(trackingIdOrMerchantId: MerchantRef): Promise<MerchantStatus | null> {
     return merchantIntegration(this.t, trackingIdOrMerchantId);
+  }
+
+  verifyWebhook(headers: Record<string, string | undefined>, rawBody: string, webhookId: string): Promise<boolean> {
+    return verifyWebhook(this.t, headers, rawBody, webhookId);
   }
 
   refundCapture(
