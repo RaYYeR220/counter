@@ -10,6 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@counter/agent": "workspace:^",
     "@counter/db": "workspace:^",
     "@counter/gateway": "workspace:^",
     "@counter/importer": "workspace:^",
@@ -18,6 +19,8 @@
     "@counter/platform": "workspace:^",
     "@counter/store-sync": "workspace:^",
     "@modelcontextprotocol/server": "^2.4",
+    "ag-studio": "3.1.0",
+    "ag-studio-react": "3.1.0",
     "mcp-handler": "^2.3",
     "next": "16.4.5",
     "react": "19.3.0",
