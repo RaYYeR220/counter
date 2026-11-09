@@ -139,9 +139,21 @@ describe("DbCatalog", () => {
     expect(v).toMatchObject({ variantId: "JC-MUG-SPECKLE-SAGE-12", active: false });
   });
 
-  it("reports a variant that cannot be bought on its own as inactive", async () => {
-    const v = await cat.getVariant("northpaw-roasters", "NP-CHOICE-ROT-WB-250");
-    expect(v).toMatchObject({ active: false });
+  it("reports subscription-only variants as inactive so carts cannot buy them", async () => {
+    for (const id of ["NP-CHOICE-ROT-WB-250", "NP-CHOICE-ROT-DRIP-250"]) {
+      expect(await cat.getVariant("northpaw-roasters", id), id).toMatchObject({ variantId: id, active: false });
+    }
+  });
+
+  it("reports every variant the catalog does not sell on its own as inactive, and no other", async () => {
+    for (const shop of catalog.shops) {
+      for (const p of shop.products) {
+        for (const v of p.variants) {
+          const got = await cat.getVariant(shop.slug, v.variant_id);
+          expect(got!.active, v.variant_id).toBe(v.active && v.purchasable);
+        }
+      }
+    }
   });
 });
 
@@ -171,5 +183,21 @@ describe("shop queries", () => {
     const expected = catalog.shops[0]!.products.flatMap((p) => p.variants.map((v) => v.variant_id));
     expect(rows.map((v) => v.variantId)).toEqual(expected);
     expect(await listVariants(db, "nope")).toEqual([]);
+  });
+
+  it("lists variants with their raw selling flags", async () => {
+    const np = await listVariants(db, "northpaw-roasters");
+    expect(np.find((v) => v.variantId === "NP-CHOICE-ROT-WB-250")).toMatchObject({
+      active: true,
+      purchasable: false,
+      flags: ["subscription_only"],
+      leadTimeDays: 0,
+    });
+    const jc = await listVariants(db, "juniper-clay");
+    expect(jc.find((v) => v.variantId === "JC-BOWL-SERVING-SAGE")).toMatchObject({
+      purchasable: true,
+      flags: ["made_to_order"],
+      leadTimeDays: 21,
+    });
   });
 });
