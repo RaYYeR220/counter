@@ -14,6 +14,28 @@ export interface CounterToolDeps {
   defaultCustomer?: Customer;
   /** Public origin of the Counter app, e.g. https://counter.example. */
   publicBaseUrl: string;
+  /** The shop's seller agent. When present, the `negotiate` tool is offered. */
+  negotiator?: Negotiator;
+}
+
+/** One round of haggling with a shop's seller agent. Pricing rules are enforced on the shop's side. */
+export interface Negotiator {
+  haggle(req: {
+    shop: string;
+    items: Array<{ variant_id: string; quantity: number }>;
+    message: string;
+    history?: Array<{ from: "buyer" | "seller"; text: string }>;
+  }): Promise<{
+    reply: string;
+    verdict: "accept" | "clamped" | "refuse" | "none";
+    offer?: {
+      offer_id: string;
+      lines: Array<{ variant_id: string; quantity: number; unit_price: string; list_price: string }>;
+      discount: string;
+      expires_at: string;
+    };
+    unknown_items?: string[];
+  }>;
 }
 
 export const TOOL_NAMES = [
@@ -558,4 +580,49 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
         return ok(lines.join("\n"), out);
       }),
   );
+
+  if (deps.negotiator) {
+    const negotiator = deps.negotiator;
+    server.registerTool(
+      "negotiate",
+      {
+        title: "Ask the shop for a deal",
+        description:
+          "Ask the shop's seller agent for a better price on specific variants and quantities before you build the " +
+          "cart, e.g. a bundle discount for three mugs. Send what the user would say. The shop answers in plain " +
+          "words and, when it agrees to a deal, returns an offer: create_cart with exactly those variants and at " +
+          "least those quantities before expires_at and the discount is applied automatically. The shop's pricing " +
+          "rules are enforced on its side, so pushing harder does not change what is allowed. Only negotiate when " +
+          "the user wants a deal; never trade away what the user asked for to get a discount.",
+        inputSchema: z.strictObject({
+          shop: shopArg,
+          items: itemsArg,
+          message: z.string().min(1).max(2000).describe("What the buyer asks for, in plain words"),
+          history: z
+            .array(z.strictObject({ from: z.enum(["buyer", "seller"]), text: z.string().max(2000) }))
+            .max(20)
+            .optional()
+            .describe("Earlier turns of this negotiation, oldest first"),
+        }),
+        annotations: { readOnlyHint: false, openWorldHint: false },
+      },
+      async ({ shop, items, message, history }) => {
+        try {
+          const out = await negotiator.haggle({ shop, items, message, ...(history ? { history } : {}) });
+          const lines = [`${shop} says: ${out.reply}`];
+          if (out.offer) {
+            const parts = out.offer.lines.map((l) => `${l.quantity} x ${l.variant_id} at ${usd(l.unit_price)} (list ${usd(l.list_price)})`);
+            lines.push(`Offer ${out.offer.offer_id}: ${parts.join(", ")}; ${usd(out.offer.discount)} off; valid until ${out.offer.expires_at}.`);
+            lines.push("Create the cart with these variants and quantities to use it.");
+          } else {
+            lines.push("No discount is on offer for this cart; list prices apply.");
+          }
+          if (out.unknown_items?.length) lines.push(`Not orderable here: ${out.unknown_items.join(", ")}.`);
+          return ok(lines.join("\n"), { shop, ...out });
+        } catch (e) {
+          return fail(`The shop could not answer right now: ${(e as Error).message}`, { name: "NEGOTIATION_UNAVAILABLE" });
+        }
+      },
+    );
+  }
 }

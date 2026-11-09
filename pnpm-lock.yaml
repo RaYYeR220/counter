@@ -26,6 +26,9 @@ importers:
       '@counter/gateway':
         specifier: workspace:^
         version: link:../../packages/gateway
+      '@counter/negotiate':
+        specifier: workspace:^
+        version: link:../../packages/negotiate
       '@counter/paypal':
         specifier: workspace:^
         version: link:../../packages/paypal

@@ -2,7 +2,8 @@ import "server-only";
 import { createDb, DbCartRepo, DbCatalog, DbOrderSink, getShop, publicBaseUrl, type Db, type Shop } from "@counter/db";
 import { gatewayPublicKeyPem, StoreSyncClient } from "@counter/gateway";
 import { PayPal, SANDBOX_BASE } from "@counter/paypal";
-import { DbShopDirectory, PayPalOrderLookup, PayPalPayments, type ShopAccounts } from "@counter/platform";
+import { veniceClient } from "@counter/negotiate";
+import { DbShopDirectory, NegotiationService, offerDiscounts, PayPalOrderLookup, PayPalPayments, type ShopAccounts } from "@counter/platform";
 import { randomCartId, type StoreSyncDeps } from "@counter/store-sync";
 
 let dbHandle: Db | undefined;
@@ -79,6 +80,7 @@ export function storeSyncDeps(): StoreSyncDeps {
     orders: new DbOrderSink(d, { publicBaseUrl: baseUrl() }),
     now: () => new Date(),
     newCartId: randomCartId,
+    discounts: offerDiscounts(d),
     onError: (err, where) => console.error("store-sync", where, err),
   };
 }
@@ -102,4 +104,17 @@ export function storeSyncClient(clientIdentifier: string): StoreSyncClient {
 
 export function orderLookup(): PayPalOrderLookup {
   return new PayPalOrderLookup(paypal(), shopAccounts);
+}
+
+/** Model behind each shop's seller agent. */
+export const SELLER_MODEL = process.env.COUNTER_SELLER_MODEL ?? "z-ai-glm-5-3-flash";
+
+let negotiationService: NegotiationService | undefined;
+export function negotiation(): NegotiationService {
+  if (!negotiationService) {
+    const apiKey = process.env.VENICE_API_KEY;
+    if (!apiKey) throw new Error("VENICE_API_KEY must be set for the seller agent");
+    negotiationService = new NegotiationService(db(), veniceClient({ apiKey, timeoutMs: 45_000, retries: 2 }), SELLER_MODEL);
+  }
+  return negotiationService;
 }

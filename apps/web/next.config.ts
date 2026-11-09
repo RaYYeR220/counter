@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     "@counter/gateway",
     "@counter/db",
     "@counter/platform",
+    "@counter/negotiate",
   ],
   serverExternalPackages: ["@electric-sql/pglite"],
 };
