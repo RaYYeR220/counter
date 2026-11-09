@@ -83,12 +83,15 @@ export function businessError(issues: ValidationIssue[], message: string): { sta
       message,
       debug_id: debugId(),
       ...(first ? { business_context: first } : {}),
-      details: issues.map((issue) => ({
-        field: issue.field ?? undefined,
-        issue: (issue.context?.specific_issue ?? undefined) as BusinessIssueCode | undefined,
-        description: issue.message,
-        business_context: issue,
-      })),
+      details: issues.map((issue) => {
+        const code = issue.context?.specific_issue as BusinessIssueCode | null | undefined;
+        return {
+          ...(issue.field ? { field: issue.field } : {}),
+          ...(code ? { issue: code } : {}),
+          description: issue.message,
+          business_context: issue,
+        };
+      }),
     },
   };
 }

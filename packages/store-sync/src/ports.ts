@@ -15,7 +15,7 @@ export interface CartRecord {
   lastTotalCents?: number;
   /** Exact checkout response, replayed when the same checkout is retried. */
   completedResponse?: object;
-  /** Which AI surface created the cart (from the token's `Client_Identifier`). */
+  /** Which agent platform created the cart (from the token's `Client_Identifier`). */
   agentClient?: string;
   createdAt: Date;
   updatedAt: Date;

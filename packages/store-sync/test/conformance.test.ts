@@ -207,7 +207,7 @@ function collectionTests(get: () => Exchange, opts: { checkout?: boolean } = {})
     expect(r.status).toBeTruthy();
   });
 
-  it("C4 PayPalCart schema has basic LLM request fields", () => {
+  it("C4 PayPalCart schema has basic request fields", () => {
     const r = get().body;
     expect(Array.isArray(r.items)).toBe(true);
     expect(r.validation_status).toBeTruthy();
