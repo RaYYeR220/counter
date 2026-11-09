@@ -6,7 +6,7 @@ Each judging criterion and each requirement, with the exact evidence. Claim numb
 
 | What | Status |
 | --- | --- |
-| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Pending sandbox credentials.** The deployment answers cart creation with `500 PAYMENTS_NOT_CONNECTED`. The same path is covered by fixture tests in `packages/paypal` and `packages/platform`. |
+| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Verified live on the sandbox** for the core path: AUTHORIZE order created by the Store Sync API, buyer approval in PayPal, authorize, capture on ship with tracking (JC-10001, LL-10001), void on cancel (NP-10001), webhooks received and verified. Order and capture ids: [docs/live-verification.md](docs/live-verification.md). Refund, a buyer-raised dispute and a second seller's onboarding are covered by fixture tests and not yet run live. |
 
 ## Requirements
 

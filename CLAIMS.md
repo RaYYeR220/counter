@@ -15,7 +15,7 @@ Commands run from the repository root after `pnpm install`. Live URLs are on htt
 
 | What | Status |
 | --- | --- |
-| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Pending sandbox credentials.** The deployment answers cart creation with `500 PAYMENTS_NOT_CONNECTED`. The same path is covered by fixture tests in `packages/paypal` and `packages/platform` (claims P4 to P13). |
+| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Verified live on the sandbox** for the core path: AUTHORIZE order created by the Store Sync API, buyer approval in PayPal, authorize, capture on ship with tracking (JC-10001, LL-10001), void on cancel (NP-10001), webhooks received and verified. Order and capture ids: [docs/live-verification.md](docs/live-verification.md). Refund, a buyer-raised dispute and a second seller's onboarding are covered by fixture tests and not yet run live. |
 
 ## Measured results
 
@@ -96,7 +96,7 @@ Commands run from the repository root after `pnpm install`. Live URLs are on htt
 | --- | --- | --- |
 | N1 | That Counter makes agents more accurate than a browser agent on a well-built store. On our storefront, accuracy was a tie. | `NOT-CLAIMED` |
 | N2 | Anything about how browser agents fare on real merchant websites. The benchmark storefront is Counter's own clean, accessible store, the best case for browser agents. | `NOT-CLAIMED` |
-| N3 | Production PayPal traffic, or a completed live PayPal round trip on the deployment (see Live PayPal verification). | `NOT-CLAIMED` |
+| N3 | Production PayPal traffic, a live refund or dispute, or a second seller onboarded through Partner Referrals (see Live PayPal verification). | `NOT-CLAIMED` |
 | N4 | Real money. Everything runs on the PayPal sandbox. | `NOT-CLAIMED` |
 | N5 | Onboarding to PayPal's Store Sync program, or traffic from PayPal's agentic commerce platform. The Console's labels for Perplexity, Copilot and Meta AI map `Client_Identifier` values; they are not observed traffic. | `NOT-CLAIMED` |
 | N6 | UCP integration. | `NOT-CLAIMED` |

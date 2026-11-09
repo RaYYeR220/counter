@@ -28,8 +28,8 @@ Rosa Marín and Theo throw, glaze and fire every piece at Juniper Clay, a two-pe
 
 | What | Status |
 | --- | --- |
-| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Pending sandbox credentials.** The deployment answers cart creation with `500 PAYMENTS_NOT_CONNECTED`. The same path is covered by fixture tests in `packages/paypal` and `packages/platform`. |
-| PayPal's Postman collection run against the deployment | **Pending** (needs the same credentials). The Node port of the collection passes in the test suite: 166 passed, 3 expected failures ([why](docs/store-sync-conformance.md#three-assertions-that-cannot-pass)). |
+| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Verified live on the sandbox** for the core path: AUTHORIZE order created by the Store Sync API, buyer approval in PayPal, authorize, capture on ship with tracking (JC-10001, LL-10001), void on cancel (NP-10001), webhooks received and verified. Order and capture ids: [docs/live-verification.md](docs/live-verification.md). Refund, a buyer-raised dispute and a second seller's onboarding are covered by fixture tests and not yet run live. |
+| PayPal's Postman collection run against the deployment | **Not yet run against the deployment.** The Node port of the collection passes in the test suite: 166 passed, 3 expected failures ([why](docs/store-sync-conformance.md#three-assertions-that-cannot-pass)). |
 | MCP Apps cards in a production chat client | Rendered in a stand-in host; not yet tried in a production chat client. |
 
 ## How it works
