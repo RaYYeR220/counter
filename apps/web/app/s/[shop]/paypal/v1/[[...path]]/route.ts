@@ -9,6 +9,7 @@ import {
   PAYPAL_JWKS_URL,
   type HandlerResult,
 } from "@counter/store-sync";
+import { recordAgentRequest } from "@counter/platform";
 import { db, loadShop, merchantRef, sandboxKeys, storeSyncDeps } from "@/lib/server/runtime";
 
 type Ctx = { params: Promise<{ shop: string; path?: string[] }> };
@@ -90,6 +91,13 @@ async function handle(req: Request, ctx: Ctx): Promise<Response> {
       agent: auth.clientIdentifier ?? null,
       ms: Date.now() - started,
     }).catch((err) => console.error("event log failed", err));
+    // Keep what the agent asked for, separately from the cart PayPal rewrites, for dispute evidence.
+    const cartId = out?.id ?? ("cartId" in r ? r.cartId : undefined);
+    if ((r.op === "create" || r.op === "replace") && cartId && result.status < 300) {
+      await recordAgentRequest(db(), { shopId: shop.slug, cartId, body, agentClient: auth.clientIdentifier ?? null }).catch((err) =>
+        console.error("agent request log failed", err),
+      );
+    }
   }
   return json(result.status, result.body);
 }

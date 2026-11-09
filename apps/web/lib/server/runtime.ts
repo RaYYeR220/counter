@@ -10,6 +10,7 @@ import {
   PayPalOrderLookup,
   PayPalPayments,
   SANDBOX_APPROVE_BASE,
+  StockKeepingOrderSink,
   type ShopAccounts,
 } from "@counter/platform";
 import { randomCartId, type PaymentPort, type StoreSyncDeps } from "@counter/store-sync";
@@ -117,7 +118,10 @@ export async function loadShop(slug: string): Promise<Shop | null> {
 
 export const shopAccounts: ShopAccounts = {
   async merchantIdFor(slug) {
-    return (await loadShop(slug))?.paypalMerchantId ?? undefined;
+    const shop = await loadShop(slug);
+    // A shop whose PayPal consent was revoked is no longer paid out to its own account.
+    if (!shop || shop.onboardingStatus === "revoked") return undefined;
+    return shop.paypalMerchantId ?? undefined;
   },
   async brandFor(slug) {
     return (await loadShop(slug))?.name;
@@ -144,7 +148,7 @@ export function storeSyncDeps(): StoreSyncDeps {
           returnUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}`,
           cancelUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}&cancelled=1`,
         }),
-    orders: new DbOrderSink(d, { publicBaseUrl: baseUrl() }),
+    orders: new StockKeepingOrderSink(d, new DbOrderSink(d, { publicBaseUrl: baseUrl() })),
     now: storeNow,
     newCartId: randomCartId,
     discounts: offerDiscounts(d),
