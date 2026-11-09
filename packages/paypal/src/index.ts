@@ -19,3 +19,4 @@ export type { CaptureParams } from "./payments";
 export type { TrackingParams } from "./tracking";
 export { DEFAULT_REFERRAL_FEATURES } from "./partner";
 export type { PartnerReferralParams, MerchantRef, MerchantStatus } from "./partner";
+export type { DisputeView, DisputeDetails, ListDisputesQuery, EvidenceParams } from "./disputes";

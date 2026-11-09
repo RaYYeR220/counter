@@ -1,3 +1,13 @@
+import {
+  acceptClaim,
+  getDispute,
+  listDisputes,
+  provideEvidence,
+  type DisputeDetails,
+  type DisputeView,
+  type EvidenceParams,
+  type ListDisputesQuery,
+} from "./disputes";
 import type { Breakdown, Money, OrderItem, OrderShipping, OrderView, PayPalEnv } from "./env";
 import { captureAuthorization, refundCapture, voidAuthorization, type CaptureParams } from "./payments";
 import {
@@ -79,6 +89,27 @@ export class PayPal {
 
   verifyWebhook(headers: Record<string, string | undefined>, rawBody: string, webhookId: string): Promise<boolean> {
     return verifyWebhook(this.t, headers, rawBody, webhookId);
+  }
+
+  listDisputes(merchantId?: string, q?: ListDisputesQuery): Promise<{ items: DisputeView[]; nextPageToken?: string }> {
+    return listDisputes(this.t, merchantId, q);
+  }
+
+  getDispute(disputeId: string, merchantId?: string): Promise<DisputeDetails> {
+    return getDispute(this.t, disputeId, merchantId);
+  }
+
+  provideEvidence(disputeId: string, merchantId: string | undefined, p: EvidenceParams): Promise<void> {
+    return provideEvidence(this.t, disputeId, merchantId, p);
+  }
+
+  acceptClaim(
+    disputeId: string,
+    merchantId: string | undefined,
+    note: string,
+    opts?: { acceptClaimType?: string },
+  ): Promise<void> {
+    return acceptClaim(this.t, disputeId, merchantId, note, opts);
   }
 
   refundCapture(
