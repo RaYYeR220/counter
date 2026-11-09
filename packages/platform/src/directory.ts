@@ -63,18 +63,24 @@ export function feedFromRows(shops: Array<{ shop: Shop; variants: Variant[] }>):
  * Shop directory backed by the database. Stock moves with every order, so the
  * feed is rebuilt after a short TTL rather than held for the process lifetime.
  */
+/** Shops created from Studio's "Create a test shop". */
+export function isTestShop(slug: string): boolean {
+  return slug.startsWith("try-");
+}
+
 export class DbShopDirectory implements ShopDirectory {
   private cached?: { at: number; dir: JsonShopDirectory };
 
   constructor(
     private readonly db: Db,
-    private readonly opts: { ttlMs?: number; now?: () => Date } = {},
+    private readonly opts: { ttlMs?: number; now?: () => Date; include?: string } = {},
   ) {}
 
   private async dir(): Promise<JsonShopDirectory> {
     const ttl = this.opts.ttlMs ?? 15_000;
     if (this.cached && Date.now() - this.cached.at < ttl) return this.cached.dir;
-    const shops = await listShops(this.db);
+    // Test shops made in Studio stay out of discovery; they are still reachable by slug.
+    const shops = (await listShops(this.db)).filter((s) => !isTestShop(s.slug) || s.slug === this.opts.include);
     const rows = await Promise.all(shops.map(async (shop) => ({ shop, variants: await listVariants(this.db, shop.slug) })));
     const dir = new JsonShopDirectory(feedFromRows(rows), this.opts.now ? { now: this.opts.now } : {});
     this.cached = { at: Date.now(), dir };
@@ -90,10 +96,19 @@ export class DbShopDirectory implements ShopDirectory {
   }
 
   async search(q: SearchQuery): Promise<ProductHit[]> {
+    if (q.shop && isTestShop(q.shop)) return (await this.testShop(q.shop)).search(q);
     return (await this.dir()).search(q);
   }
 
   async getProduct(shop: string, parentId: string): Promise<ProductDetail | null> {
+    if (isTestShop(shop)) return (await this.testShop(shop)).getProduct(shop, parentId);
     return (await this.dir()).getProduct(shop, parentId);
+  }
+
+  /** A directory over one test shop, for agents that were given its slug. */
+  private async testShop(slug: string): Promise<JsonShopDirectory> {
+    const shop = (await listShops(this.db)).find((s) => s.slug === slug);
+    const rows = shop ? [{ shop, variants: await listVariants(this.db, slug) }] : [];
+    return new JsonShopDirectory(feedFromRows(rows), this.opts.now ? { now: this.opts.now } : {});
   }
 }

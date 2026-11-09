@@ -13,7 +13,7 @@ import {
   StockKeepingOrderSink,
   type ShopAccounts,
 } from "@counter/platform";
-import { randomCartId, type PaymentPort, type StoreSyncDeps } from "@counter/store-sync";
+import { PaymentsUnavailable, randomCartId, type PaymentPort, type StoreSyncDeps } from "@counter/store-sync";
 
 // ---------------------------------------------------------------------------
 // Benchmark switches, for local benchmark runs only (bench/purchase). Both are
@@ -146,15 +146,17 @@ export function paypalConfigured(): boolean {
  * validated, and anything that needs a PayPal order fails with a clear named
  * error instead of a crash.
  */
+const notConnected = () =>
+  new PaymentsUnavailable("PAYMENTS_NOT_CONNECTED", "This shop has not connected PayPal payments yet, so no order can be placed.");
 const paymentsNotConfigured: PaymentPort = {
   async createOrder() {
-    throw new Error("PayPal payments are not configured for this deployment");
+    throw notConnected();
   },
   async patchOrder() {
-    throw new Error("PayPal payments are not configured for this deployment");
+    throw notConnected();
   },
   async authorizeOrder() {
-    throw new Error("PayPal payments are not configured for this deployment");
+    throw notConnected();
   },
 };
 

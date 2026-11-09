@@ -98,3 +98,18 @@ export interface StoreSyncDeps {
   /** Called with unexpected failures that were answered with a 5xx. */
   onError?: (err: unknown, where: { op: string; shopId: string; cartId?: string }) => void;
 }
+
+/**
+ * Thrown by a payment port when payments cannot be taken at all (for example,
+ * the shop has not connected PayPal). Reported to the caller as a named 500
+ * with this code and message instead of a generic processor outage.
+ */
+export class PaymentsUnavailable extends Error {
+  constructor(
+    readonly code: string,
+    readonly publicMessage: string,
+  ) {
+    super(publicMessage);
+    this.name = "PaymentsUnavailable";
+  }
+}

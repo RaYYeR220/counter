@@ -1,3 +1,4 @@
+import { PaymentsUnavailable } from "./ports";
 import { assembleCart, computeCart, type CartStatus, type ComputedCart } from "./compute";
 import {
   businessError,
@@ -54,6 +55,7 @@ async function viaPayPal<T>(fn: () => Promise<T>): Promise<T> {
   try {
     return await fn();
   } catch (cause) {
+    if (cause instanceof PaymentsUnavailable) throw new ServiceFailure(cause.code, cause.publicMessage, cause);
     throw new ServiceFailure(
       "PAYMENT_PROCESSOR_UNAVAILABLE",
       "The payment processor is temporarily unavailable. Please try again.",

@@ -18,3 +18,16 @@ describe("DbShopDirectory", () => {
     expect(raw).not.toMatch(/floor|cost/i);
   });
 });
+
+describe("test shops", () => {
+  it("stay out of discovery but answer when asked for by slug", async () => {
+    const { shops } = await import("@counter/db");
+    const db = await createTestDb();
+    await seedCatalog(db);
+    const [jc] = await db.select().from(shops);
+    await db.insert(shops).values({ ...jc!, id: "try-abc123", slug: "try-abc123", name: "Test shop", orderPrefix: "TA" });
+    const dir = new DbShopDirectory(db, { ttlMs: 0 });
+    expect((await dir.listShops()).map((s) => s.shop)).not.toContain("try-abc123");
+    expect(await dir.search({ query: "mug", shop: "try-abc123" })).toEqual([]);
+  });
+});
