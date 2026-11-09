@@ -44,7 +44,7 @@ describe("NegotiationService", () => {
     await seedCatalog(db);
     const llm = scripted([
       { tool: { percent_off: 90 } },
-      { text: "I can do the three mugs for $76.50 together." },
+      { text: "I can do $27.50 each, $82.50 for the three." },
     ]);
     const service = new NegotiationService(db, llm, "m", () => NOW);
     const out = await service.haggle({
@@ -59,6 +59,8 @@ describe("NegotiationService", () => {
     const unit = Number(out.offer!.lines[0]!.unit_price);
     // List $30.00, floor $25.50, shop cap 15% of the subtotal.
     expect(unit).toBeGreaterThanOrEqual(25.5);
+    // A lowball is answered above the floor, never at it.
+    expect(unit).toBe(27.5);
     expect(Number(out.offer!.discount)).toBeLessThanOrEqual(13.5);
     // Floors and costs never reach the agent.
     expect(JSON.stringify(out)).not.toMatch(/floor|cost/i);

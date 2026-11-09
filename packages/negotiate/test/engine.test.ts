@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   bestDeal,
   evaluate,
+  floorGuard,
   SMALL_CART_MAX_PCT,
   type Evaluation,
   type LineEconomics,
@@ -32,11 +33,13 @@ describe("evaluate: accepting and clamping", () => {
     expect(e.reasons).toEqual([]);
   });
 
-  it("raises a unit price below the floor up to the floor", () => {
+  it("answers a unit price below the floor with a counter above it, so the floor stays private", () => {
     const e = evaluate([line(SAGE12, 3)], JUNIPER, { lines: [{ variantId: SAGE12.variantId, unitCents: 500 }] });
     expect(e.verdict).toBe("clamped");
-    expect(units(e)).toEqual([2900]);
-    expect(e.discountCents).toBe(1500);
+    // floor $29.00 + 40% of the $5.00 gap to list, rounded up to 50 cents
+    expect(units(e)).toEqual([3100]);
+    expect(floorGuard(SAGE12)).toBe(3100);
+    expect(e.discountCents).toBe(900);
     expect(e.reasons).toContain(`floor:${SAGE12.variantId}`);
   });
 
@@ -101,6 +104,12 @@ describe("evaluate: maximum discount", () => {
     const e = evaluate([line(SAGE12, 3)], JUNIPER, { percentOff: 100 });
     expect(e.verdict).toBe("clamped");
     expect(e.lines).toEqual(bestDeal([line(SAGE12, 3)], JUNIPER).lines);
+    expect(units(e)).toEqual([3100]);
+  });
+
+  it("still takes an ask at or just above the floor as it is", () => {
+    const e = evaluate([line(SAGE12, 3)], JUNIPER, { lines: [{ variantId: SAGE12.variantId, unitCents: 2900 }] });
+    expect(e.verdict).toBe("accept");
     expect(units(e)).toEqual([2900]);
   });
 });
@@ -240,9 +249,10 @@ describe("evaluate: proposal forms and rounding", () => {
 
 describe("bestDeal", () => {
   it("is the lowest total the rules allow for the cart", () => {
-    expect(bestDeal([line(SAGE12, 3)], JUNIPER).discountCents).toBe(1500);
+    // A request for the deepest deal is a lowball: it is answered at the floor guard, not the floor.
+    expect(bestDeal([line(SAGE12, 3)], JUNIPER).discountCents).toBe(900);
     expect(bestDeal([line(SAGE12, 1)], JUNIPER).discountCents).toBe(170);
-    expect(bestDeal([line(SAGE12, 1), line(INK8, 1)], { ...JUNIPER, maxDiscountPct: 10 }).discountCents).toBe(640);
+    expect(bestDeal([line(SAGE12, 1), line(INK8, 1)], { ...JUNIPER, maxDiscountPct: 10 }).discountCents).toBe(550);
     expect(bestDeal([line(SAGE12, 3)], { ...JUNIPER, enabled: false }).discountCents).toBe(0);
   });
 });
@@ -352,7 +362,7 @@ describe("evaluate: properties", () => {
 
       // Brute force every compliant price vector that keeps each line at or above its ask.
       let best = 0;
-      const ranges = lines.map((l, i) => [Math.max(l.floorCents, asked[i]!), l.listCents] as const);
+      const ranges = lines.map((l, i) => [asked[i]! < l.floorCents ? floorGuard(l) : asked[i]!, l.listCents] as const);
       const walk = (i: number, acc: number[]) => {
         if (i === lines.length) {
           if (compliant(lines, policy, acc)) {

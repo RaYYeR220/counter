@@ -202,6 +202,21 @@ function proposedUnits(lines: readonly LineEconomics[], proposal: Proposal, reas
 }
 
 /** Evaluates a seller's proposal against the shop's rules. See the module comment for the rules. */
+/** Share of the floor-to-list gap kept back when answering an offer below the floor. */
+export const FLOOR_GUARD_SHARE = 0.4;
+
+/**
+ * The lowest unit price offered back to a buyer whose ask fell below the floor:
+ * the floor plus part of the gap to list, rounded up to the next 50 cents and
+ * never above list. Asks at or above the floor are still taken as they are.
+ */
+export function floorGuard(l: Pick<LineEconomics, "listCents" | "floorCents">): number {
+  const gap = l.listCents - l.floorCents;
+  if (gap <= 0) return l.listCents;
+  const raised = l.floorCents + Math.ceil(gap * FLOOR_GUARD_SHARE);
+  return Math.min(l.listCents, Math.ceil(raised / 50) * 50);
+}
+
 export function evaluate(lines: readonly LineEconomics[], policy: ShopPolicy, proposal: Proposal): Evaluation {
   checkLines(lines);
 
@@ -232,8 +247,12 @@ export function evaluate(lines: readonly LineEconomics[], policy: ShopPolicy, pr
       if (!reasons.includes("negotiation_disabled")) reasons.push("negotiation_disabled");
       return l.listCents;
     }
-    if (want < l.floorCents) reasons.push(`floor:${l.variantId}`);
     let lowest = l.floorCents;
+    if (want < l.floorCents) {
+      // A lowball is answered above the floor, so one probe never reveals it.
+      reasons.push(`floor:${l.variantId}`);
+      lowest = floorGuard(l);
+    }
     if (!bundle) {
       const smallCartLowest = l.listCents - Math.floor((l.listCents * SMALL_CART_MAX_PCT) / 100);
       if (smallCartLowest > lowest) {
