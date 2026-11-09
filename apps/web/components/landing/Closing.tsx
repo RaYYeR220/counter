@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CounterMark } from "@/components/brand/CounterMark";
-import { GITHUB_URL, LINKS } from "@/lib/site";
+import { GITHUB_URL, LINKS, VIDEO_URL } from "@/lib/site";
 import { hero } from "./data";
 import { glazeVar } from "./glaze";
 import l from "./landing.module.css";
@@ -66,6 +66,7 @@ const FOOTER_LINKS = [
   { label: "Console", href: LINKS.console },
   { label: "Docs", href: LINKS.conformance },
   { label: "MCP server", href: LINKS.mcp },
+  { label: "Video", href: VIDEO_URL },
   { label: "GitHub", href: GITHUB_URL },
 ];
 

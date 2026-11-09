@@ -16,7 +16,7 @@ Each judging criterion and each requirement, with the exact evidence. Claim numb
 | AI meaningfully integrated | A seller agent negotiates for each shop under a deterministic pricing engine; a buyer agent shops through MCP in the Playground; vision and text models turn product pages, photos and CSVs into agent-legible catalogs; a `merchant-ops` agent runs the shop from the Console. Models named per role. | [README: AI usage](README.md#ai-usage); `packages/negotiate`, `packages/agent`, `packages/importer`, `apps/web/lib/console/ai/harness.ts`; negotiation benchmark (R7, R8); claims P14 to P23 |
 | Working prototype judges can run | Live deployment, no sign-in and no key; any MCP client can connect; the whole repo runs locally with one test command. | https://counter-agents.vercel.app/playground, `{"mcpServers":{"counter":{"url":"https://counter-agents.vercel.app/mcp"}}}`, https://counter-agents.vercel.app/s/juniper-clay, https://counter-agents.vercel.app/studio?shop=juniper-clay, https://counter-agents.vercel.app/console?shop=juniper-clay (claims L1 to L11); [README: Run locally](README.md#run-locally); `pnpm -r test` |
 | Public repository with a license | This repository, MIT license. | [`LICENSE`](LICENSE) |
-| Video | Not linked yet. | |
+| Video | 2:50, under the 3-minute limit: a buyer agent shops Juniper Clay on the live deployment, haggles, pays in the PayPal sandbox, and the shop ships and captures; then the benchmark numbers and the architecture. | https://youtu.be/GWyws_b6Yck |
 
 ## Judging criteria
 
@@ -75,4 +75,4 @@ Each judging criterion and each requirement, with the exact evidence. Claim numb
 | Architecture diagram that marks what is not wired | [`docs/architecture.md`](docs/architecture.md) |
 | Benchmark methods, failures and limits written up, including the superseded first run | [`bench/purchase/README.md`](bench/purchase/README.md), [`bench/negotiation/README.md`](bench/negotiation/README.md) |
 | Everything stubbed, and why | [`MOCKS.md`](MOCKS.md) |
-| Video | Not linked yet. |
+| Video | https://youtu.be/GWyws_b6Yck |

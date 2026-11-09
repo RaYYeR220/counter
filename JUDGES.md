@@ -8,7 +8,7 @@ Counter makes any small PayPal shop buyable by any AI agent, through the merchan
 - **[Innovation]** Innovation
 - **[Presentation]** Presentation
 
-Deployment: https://counter-agents.vercel.app. Every claim below is listed with its evidence in [`CLAIMS.md`](CLAIMS.md).
+Deployment: https://counter-agents.vercel.app. Demo video (2:50, a live purchase on the deployment): https://youtu.be/GWyws_b6Yck. Every claim below is listed with its evidence in [`CLAIMS.md`](CLAIMS.md).
 
 ## Live PayPal verification
 

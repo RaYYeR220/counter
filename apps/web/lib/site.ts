@@ -10,6 +10,8 @@ export const GITHUB_URL = "https://github.com/RaYYeR220/counter";
 /** Demo shop the merchant surfaces open by default. */
 export const DEMO_SHOP = "juniper-clay";
 
+export const VIDEO_URL = "https://youtu.be/GWyws_b6Yck";
+
 export const LINKS = {
   playground: "/playground",
   studio: `/studio?shop=${DEMO_SHOP}`,

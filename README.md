@@ -5,6 +5,7 @@ Any small PayPal shop, buyable by any AI agent, on PayPal's own Store Sync Cart 
 On the same 40 shopping tasks, an agent shopping through Counter was as accurate as a browser agent on a clean storefront, with about a third of the tool calls and a fifth of the model spend: **$0.67 against $3.55** for all 40 tasks with `openai-gpt-6-sol`, median **4** tool calls against **11.5** ([`results/purchase.json`](results/purchase.json)). In 120 negotiation runs, the seller agent sold below a merchant's floor **0** times ([`results/negotiation.json`](results/negotiation.json)).
 
 - Live: https://counter-agents.vercel.app/playground
+- Demo video (2:50): https://youtu.be/GWyws_b6Yck
 - MCP server: `https://counter-agents.vercel.app/mcp`
 - Review path for judges: [`JUDGES.md`](JUDGES.md) · every claim and its evidence: [`CLAIMS.md`](CLAIMS.md)
 
