@@ -26,6 +26,9 @@ importers:
       '@counter/gateway':
         specifier: workspace:^
         version: link:../../packages/gateway
+      '@counter/importer':
+        specifier: workspace:^
+        version: link:../../packages/importer
       '@counter/negotiate':
         specifier: workspace:^
         version: link:../../packages/negotiate
@@ -137,6 +140,21 @@ importers:
       '@modelcontextprotocol/client':
         specifier: ^2.4
         version: 2.4.0
+
+  packages/importer:
+    dependencies:
+      '@counter/db':
+        specifier: workspace:^
+        version: link:../db
+      '@counter/negotiate':
+        specifier: workspace:^
+        version: link:../negotiate
+      '@modelcontextprotocol/client':
+        specifier: ^2.4
+        version: 2.4.0
+      drizzle-orm:
+        specifier: ^0.45
+        version: 0.45.4(@electric-sql/pglite@0.5.15)(@neondatabase/serverless@1.2.0)
 
   packages/negotiate:
     dependencies:

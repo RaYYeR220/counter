@@ -12,6 +12,7 @@
   "dependencies": {
     "@counter/db": "workspace:^",
     "@counter/gateway": "workspace:^",
+    "@counter/importer": "workspace:^",
     "@counter/negotiate": "workspace:^",
     "@counter/paypal": "workspace:^",
     "@counter/platform": "workspace:^",
