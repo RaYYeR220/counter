@@ -12,3 +12,6 @@ export type {
 export { PayPalApiError } from "./errors";
 export { TokenCache } from "./token";
 export type { AccessToken } from "./token";
+export { PayPal } from "./client";
+export { REFERENCE_ID, approvalLink } from "./orders";
+export type { CreateAuthorizeOrderParams } from "./orders";
