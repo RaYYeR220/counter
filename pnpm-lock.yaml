@@ -116,6 +116,15 @@ importers:
         specifier: 2.5.0
         version: 2.5.0
 
+  packages/platform:
+    dependencies:
+      '@counter/paypal':
+        specifier: workspace:^
+        version: link:../paypal
+      '@counter/store-sync':
+        specifier: workspace:^
+        version: link:../store-sync
+
   packages/store-sync:
     dependencies:
       '@paypal/commerce-cart-zod':
