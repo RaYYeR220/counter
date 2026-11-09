@@ -8,6 +8,7 @@ import {
   type AuthorizeResult,
   type CreateAuthorizeOrderParams,
 } from "./orders";
+import { addTracking, type TrackingParams } from "./tracking";
 import { Transport } from "./transport";
 
 /**
@@ -54,6 +55,10 @@ export class PayPal {
 
   voidAuthorization(authId: string, merchantId?: string, requestId?: string): Promise<void> {
     return voidAuthorization(this.t, authId, merchantId, requestId);
+  }
+
+  addTracking(orderId: string, merchantId: string | undefined, p: TrackingParams): Promise<void> {
+    return addTracking(this.t, orderId, merchantId, p);
   }
 
   refundCapture(
