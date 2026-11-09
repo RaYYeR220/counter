@@ -2,5 +2,8 @@
   "name": "@counter/bench",
   "version": "0.1.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"purchase/test/*.test.mjs\""
+  }
 }
