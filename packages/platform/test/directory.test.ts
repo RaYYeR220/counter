@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createTestDb, seedCatalog } from "@counter/db";
+import { seedCatalog } from "@counter/db";
+import { createTestDb } from "@counter/db/testing";
 import { DbShopDirectory } from "../src/directory";
 
 describe("DbShopDirectory", () => {
