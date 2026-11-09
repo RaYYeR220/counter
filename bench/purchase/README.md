@@ -53,55 +53,97 @@ Two models, both through Venice AI's OpenAI-compatible API at temperature 0: a s
 
 160 runs: 2 models × 2 arms × 40 tasks, one run each. Printed by `node bench/purchase/report.mjs --failures` from [`results/purchase.json`](../../results/purchase.json).
 
+**The Counter arm was run twice.** The first run exposed two bugs in Counter's own tools (below). We fixed them (commit `b0c8d25`) and re-ran only the Counter arm, all 40 tasks for both models, on the same stack. The storefront-arm runs were not repeated. The table shows the re-run; the first run's numbers follow it and are kept in `results/purchase.json` under `superseded`.
+
 | Model | Arm | Tasks | Correct | Correct buys | Correct no-buys | Wrong buys | Missed buys | Median steps | Median seconds | Cost |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | openai-gpt-6-sol | Storefront + browser | 40 | 40 (100%) | 31 | 9 | **0** | 0 | 11.5 | 44.9 | $3.55 |
-| openai-gpt-6-sol | Counter tools | 40 | 39 (98%) | 30 | 9 | **0** | 1 | 4 | 17.4 | $0.69 |
+| openai-gpt-6-sol | Counter tools | 40 | 39 (98%) | 30 | 9 | **0** | 1 | 4 | 14.9 | $0.67 |
 | z-ai-glm-5-3-flash | Storefront + browser | 40 | 39 (98%) | 30 | 9 | **0** | 1 | 10 | 26.8 | $0.32 |
-| z-ai-glm-5-3-flash | Counter tools | 40 | 39 (98%) | 30 | 9 | **0** | 1 | 3 | 8.7 | $0.06 |
+| z-ai-glm-5-3-flash | Counter tools | 40 | 40 (100%) | 31 | 9 | **0** | 0 | 3 | 6.8 | $0.07 |
 
-Failed runs: 3 of 160; 0 of the failed runs (0%) still bought something.
+Failed runs: 2 of 160; 0 of the failed runs (0%) still bought something.
 
 | Model | Arm | exact_variant | quantity | bundle | budget | constraint | should_not_buy | trap |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | openai-gpt-6-sol | Storefront + browser | 10/10 | 5/5 | 5/5 | 5/5 | 5/5 | 7/7 | 3/3 |
-| openai-gpt-6-sol | Counter tools | 9/10 | 5/5 | 5/5 | 5/5 | 5/5 | 7/7 | 3/3 |
+| openai-gpt-6-sol | Counter tools | 10/10 | 4/5 | 5/5 | 5/5 | 5/5 | 7/7 | 3/3 |
 | z-ai-glm-5-3-flash | Storefront + browser | 10/10 | 4/5 | 5/5 | 5/5 | 5/5 | 7/7 | 3/3 |
-| z-ai-glm-5-3-flash | Counter tools | 9/10 | 5/5 | 5/5 | 5/5 | 5/5 | 7/7 | 3/3 |
+| z-ai-glm-5-3-flash | Counter tools | 10/10 | 5/5 | 5/5 | 5/5 | 5/5 | 7/7 | 3/3 |
 
 | Task | Model | Arm | Outcome | What happened |
 | --- | --- | --- | --- | --- |
-| T02 | openai-gpt-6-sol | Counter tools | MISSED_BUY | bought nothing; expected 1 x JC-POUROVER-OAT |
+| T11 | openai-gpt-6-sol | Counter tools | MISSED_BUY | bought nothing; expected 4 x JC-PLATE-DINNER-INK-SINGLE |
 | T14 | z-ai-glm-5-3-flash | Storefront + browser | MISSED_BUY | bought nothing; expected 2 x LL-HARBOR-FINGERING-L117-5 |
-| T02 | z-ai-glm-5-3-flash | Counter tools | MISSED_BUY | bought nothing; expected 1 x JC-POUROVER-OAT |
 
-**Pre-registered targets for the Counter arm:** at least 38 of 40 correct (met: 39 for both models) and no wrong buys (met: 0 for both).
+**First Counter-arm run, before the fix** (superseded, shown so nothing is hidden):
+
+| Model | Arm | Tasks | Correct | Correct buys | Correct no-buys | Wrong buys | Missed buys | Median steps | Median seconds | Cost |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| openai-gpt-6-sol | Counter tools | 40 | 39 (98%) | 30 | 9 | **0** | 1 | 4 | 17.4 | $0.69 |
+| z-ai-glm-5-3-flash | Counter tools | 40 | 39 (98%) | 30 | 9 | **0** | 1 | 3 | 8.7 | $0.06 |
+
+Failed then: T02 (openai-gpt-6-sol, MISSED_BUY), T02 (z-ai-glm-5-3-flash, MISSED_BUY).
+
+**Pre-registered targets for the Counter arm:** at least 38 of 40 correct and no wrong buys. Met in both runs (first run 39 and 39; re-run 39 and 40; no wrong buys in either).
 
 ## What we learned
 
-**On this storefront, accuracy is a tie.** Both arms got 39 or 40 of 40 right with both models, and no run in either arm bought the wrong thing. We did not reproduce Visa's failure rate here, and we are not going to claim a gap the data does not show. The storefront the browser agent shopped is Counter's own: server-rendered, every option a labelled radio button, stock and "sold out" shown on each option, seconds sold as a separately named product, delivery dates on the page. The traps in the task set (seconds next to firsts, decaf next to regular, a grind picker that defaults to whole bean, dye lots) did not catch either model on pages built like that. Real merchant sites are messier; see Limits.
+**On this storefront, accuracy is a tie.** Every arm got 39 or 40 of 40 right with both models, and no run in either arm bought the wrong thing. We did not reproduce Visa's failure rate here, and we are not going to claim a gap the data does not show. The storefront the browser agent shopped is Counter's own: server-rendered, every option a labelled radio button, stock and "sold out" shown on each option, seconds sold as a separately named product, delivery dates on the page. The traps in the task set (seconds next to firsts, decaf next to regular, a grind picker that defaults to whole bean, dye lots) did not catch either model on pages built like that. Real merchant sites are messier; see Limits.
 
-**The difference is cost and time.** For the same answers, the storefront arm took about three times the steps (median 10 to 11.5 against 3 to 4), two and a half to three times the wall-clock time, and about five times the spend ($3.55 against $0.69 for the larger model; $0.32 against $0.06 for the small one). An average storefront run sent the model about 88,000 tokens; an average Counter run 16,000 to 22,000. Tasks that hinge on the total are where the browser pays most, because the only way to see shipping and tax on a website is to build the cart and fill in the address:
-
-- T23 ("as much Lakefront medium as $60 buys"): the small model put the 1 kg bag in the cart, filled the address, read the total, removed the bag, set the quantity of the 250 g bag by script, refilled the address and checked out: 30 steps against 4 with Counter. The larger model took 26 against 5.
-- T24 ("Kenya and Guji if both come to under $50, else just the Kenya"): both models added both bags, read $52.54, and removed the Guji: 17 and 19 steps against 5 and 7.
-- T35 ("1 kg Huila under $62"): the small model put the bag in the cart to work out the total, then removed it: 14 steps against 2.
-- T36 (Ember worsted 5-pack, sold out): the larger model clicked through every lot and pack combination on the product page before concluding it was sold out: 15 steps against 2.
+**The difference is effort.** For the same answers, the storefront arm took about three times the steps (median 10 to 11.5 against 3 to 4), three to four times the wall-clock time, and about five times the spend ($3.55 against $0.67 for the larger model; $0.32 against $0.07 for the small one). An average storefront run sent the model about 88,000 tokens; an average Counter run 15,000 to 21,000. The next section shows where those steps go.
 
 **The one storefront failure.** T14, small model: ten skeins of Harbor fingering from one dye lot. The agent read the lot picker (L114: 3 skeins, L117: 4 skeins), concluded no lot had ten, and bought nothing. It never opened the pack-size picker, where L117 also comes as a 5-skein pack (two packs make ten). With Counter, `search_products` lists every variant including packs, and the same model bought two L117 packs.
 
-**The Counter failure, twice: T02.** "The pour-over set in the cream color." The shop calls that glaze oat and describes it as "creamy off-white". Both models refused to buy on the Counter arm; both bought the oat set on the storefront. Two causes, both ours:
+**What the first Counter run found: T02, twice.** "The pour-over set in the cream color." The shop calls that glaze oat and describes it as "creamy off-white". Both models refused to buy on the Counter arm; both bought the oat set on the storefront. Two causes, both in Counter's tools:
 
-- Counter's tool descriptions carry buying rules that say a colour must match exactly and a near match is a different product. That made the agents treat "cream" versus "oat" as a mismatch even after the larger model read the description "oat (creamy off-white)". The rules should say the shop's own descriptions count when they match the user's words.
-- `search_products` results show each variant's id but not its product's `parent_id`, so agents guessed `get_product` ids. The small model's `get_product` calls failed 27 times out of 30 (in 16 of its 40 runs), and in T02 it never saw the glaze description at all. The larger model lost 11 of 57 calls the same way. `get_product` should accept a variant id, or search results should name the parent.
+- The buying rules in the tool descriptions said a colour must match exactly and a near match is a different product. Agents treated "cream" against "oat" as a mismatch, even after the larger model read "oat (creamy off-white)" in the description.
+- `search_products` showed each variant's id but not its product's `parent_id`, so agents guessed `get_product` ids. In the first run the small model's `get_product` calls failed 27 times out of 30 (in 16 of its 40 runs), so in T02 it never saw the glaze description at all; the larger model lost 11 of 57 calls the same way.
 
-**No wrong buys anywhere.** All three failures were the cautious kind: nothing bought. The failure Visa saw most, a purchase that should not have happened, did not occur in 160 runs.
+The fix: search results now name each variant's product, `get_product` also opens a product from a variant id, and the rules say the shop's own words count (a colour, size or style word matches when the shop's attribute values or description say so) while still never swapping in another product, size, pack, roast, grind, decaf, seconds, made-to-order piece or dye lot. In the re-run every `get_product` call succeeded (66 of 66), and both models bought the oat set for T02, quoting the shop's description.
+
+**What the re-run cost: T11, larger model.** The new rules also say "if two variants could both be what the user means, ask; if you can't ask, don't buy". For "four of the ink dinner plates", with the ink set of 4 and the pair sold out, the larger model decided singles versus a set was such a choice and bought nothing. In the first run it bought four singles, which is what the key expects. We report this as measured rather than rewording the rules against the test set; the rules should say that the same count of the same item in a different pack is not a different item.
+
+**No wrong buys anywhere.** Every failure in both runs was the cautious kind: nothing bought. The failure Visa saw most, a purchase that should not have happened, did not occur.
+
+## Where each arm spends its effort
+
+Tasks that hinge on the total show the gap best, because on a website the only way to see shipping and tax is to build the cart and fill in the address. Step counts are tool calls, from the traces.
+
+**T23: "As much Lakefront medium as you can get me for $60 total, shipping and tax included. Whole bean."** The answer is three 250 g bags ($57.90); the 1 kg bag lists at $52.00 but totals $62.19.
+
+| Storefront + browser (larger model, 26 steps) | Counter tools (larger model, 5 steps) |
+| --- | --- |
+| 1-3: open the shop, wait for it to load, open Lakefront | 1: `search_products` "Lakefront medium whole bean" |
+| 4-5: pick the 1 kg bag, add it to the cart | 2: `get_product` NP-LAKEFRONT, every roast, grind and bag with prices |
+| 6-8: open the cart, fill in name and address, read the page: $62.19, over | 3: `create_cart` 1 × 1 kg: total $62.19, over |
+| 9-12: back to the product, look at the 250 g bag, back to the cart, remove the 1 kg bag | 4: `update_cart` 3 × 250 g: total $57.90 |
+| 13-16: open the 250 g bag again, set quantity 3, add to cart | 5: `checkout`: order placed |
+| 17-19: open the cart, fill in the address again, read the page: $57.90 | |
+| 20-24: open a second tab to check the 1 kg price, switch back, read the cart again | |
+| 25-26: Checkout with PayPal, wait for the hand-off page | |
+
+The small model took 30 steps on the storefront (it tried to remove the 1 kg bag from the product page with a stale element reference before doing it in the cart, and set the 250 g quantity with a script) against 5 with Counter.
+
+**T24: "A small whole-bean bag each of the Kenya and the Guji, if both together come to under $50 shipped with tax. Otherwise just the Kenya."** Both bags total $52.54, so the answer is the Kenya alone ($32.16).
+
+| Storefront + browser (small model, 17 steps) | Counter tools (small model, 5 steps) |
+| --- | --- |
+| 1-4: open the shop, wait, open the Kenya, wait | 1: `search_products` "Kenya whole bean" |
+| 5: add the Kenya to the cart | 2: `search_products` "Guji whole bean" |
+| 6-9: back to the shop, wait, open the Guji, add it | 3: `create_cart` Kenya + Guji: total $52.54, over |
+| 10-11: open the cart, wait for it to load | 4: `update_cart` Kenya only: total $32.16 |
+| 12-14: fill in name and address (twice), wait for tax: $52.54 | 5: `checkout`: order placed |
+| 15: remove the Guji: $32.16 | |
+| 16-17: Checkout with PayPal, wait for the hand-off page | |
+
+The larger model took 19 steps on the storefront and 10 with Counter. Its Counter run built the same one-bag Kenya cart four times in a row before checking out, without saying why; it cost time, not money.
 
 ## Limits
 
 - **One storefront, and a good one.** The storefront is Counter's reference storefront for these three demo shops, built in this repo with accessible markup. It is not a sample of real merchant sites, which have pop-ups, dropdowns, lazy-loaded variants and checkout flows with more steps. This benchmark measures the agent paths against one well-built site; it says nothing about how often browser agents fail on the open web.
 - **Payment is stubbed.** The PayPal approval step, which a person does in both arms in production, is not measured.
-- **One run per task and arm.** Temperature 0 does not make these models fully deterministic; a rerun can flip a task or two.
+- **One run per task and arm** (the Counter arm twice: before and after the tool fix). Temperature 0 does not make these models fully deterministic; a rerun can flip a task or two.
 - **Two models**, both served through one provider.
 - **Text-only browsing.** The browser agent reads accessibility snapshots, not screenshots, and keeps the two most recent snapshots in full. A vision-based browser agent could behave differently.
 - **The store clock and stock are controlled**, which real shops are not: deliver-by tasks always see the same dates, and stock never changes during a run except through the agent's own order.
@@ -126,4 +168,4 @@ VENICE_API_KEY=... BENCH_KEY=<same> BENCH_DATABASE_URL=<bench db> \
 node bench/purchase/report.mjs --failures
 ```
 
-`run.mjs` resumes: runs already in `results/purchase.json` are skipped (`--rerun T03,T07` repeats some, `--fresh` starts over). Full traces go to `results/raw/purchase/` (not committed).
+`run.mjs` resumes: runs already in `results/purchase.json` are skipped (`--rerun T03,T07` repeats some, `--fresh` starts over). `--supersede "<why>"` repeats the selected arm and tasks and moves the earlier runs to `superseded` instead of overwriting them; the Counter re-run used `--arms counter --supersede ...`. Full traces go to `results/raw/purchase/` (not committed).

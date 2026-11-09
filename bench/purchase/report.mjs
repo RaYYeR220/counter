@@ -17,14 +17,18 @@ const ARM = { storefront: 'Storefront + browser', counter: 'Counter tools' };
 const pct = (n, d) => `${Math.round((100 * n) / d)}%`;
 const num = (x) => (x == null ? '–' : Number.isInteger(x) ? String(x) : x.toFixed(1));
 
-console.log('| Model | Arm | Tasks | Correct | Correct buys | Correct no-buys | Wrong buys | Missed buys | Median steps | Median seconds | Cost |');
-console.log('| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |');
-for (const s of summarize(runs)) {
-  console.log(
-    `| ${s.model} | ${ARM[s.arm] ?? s.arm} | ${s.runs} | ${s.correct} (${pct(s.correct, s.runs)}) | ${s.correct_buys} | ${s.correct_no_buys} | ` +
-      `**${s.wrong_buys}** | ${s.missed_buys} | ${num(s.median_steps)} | ${num(s.median_seconds)} | $${s.cost_usd.toFixed(2)} |`,
-  );
+function summaryTable(rows) {
+  console.log('| Model | Arm | Tasks | Correct | Correct buys | Correct no-buys | Wrong buys | Missed buys | Median steps | Median seconds | Cost |');
+  console.log('| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |');
+  for (const s of summarize(rows)) {
+    console.log(
+      `| ${s.model} | ${ARM[s.arm] ?? s.arm} | ${s.runs} | ${s.correct} (${pct(s.correct, s.runs)}) | ${s.correct_buys} | ${s.correct_no_buys} | ` +
+        `**${s.wrong_buys}** | ${s.missed_buys} | ${num(s.median_steps)} | ${num(s.median_seconds)} | $${s.cost_usd.toFixed(2)} |`,
+    );
+  }
 }
+
+summaryTable(runs);
 
 const failed = runs.filter((r) => r.verdict === 'WRONG_BUY' || r.verdict === 'MISSED_BUY');
 const failedBought = failed.filter((r) => r.verdict === 'WRONG_BUY').length;
@@ -54,4 +58,13 @@ if (argv.includes('--failures')) {
     const why = [...r.reasons, r.stopped_by !== 'answer' ? `stopped: ${r.stopped_by}` : null].filter(Boolean).join('; ');
     console.log(`| ${r.task} | ${r.model} | ${ARM[r.arm] ?? r.arm} | ${r.verdict} | ${why} |`);
   }
+}
+
+for (const old of doc.superseded ?? []) {
+  console.log('');
+  console.log(`Superseded (${old.superseded_at.slice(0, 10)}): ${old.label}`);
+  console.log('');
+  summaryTable(old.runs);
+  const missed = old.runs.filter((r) => r.verdict === 'WRONG_BUY' || r.verdict === 'MISSED_BUY');
+  if (missed.length) console.log(`\nFailed then: ${missed.map((r) => `${r.task} (${r.model}, ${r.verdict})`).join(', ')}`);
 }

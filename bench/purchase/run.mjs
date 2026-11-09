@@ -11,7 +11,7 @@
 //   VENICE_API_KEY=... BENCH_KEY=... BENCH_DATABASE_URL=... \
 //     node bench/purchase/run.mjs --base-url http://localhost:3105 --models z-ai-glm-5-3-flash \
 //       [--tasks all|pilot|subset20|T01,T02] [--arms storefront,counter] [--concurrency 4] \
-//       [--budget 5] [--out results/purchase.json] [--fresh] [--rerun T01,T02]
+//       [--budget 5] [--out results/purchase.json] [--fresh] [--rerun T01,T02] [--supersede "why these runs are repeated"]
 import '../negotiation/ts-resolve.mjs';
 import { mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -186,12 +186,21 @@ async function runOnce(model, arm, task) {
 // Results file
 
 function load() {
-  if (FRESH || !existsSync(OUT)) return [];
-  return JSON.parse(readFileSync(OUT, 'utf8')).runs ?? [];
+  if (FRESH || !existsSync(OUT)) return { runs: [], superseded: [] };
+  const doc = JSON.parse(readFileSync(OUT, 'utf8'));
+  return { runs: doc.runs ?? [], superseded: doc.superseded ?? [] };
 }
 
-const runs = load();
+const { runs, superseded } = load();
 const keyOf = (r) => `${r.model}|${r.arm}|${r.task}`;
+
+// --supersede "<why>": the runs this invocation repeats move to `superseded`, kept and labelled, not overwritten.
+const SUPERSEDE = opt('supersede', '');
+if (SUPERSEDE) {
+  const moved = runs.filter((r) => MODELS.includes(r.model) && ARMS.includes(r.arm) && TASK_IDS.includes(r.task));
+  for (const r of moved) runs.splice(runs.indexOf(r), 1);
+  if (moved.length) superseded.push({ label: SUPERSEDE, superseded_at: new Date().toISOString(), summary: summarize(moved), runs: moved });
+}
 const done = new Set(runs.filter((r) => !RERUN.has(r.task)).map(keyOf));
 
 function save() {
@@ -227,6 +236,7 @@ function save() {
     summary: summarize(runs),
     by_category: byCategory,
     runs,
+    ...(superseded.length ? { superseded } : {}),
   };
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(`${OUT}.tmp`, JSON.stringify(doc, null, 2) + '\n');
