@@ -13,6 +13,8 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@counter/db": "workspace:^",
+    "@counter/gateway": "workspace:^",
     "@counter/paypal": "workspace:^",
     "@counter/store-sync": "workspace:^"
   }

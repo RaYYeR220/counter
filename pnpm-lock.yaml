@@ -124,6 +124,12 @@ importers:
 
   packages/platform:
     dependencies:
+      '@counter/db':
+        specifier: workspace:^
+        version: link:../db
+      '@counter/gateway':
+        specifier: workspace:^
+        version: link:../gateway
       '@counter/paypal':
         specifier: workspace:^
         version: link:../paypal
