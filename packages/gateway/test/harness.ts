@@ -130,6 +130,16 @@ export class FakePayPal implements PaymentPort {
     if (o.status === "CREATED") Object.assign(o, { status: "APPROVED", payerId });
   }
 
+  /** What the buyer has done with the order so far (the gateway's view of PayPal). */
+  async approvalState(_shop: string, orderId: string) {
+    const o = this.orders.get(orderId);
+    return {
+      status: o?.status ?? ("UNKNOWN" as const),
+      ...(o?.payerId ? { payerId: o.payerId } : {}),
+      approveUrl: this.approveUrl(orderId),
+    };
+  }
+
   async authorizeOrder(_shopId: string, orderId: string): Promise<AuthorizeResult> {
     const o = this.orders.get(orderId);
     if (!o || o.status === "CREATED") return { status: "DECLINED", reason: "ORDER_NOT_APPROVED" };
