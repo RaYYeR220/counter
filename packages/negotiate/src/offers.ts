@@ -114,13 +114,18 @@ export class OfferBook {
     agentClient: string,
     cartLines: readonly CartLineRef[],
     now: Date,
+    /** Offer ids the cart asks for (Store Sync `discounts.codes`). Only those can apply. */
+    codes: readonly string[],
   ): Promise<AppliedDiscountIn[]> {
+    const wanted = new Set(codes.map((c) => c.trim().toUpperCase()).filter(Boolean));
+    if (wanted.size === 0) return [];
     const inCart = new Map<string, number>();
     for (const l of cartLines) inCart.set(l.variantId, (inCart.get(l.variantId) ?? 0) + l.quantity);
 
     let best: Offer | undefined;
     for (const o of await this.store.forAgent(shopId, agentClient)) {
       const usable =
+        wanted.has(o.id.toUpperCase()) &&
         o.shopId === shopId &&
         o.agentClient === agentClient &&
         now.getTime() < o.expiresAt.getTime() &&
@@ -153,6 +158,6 @@ export class OfferDiscounts implements DiscountPort {
     const lines = (q.cart.items ?? [])
       .filter((it) => it.variant_id && it.quantity > 0)
       .map((it) => ({ variantId: it.variant_id!, quantity: it.quantity }));
-    return this.book.discountsFor(shopId, q.agentClient, lines, this.now());
+    return this.book.discountsFor(shopId, q.agentClient, lines, this.now(), q.cart.discounts?.codes ?? []);
   }
 }

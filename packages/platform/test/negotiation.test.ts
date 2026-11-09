@@ -70,10 +70,18 @@ describe("NegotiationService", () => {
     expect(rows[0]!.outcome).toBe("clamped");
     expect((await listEvents(db, "juniper-clay")).map((e) => e.type)).toContain("negotiation.clamped");
 
-    // The same agent's cart for those lines picks the deal up as a discount.
+    // A cart without the offer's code gets nothing, even from the same agent.
+    const uncoded = await offerDiscounts(db).forCart("juniper-clay", {
+      cartId: undefined,
+      cart: { items: [{ variant_id: SAGE8, quantity: 3 }] } as never,
+      agentClient: "Counter MCP",
+    });
+    expect(uncoded).toHaveLength(0);
+
+    // The same agent's cart for those lines, carrying the offer id, picks the deal up as a discount.
     const discounts = await offerDiscounts(db).forCart("juniper-clay", {
       cartId: "CART-TEST000001",
-      cart: { items: [{ variant_id: SAGE8, quantity: 3 }] } as never,
+      cart: { items: [{ variant_id: SAGE8, quantity: 3 }], discounts: { codes: [out.offer!.offer_id] } } as never,
       agentClient: "Counter MCP",
     });
     expect(discounts).toHaveLength(1);
@@ -84,7 +92,7 @@ describe("NegotiationService", () => {
     // Another agent gets nothing.
     const other = await offerDiscounts(db).forCart("juniper-clay", {
       cartId: undefined,
-      cart: { items: [{ variant_id: SAGE8, quantity: 3 }] } as never,
+      cart: { items: [{ variant_id: SAGE8, quantity: 3 }], discounts: { codes: [out.offer!.offer_id] } } as never,
       agentClient: "someone-else",
     });
     expect(other).toHaveLength(0);

@@ -171,7 +171,8 @@
 }
 
 @media (min-width: 900px) {
-  .page { height: calc(100dvh - 56px); }
+  /* A fixed height (not flex-basis) so the conversation and the trace scroll on their own. */
+  .page { flex: none; height: calc(100dvh - 56px); }
 }
 
 /* ------------------------------------------------------------------ conversation */

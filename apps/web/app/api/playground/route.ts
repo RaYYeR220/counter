@@ -1,24 +1,25 @@
 import { connectCounter, runAgent, type AgentStep } from "@counter/agent";
 import { veniceClient } from "@counter/negotiate";
 import { baseUrl } from "@/lib/server/runtime";
+import { MAX_TURN_CHARS, openStateFrom, taskFrom, type Turn } from "@/lib/server/playground-task";
 
 export const maxDuration = 120;
 
 /** Model behind the playground's buyer agent. */
 const BUYER_MODEL = process.env.COUNTER_BUYER_MODEL ?? "z-ai-glm-5-3-flash";
 const MAX_STEPS = 16;
-const MAX_TURN_CHARS = 1200;
 
 const SYSTEM =
   "You are a shopping agent acting for the person chatting with you. You shop small independent shops through the " +
   "shop tools. Buy exactly what they ask for. If the exact item can't be bought, don't buy anything and say why, " +
   "offering the closest real alternatives the shop has. If they ask for a deal or name a price, call negotiate before " +
-  "building the cart and pass their own words as the message, unchanged; the shop decides what it can do. When the cart matches the request, call checkout: the first time it returns an approve_url, tell the person " +
+  "building the cart and pass their own words as the message, unchanged; the shop decides what it can do. When negotiate " +
+  "returns an offer, pass its offer_id to create_cart. If the conversation already has an open cart, keep using it: " +
+  "update_cart to change it and checkout to finish it; never create a second cart for the same request. When the cart " +
+  "matches the request, call checkout: the first time it returns an approve_url, tell the person " +
   "to approve the payment in PayPal at that link and stop. When they say they approved, call checkout again to place " +
   "the order. If no shipping address was given, use 1 Main St, Portland, OR 97205, US. Keep replies short and specific: " +
   "name the exact variant, the unit price and the total.";
-
-type Turn = { from: "user" | "agent"; text: string };
 
 // A small per-instance limiter: enough to keep one visitor from running up costs.
 const recent = new Map<string, number[]>();
@@ -31,13 +32,6 @@ function allowed(ip: string): boolean {
   return true;
 }
 
-function taskFrom(history: Turn[], message: string): string {
-  const earlier = history
-    .slice(-8)
-    .map((t) => `${t.from === "user" ? "Person" : "You"}: ${t.text.slice(0, MAX_TURN_CHARS)}`)
-    .join("\n");
-  return earlier ? `Conversation so far:\n${earlier}\n\nPerson: ${message}` : message;
-}
 
 function stepView(s: AgentStep) {
   return {
@@ -61,7 +55,7 @@ export async function POST(req: Request): Promise<Response> {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
   if (!allowed(ip)) return Response.json({ error: "Too many runs from this address. Try again in a few minutes." }, { status: 429 });
 
-  let body: { message?: unknown; history?: unknown };
+  let body: { message?: unknown; history?: unknown; state?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -72,6 +66,7 @@ export async function POST(req: Request): Promise<Response> {
   const history = Array.isArray(body.history)
     ? (body.history as Turn[]).filter((t) => t && (t.from === "user" || t.from === "agent") && typeof t.text === "string")
     : [];
+  const state = openStateFrom(body.state);
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
@@ -89,7 +84,7 @@ export async function POST(req: Request): Promise<Response> {
           llm: veniceClient({ apiKey, timeoutMs: 45_000, retries: 2 }),
           model: BUYER_MODEL,
           system: SYSTEM,
-          task: taskFrom(history, message),
+          task: taskFrom(history, message, state),
           mcp: [counter],
           maxSteps: MAX_STEPS,
           temperature: 0,

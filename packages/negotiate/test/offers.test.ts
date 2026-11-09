@@ -79,34 +79,34 @@ describe("OfferBook.discountsFor", () => {
       { variantId: SAGE12, quantity: 3 },
       { variantId: INK8, quantity: 1 },
       { variantId: BOWL6, quantity: 2 },
-    ], at(1000));
+    ], at(1000), ["OFF-AAAAAAAA"]);
     expect(d).toEqual([{ code: "OFF-AAAAAAAA", variantId: SAGE12, amountCents: 1500, description: "Negotiated price" }]);
   });
 
   it("expires at expiresAt", async () => {
     const { b } = await issued();
     const cart = [{ variantId: SAGE12, quantity: 3 }, { variantId: INK8, quantity: 1 }];
-    expect(await b.discountsFor(SHOP, AGENT, cart, at(TTL - 1))).toHaveLength(1);
-    expect(await b.discountsFor(SHOP, AGENT, cart, at(TTL))).toEqual([]);
+    expect(await b.discountsFor(SHOP, AGENT, cart, at(TTL - 1), ["OFF-AAAAAAAA"])).toHaveLength(1);
+    expect(await b.discountsFor(SHOP, AGENT, cart, at(TTL), ["OFF-AAAAAAAA"])).toEqual([]);
   });
 
   it("is bound to the agent client and the shop", async () => {
     const { b } = await issued();
     const cart = [{ variantId: SAGE12, quantity: 3 }, { variantId: INK8, quantity: 1 }];
-    expect(await b.discountsFor(SHOP, "another-agent", cart, NOW)).toEqual([]);
-    expect(await b.discountsFor("northpaw-roasters", AGENT, cart, NOW)).toEqual([]);
+    expect(await b.discountsFor(SHOP, "another-agent", cart, NOW, ["OFF-AAAAAAAA"])).toEqual([]);
+    expect(await b.discountsFor("northpaw-roasters", AGENT, cart, NOW, ["OFF-AAAAAAAA"])).toEqual([]);
   });
 
   it("needs every offered line with at least the offered quantity", async () => {
     const { b } = await issued();
-    expect(await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 2 }, { variantId: INK8, quantity: 1 }], NOW)).toEqual([]);
+    expect(await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 2 }, { variantId: INK8, quantity: 1 }], NOW, ["OFF-AAAAAAAA"])).toEqual([]);
     // The ink mug carries no discount, but it is part of the bundle the deal was priced for.
-    expect(await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 3 }], NOW)).toEqual([]);
+    expect(await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 3 }], NOW, ["OFF-AAAAAAAA"])).toEqual([]);
   });
 
   it("discounts only the offered quantity when the cart holds more", async () => {
     const { b } = await issued();
-    const d = await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 5 }, { variantId: INK8, quantity: 1 }], NOW);
+    const d = await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 5 }, { variantId: INK8, quantity: 1 }], NOW, ["OFF-AAAAAAAA"]);
     expect(d.map((x) => x.amountCents)).toEqual([1500]);
   });
 
@@ -116,7 +116,7 @@ describe("OfferBook.discountsFor", () => {
       { variantId: SAGE12, quantity: 1 },
       { variantId: INK8, quantity: 1 },
       { variantId: SAGE12, quantity: 2 },
-    ], NOW);
+    ], NOW, ["OFF-AAAAAAAA"]);
     expect(d).toHaveLength(1);
   });
 
@@ -125,10 +125,21 @@ describe("OfferBook.discountsFor", () => {
     const small: OfferDeal = { lines: [{ variantId: SAGE12, quantity: 1, unitCents: 3230, listCents: 3400 }], discountCents: 170 };
     await b.issue(SHOP, AGENT, small, TTL, NOW);
     await b.issue(SHOP, AGENT, DEAL, TTL, NOW);
-    const both = await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 3 }, { variantId: INK8, quantity: 1 }], NOW);
+    const both = await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 3 }, { variantId: INK8, quantity: 1 }], NOW, ["OFF-AAAAAAAA", "OFF-BBBBBBBB"]);
     expect(both.map((x) => x.code)).toEqual(["OFF-BBBBBBBB"]);
-    const onlySmall = await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 1 }], NOW);
+    const onlySmall = await b.discountsFor(SHOP, AGENT, [{ variantId: SAGE12, quantity: 1 }], NOW, ["OFF-AAAAAAAA", "OFF-BBBBBBBB"]);
     expect(onlySmall).toEqual([{ code: "OFF-AAAAAAAA", variantId: SAGE12, amountCents: 170, description: "Negotiated price" }]);
+  });
+});
+
+describe("OfferBook.discountsFor: codes", () => {
+  it("applies nothing unless the cart asks for the offer by id", async () => {
+    const b = book();
+    await b.issue(SHOP, AGENT, DEAL, TTL, NOW);
+    const cart = [{ variantId: SAGE12, quantity: 3 }, { variantId: INK8, quantity: 1 }];
+    expect(await b.discountsFor(SHOP, AGENT, cart, NOW, [])).toEqual([]);
+    expect(await b.discountsFor(SHOP, AGENT, cart, NOW, ["OFF-ZZZZZZZZ"])).toEqual([]);
+    expect(await b.discountsFor(SHOP, AGENT, cart, NOW, ["off-aaaaaaaa"])).toHaveLength(1);
   });
 });
 
@@ -154,14 +165,21 @@ describe("OfferDiscounts", () => {
     const b = book();
     await b.issue(SHOP, AGENT, DEAL, TTL, NOW);
     const port = new OfferDiscounts(b, () => at(60_000));
-    const body = cart([[SAGE12, 3], [INK8, 1], [BOWL6, 1]]);
+    const body = { ...cart([[SAGE12, 3], [INK8, 1], [BOWL6, 1]]), discounts: { codes: ["OFF-AAAAAAAA"] } };
     const discounts = await port.forCart(SHOP, { cartId: "CART-TEST000001", cart: body, agentClient: AGENT });
     const c = await computeCart(body, catalog, SHOP, { now: NOW, discounts });
     expect(c.amounts.subtotal).toBe(3 * 3400 + 3000 + 2800);
     expect(c.amounts.discount).toBe(1500);
     expect(c.discounts?.applied).toEqual([
-      expect.objectContaining({ code: "OFF-AAAAAAAA", automatic: true, method: "EACH", amount: { currency_code: "USD", value: "15.00" } }),
+      expect.objectContaining({ code: "OFF-AAAAAAAA", method: "EACH", amount: { currency_code: "USD", value: "15.00" } }),
     ]);
+  });
+
+  it("grants nothing to a cart that does not carry the offer's code", async () => {
+    const b = book();
+    await b.issue(SHOP, AGENT, DEAL, TTL, NOW);
+    const port = new OfferDiscounts(b, () => NOW);
+    expect(await port.forCart(SHOP, { cartId: undefined, cart: cart([[SAGE12, 3], [INK8, 1]]), agentClient: AGENT })).toEqual([]);
   });
 
   it("grants nothing to a cart without an agent client", async () => {

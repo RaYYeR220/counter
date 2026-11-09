@@ -6,6 +6,7 @@ import { RichText } from "./RichText";
 import { StepCard, type StepActions } from "./StepCard";
 import { hitUnconnectedPayments, msLabel, pendingApproval, resultOf, TOOL_LABELS, toolError } from "./trace-model";
 import type { CheckoutOutcome, PlaygroundConfig, PlaygroundEvent, Run } from "./types";
+import { openStateOf } from "./open-state";
 import s from "./playground.module.css";
 
 const STARTERS: Array<{ label: string; prompt: string }> = [
@@ -110,6 +111,7 @@ export function Playground({ config }: { config: PlaygroundConfig | null }) {
         { from: "user" as const, text: r.prompt },
         ...(r.final?.text ? [{ from: "agent" as const, text: r.final.text }] : []),
       ]);
+      const state = openStateOf(runs);
       const id = nextId.current++;
       setRuns((all) => [...all, { id, prompt: message, steps: [], state: "running" }]);
       setDraft("");
@@ -138,7 +140,7 @@ export function Playground({ config }: { config: PlaygroundConfig | null }) {
         const res = await fetch("/api/playground", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ message, history }),
+          body: JSON.stringify({ message, history, state }),
           signal: controller.signal,
         });
         if (!res.ok || !res.body) {

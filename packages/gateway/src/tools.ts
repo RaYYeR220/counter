@@ -69,6 +69,10 @@ const BUYING_RULES =
 
 const shopArg = z.string().min(1).max(100).describe("Shop slug from list_shops, e.g. juniper-clay");
 const cartIdArg = z.string().min(1).max(100).describe("cart_id returned by create_cart");
+const offerIdArg = z
+  .string()
+  .regex(/^OFF-[A-Z0-9]{8}$/i)
+  .describe("offer_id returned by negotiate; the deal applies only to a cart that carries it");
 
 const itemsArg = z
   .array(
@@ -415,11 +419,12 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
         items: itemsArg.describe("The exact variants the user asked for"),
         shipping_address: addressArg,
         customer: customerArg.optional().describe("The buyer; defaults to the account's buyer details"),
+        offer_id: offerIdArg.optional(),
       }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
       _meta: appToolMeta("cart"),
     },
-    async ({ shop, items, shipping_address, customer }) =>
+    async ({ shop, items, shipping_address, customer, offer_id }) =>
       guard("Creating a cart", shop, async () => {
         const buyer = customer ?? deps.defaultCustomer;
         const cart: PayPalCart = {
@@ -427,6 +432,7 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
           ...(buyer ? { customer: buyer } : {}),
           shipping_address,
           payment_method: { type: "paypal" },
+          ...(offer_id ? { discounts: { codes: [offer_id.toUpperCase()] } } : {}),
         };
         const res = await deps.storeSync.create(shop, cart);
         if (res.status !== 200 && res.status !== 201) return shopError(res, "Creating the cart");
@@ -450,11 +456,12 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
         items: itemsArg.optional().describe("The complete new item list"),
         shipping_address: addressArg.optional(),
         shipping_option_id: z.string().min(1).max(40).optional().describe("STANDARD or EXPRESS"),
+        offer_id: offerIdArg.optional(),
       }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       _meta: appToolMeta("cart"),
     },
-    async ({ shop, cart_id, items, shipping_address, shipping_option_id }) =>
+    async ({ shop, cart_id, items, shipping_address, shipping_option_id, offer_id }) =>
       guard("Updating the cart", shop, async () => {
         const loaded = await loadCart(deps, shop, cart_id);
         if ("error" in loaded) return loaded.error;
@@ -466,11 +473,12 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
             message: "The cart is already completed",
           });
         }
-        if (!items && !shipping_address && !shipping_option_id) return cartResult(shop, current, "Nothing to change.");
+        if (!items && !shipping_address && !shipping_option_id && !offer_id) return cartResult(shop, current, "Nothing to change.");
 
         const next = requestCart(current);
         if (items) next.items = items.map((i) => ({ variant_id: i.variant_id, quantity: i.quantity }));
         if (shipping_address) next.shipping_address = shipping_address;
+        if (offer_id) next.discounts = { codes: [offer_id.toUpperCase()] };
         if (shipping_option_id) {
           next.available_shipping_options = selectShipping(current.available_shipping_options ?? [], shipping_option_id);
         }
@@ -608,7 +616,7 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
           "Ask the shop's seller agent for a better price on specific variants and quantities before you build the " +
           "cart, e.g. a bundle discount for three mugs. Send what the user would say. The shop answers in plain " +
           "words and, when it agrees to a deal, returns an offer: create_cart with exactly those variants and at " +
-          "least those quantities before expires_at and the discount is applied automatically. The shop's pricing " +
+          "least those quantities and its offer_id before expires_at, and the discount is applied. The shop's pricing " +
           "rules are enforced on its side, so pushing harder does not change what is allowed. Only negotiate when " +
           "the user wants a deal; never trade away what the user asked for to get a discount.",
         inputSchema: z.strictObject({
@@ -630,7 +638,7 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
           if (out.offer) {
             const parts = out.offer.lines.map((l) => `${l.quantity} x ${l.variant_id} at ${usd(l.unit_price)} (list ${usd(l.list_price)})`);
             lines.push(`Offer ${out.offer.offer_id}: ${parts.join(", ")}; ${usd(out.offer.discount)} off; valid until ${out.offer.expires_at}.`);
-            lines.push("Create the cart with these variants and quantities to use it.");
+            lines.push(`To use it, call create_cart (or update_cart) with offer_id ${out.offer.offer_id} and at least these variants and quantities.`);
           } else {
             lines.push("No discount is on offer for this cart; list prices apply.");
           }

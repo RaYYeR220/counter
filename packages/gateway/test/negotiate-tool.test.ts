@@ -53,7 +53,7 @@ describe("negotiate tool", () => {
     expect(asked).toEqual([{ shop: "juniper-clay", items: [{ variant_id: "JC-MUG-SPECKLE-SAGE-8", quantity: 3 }], message: "Any deal on three?" }]);
     expect(text).toContain("OFF-ABCD1234");
     expect(text).toContain("$26.50");
-    expect(text).toContain("Create the cart with these variants and quantities");
+    expect(text).toContain("call create_cart (or update_cart) with offer_id OFF-ABCD1234");
     expect(r.structuredContent?.verdict).toBe("accept");
   });
 
