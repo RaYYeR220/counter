@@ -104,6 +104,6 @@ Commands run from the repository root after `pnpm install`. Live URLs are on htt
 | N8 | Robustness to multi-turn negotiation pressure. The negotiation benchmark is single-turn. | `NOT-CLAIMED` |
 | N9 | That prompt rules alone fail on this scenario set. The prompt-only arm also sold nothing below floor in the reported run. | `NOT-CLAIMED` |
 | N10 | Merchant authentication. The Console is demo-grade: same-origin checks and rate limits only. | `NOT-CLAIMED` |
-| N13 | That the demo shops' floors are secret on this deployment. The Console's data API is public (`/api/console/<shop>/catalog` shows floors and costs); what Counter claims is that buyer agents and the seller model never receive them (P16, and `packages/platform/test/directory.test.ts`). | `NOT-CLAIMED` |
+| N13 | That the demo shops' floors are secret from people. The Console's data API serves floors and costs only to a merchant session (`apps/web/test/console-routes.test.ts`), but the demo hands that session to anyone who clicks "View as Rosa". What Counter claims is that buyer agents and the seller model never receive floors or costs (P16, and `packages/platform/test/directory.test.ts`). | `NOT-CLAIMED` |
 | N11 | Saved PayPal wallets (Vault v3) in any flow. | `NOT-CLAIMED` |
 | N12 | Any endorsement by PayPal, Channel3, AG Grid or a model provider. | `NOT-CLAIMED` |

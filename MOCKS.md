@@ -27,7 +27,7 @@ Everything Counter fakes, where, and why. Production runs none of the benchmark 
 ### Merchant sign-in
 
 - **Where:** `apps/web/app/api/merchant/_lib/http.ts` (`requireMerchant`), `apps/web/app/api/console/_lib/http.ts` (`sameOrigin`, `allow`).
-- **What it does:** there are no merchant accounts. The merchant REST API (`/api/merchant/*`, `/api/onboarding/start`, `/api/studio/*`) needs one shared key in the `x-merchant-key` header (`MERCHANT_DEMO_KEY`). Console actions accept same-origin requests only, with a per-address rate limit kept in memory. The Console's read API (`/api/console/<shop>/*`) is open, so the demo shops' floors and costs are readable there; the MCP tools and the seller model never receive them.
+- **What it does:** there are no merchant accounts. The merchant REST API (`/api/merchant/*`, `/api/onboarding/start`, `/api/studio/*`) needs one shared key in the `x-merchant-key` header (`MERCHANT_DEMO_KEY`). Console actions accept same-origin requests only, with a per-address rate limit kept in memory. The Console's data API (`/api/console/<shop>/*`, except the public `summary`) needs a merchant session cookie that the demo Console grants with one click ("View as Rosa (demo merchant)"); there is no real merchant sign-in. The MCP tools and the seller model never receive floors or costs.
 - **Why:** a public demo where anyone can try the merchant side. It is not access control for a real shop.
 
 ### Default buyer on MCP carts

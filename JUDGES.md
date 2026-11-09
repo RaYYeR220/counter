@@ -84,7 +84,7 @@ Proves: a shop owner gets from an existing product page, photo or spreadsheet to
 
 ### 6. Run the shop (45 s) [Design] [Tech] [Innovation]
 
-Open https://counter-agents.vercel.app/console?shop=juniper-clay.
+Open https://counter-agents.vercel.app/console?shop=juniper-clay and click **View as Rosa (demo merchant)**. Floors and costs are private to the shop, so the Console's data API answers only to a merchant session (buyer agents never get one).
 
 You should see an AG Studio dashboard over the shop's own data, with pages for Agents, Negotiations, Orders and Catalog. On **Agents**, the **Agent stream** widget lists the Store Sync calls and negotiations you just made, labelled by agent (Counter MCP). **Catalog** holds the Floor ladder and Market position widgets (market data appears once a product has had a Channel3 market check; right-click to run one). Click **Assistant** and ask "Explain the latest negotiation".
 

@@ -21,7 +21,7 @@ Rosa Marín and Theo throw, glaze and fire every piece at Juniper Clay, a two-pe
 
    Then ask it for "two 12 oz speckled mugs in the green glaze from Juniper Clay, and see if they'll do a deal on three".
 3. **Storefront.** The same shops for people: https://counter-agents.vercel.app/s/juniper-clay, https://counter-agents.vercel.app/s/northpaw-roasters, https://counter-agents.vercel.app/s/loop-and-lantern. Storefront pages also expose the shop tools to in-page agents (WebMCP).
-4. **Merchant side.** Studio, where a shop imports products and sets its agent policy: https://counter-agents.vercel.app/studio?shop=juniper-clay. Console, where it watches agent traffic and ships orders: https://counter-agents.vercel.app/console?shop=juniper-clay.
+4. **Merchant side.** Studio, where a shop imports products and sets its agent policy: https://counter-agents.vercel.app/studio?shop=juniper-clay. Console, where it watches agent traffic and ships orders: https://counter-agents.vercel.app/console?shop=juniper-clay (click "View as Rosa (demo merchant)" to open the merchant session).
 5. **Protocol evidence.** Store Sync conformance notes: https://counter-agents.vercel.app/docs/store-sync-conformance. The gateway's public signing key: https://counter-agents.vercel.app/.well-known/jwks.json.
 
 ## Live PayPal verification
@@ -241,8 +241,7 @@ PAYPAL_LIVE=1 PAYPAL_CLIENT_ID=... PAYPAL_CLIENT_SECRET=... pnpm --filter @count
 - **Real PayPal agent traffic needs Store Sync onboarding** (US merchants, physical goods, USD, by application). Counter's gateway sends the same signed requests in sandbox, and a shop can verify PayPal's own JWKS instead (`jwksMode: paypal`), but no shop here is onboarded to PayPal's agentic platform.
 - **UCP with PayPal** needs enablement by Google and is not wired.
 - **Sandbox money only.** The PayPal client is pinned to the sandbox (`SANDBOX_BASE` in `apps/web/lib/server/runtime.ts`).
-- **Console actions are protected by same-origin and a per-address rate limit only.** It is a demo: there are no merchant accounts or sign-in. The merchant REST API needs `MERCHANT_DEMO_KEY`. Rate limits are in memory, per server instance.
-- **The demo Console and its data API are public**, so the demo shops' floors and costs can be read there (`/api/console/<shop>/catalog`). The MCP tools and the seller model never receive them.
+- **The merchant sign-in is a one-click demo session.** Floors, costs, orders and transcripts are served only to a signed merchant session (`counter_merchant`, HMAC-signed, httpOnly, 12 h); the demo Console offers "View as Rosa (demo merchant)" so reviewers can see the merchant side, which also means anyone who clicks it sees the demo shops' floors. Buyer agents never receive floors or costs through the MCP tools or Store Sync, and the seller model never sees them. There are no real merchant accounts; the merchant REST API needs `MERCHANT_DEMO_KEY`, and rate limits are in memory, per server instance.
 - **The purchase benchmark storefront is our own clean, accessible store**, the best case for browser agents. One run per task and arm (the Counter arm twice), two models, one provider. It says nothing about how browser agents fare on messier real sites.
 - **The negotiation benchmark is single-turn.** Multi-turn pressure is not tested.
 - **Vault v3** helpers exist with tests but no flow uses them yet.
