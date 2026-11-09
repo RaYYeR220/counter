@@ -20,3 +20,5 @@ export type { TrackingParams } from "./tracking";
 export { DEFAULT_REFERRAL_FEATURES } from "./partner";
 export type { PartnerReferralParams, MerchantRef, MerchantStatus } from "./partner";
 export type { DisputeView, DisputeDetails, ListDisputesQuery, EvidenceParams } from "./disputes";
+export { DEFAULT_USAGE_PATTERN } from "./vault";
+export type { VaultSetupParams, ChargeVaultedParams, ChargeVaultedResult } from "./vault";

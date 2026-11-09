@@ -27,6 +27,14 @@ import {
 } from "./partner";
 import { addTracking, type TrackingParams } from "./tracking";
 import { Transport } from "./transport";
+import {
+  chargeVaulted,
+  createPaymentToken,
+  createVaultSetupToken,
+  type ChargeVaultedParams,
+  type ChargeVaultedResult,
+  type VaultSetupParams,
+} from "./vault";
 import { verifyWebhook } from "./webhooks";
 
 /**
@@ -110,6 +118,24 @@ export class PayPal {
     opts?: { acceptClaimType?: string },
   ): Promise<void> {
     return acceptClaim(this.t, disputeId, merchantId, note, opts);
+  }
+
+  createVaultSetupToken(
+    p: VaultSetupParams,
+  ): Promise<{ setupTokenId: string; status: string; approveUrl: string; customerId?: string }> {
+    return createVaultSetupToken(this.t, p);
+  }
+
+  createPaymentToken(p: {
+    setupTokenId: string;
+    merchantId?: string;
+    requestId: string;
+  }): Promise<{ vaultId: string; customerId?: string; payerId?: string; payerEmail?: string }> {
+    return createPaymentToken(this.t, p);
+  }
+
+  chargeVaulted(p: ChargeVaultedParams): Promise<ChargeVaultedResult> {
+    return chargeVaulted(this.t, p);
   }
 
   refundCapture(
