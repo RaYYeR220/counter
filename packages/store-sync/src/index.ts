@@ -8,3 +8,4 @@ export * from "./issues";
 export * from "./validate";
 export * from "./compute";
 export * from "./memory";
+export * from "./auth";
