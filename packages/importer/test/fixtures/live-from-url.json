@@ -1,15 +1,30 @@
 {
-  "recorded_at": "2026-11-09T05:38:33.567Z",
+  "recorded_at": "2026-11-09T05:48:10.137Z",
   "search": {
     "query": "speckled stoneware mug 12 oz",
     "results": [
       {
-        "id": "2EZ4nBJ",
-        "title": "Sur La Table Speckled Mug",
+        "id": "prod001",
+        "title": "<text 25>",
+        "brands": [
+          {
+            "id": "prod013",
+            "name": "<text 12>"
+          }
+        ],
+        "images": [
+          {
+            "url": "https://images.example/1.jpg",
+            "cleaned_url": "https://images.example/1.jpg",
+            "is_main_image": true,
+            "shot_type": "hero",
+            "alt_text": "<text 56>"
+          }
+        ],
         "offers": [
           {
-            "url": "https://buy.trychannel3.com/2EZ4nBJ-MuWY-S666bu",
-            "domain": "surlatable.com",
+            "url": "https://buy.trychannel3.com/prod001",
+            "domain": "shop-1.example",
             "price": {
               "price": 6.99,
               "compare_at_price": 13.95,
@@ -22,12 +37,27 @@
         ]
       },
       {
-        "id": "WUgi0Zl",
-        "title": "Speckled Heart Mug Stoneware",
+        "id": "prod002",
+        "title": "<text 28>",
+        "brands": [
+          {
+            "id": "prod014",
+            "name": "<text 7>"
+          }
+        ],
+        "images": [
+          {
+            "url": "https://images.example/2.jpg",
+            "cleaned_url": "https://images.example/2.jpg",
+            "is_main_image": true,
+            "shot_type": "hero",
+            "alt_text": "<text 46>"
+          }
+        ],
         "offers": [
           {
-            "url": "https://buy.trychannel3.com/WUgi0Zl-VtLY-S666bu",
-            "domain": "athome.com",
+            "url": "https://buy.trychannel3.com/prod002",
+            "domain": "shop-2.example",
             "price": {
               "price": 2.49,
               "compare_at_price": 4.99,
@@ -48,12 +78,34 @@
         ]
       },
       {
-        "id": "AmWtok8",
-        "title": "Craft Stoneware Mug",
+        "id": "prod003",
+        "title": "<text 19>",
+        "brands": [
+          {
+            "id": "prod015",
+            "name": "<text 14>"
+          }
+        ],
+        "images": [
+          {
+            "url": "https://images.example/3.jpg",
+            "cleaned_url": "https://images.example/3.jpg",
+            "is_main_image": true,
+            "shot_type": "hero",
+            "alt_text": "<text 53>"
+          },
+          {
+            "url": "https://images.example/4.jpg",
+            "cleaned_url": null,
+            "is_main_image": false,
+            "shot_type": "lifestyle",
+            "alt_text": "<text 42>"
+          }
+        ],
         "offers": [
           {
-            "url": "https://buy.trychannel3.com/AmWtok8-FgTK-S666bu",
-            "domain": "crateandbarrel.com",
+            "url": "https://buy.trychannel3.com/prod003",
+            "domain": "shop-3.example",
             "price": {
               "price": 9.95,
               "compare_at_price": null,
@@ -66,12 +118,34 @@
         ]
       },
       {
-        "id": "hEyLWbC",
-        "title": "Ora 12-oz. Stoneware Mug",
+        "id": "prod004",
+        "title": "<text 24>",
+        "brands": [
+          {
+            "id": "prod016",
+            "name": "<text 3>"
+          }
+        ],
+        "images": [
+          {
+            "url": "https://images.example/5.jpg",
+            "cleaned_url": "https://images.example/5.jpg",
+            "is_main_image": true,
+            "shot_type": "hero",
+            "alt_text": "<text 42>"
+          },
+          {
+            "url": "https://images.example/6.jpg",
+            "cleaned_url": null,
+            "is_main_image": false,
+            "shot_type": "lifestyle",
+            "alt_text": "<text 60>"
+          }
+        ],
         "offers": [
           {
-            "url": "https://buy.trychannel3.com/hEyLWbC-FgTK-S666bu",
-            "domain": "crateandbarrel.com",
+            "url": "https://buy.trychannel3.com/prod004",
+            "domain": "shop-3.example",
             "price": {
               "price": 15.95,
               "compare_at_price": null,
@@ -84,12 +158,34 @@
         ]
       },
       {
-        "id": "prodmug1",
-        "title": "Morning mug",
+        "id": "prod005",
+        "title": "<text 15>",
+        "brands": [
+          {
+            "id": "prod017",
+            "name": "<text 22>"
+          }
+        ],
+        "images": [
+          {
+            "url": "https://images.example/7.jpg",
+            "cleaned_url": "https://images.example/7.jpg",
+            "is_main_image": true,
+            "shot_type": "hero",
+            "alt_text": "<text 54>"
+          },
+          {
+            "url": "https://images.example/8.jpg",
+            "cleaned_url": "https://images.example/8.jpg",
+            "is_main_image": false,
+            "shot_type": "hero",
+            "alt_text": "<text 54>"
+          }
+        ],
         "offers": [
           {
-            "url": "https://buy.trychannel3.com/prodmug1-lXWd-S666bu",
-            "domain": "pottery-studio.test",
+            "url": "https://buy.trychannel3.com/prod005",
+            "domain": "shop-4.example",
             "price": {
               "price": 54,
               "compare_at_price": null,
@@ -113,12 +209,34 @@
         ]
       },
       {
-        "id": "npIq7SC",
-        "title": "Speckled Stoneware Mug",
+        "id": "prod006",
+        "title": "<text 22>",
+        "brands": [
+          {
+            "id": "prod015",
+            "name": "<text 14>"
+          }
+        ],
+        "images": [
+          {
+            "url": "https://images.example/9.jpg",
+            "cleaned_url": "https://images.example/9.jpg",
+            "is_main_image": true,
+            "shot_type": "hero",
+            "alt_text": "<text 52>"
+          },
+          {
+            "url": "https://images.example/10.jpg",
+            "cleaned_url": null,
+            "is_main_image": false,
+            "shot_type": "lifestyle",
+            "alt_text": "<text 68>"
+          }
+        ],
         "offers": [
           {
-            "url": "https://buy.trychannel3.com/npIq7SC-FgTK-S666bu",
-            "domain": "crateandbarrel.com",
+            "url": "https://buy.trychannel3.com/prod006",
+            "domain": "shop-3.example",
             "price": {
               "price": 12.95,
               "compare_at_price": null,
@@ -131,12 +249,34 @@
         ]
       },
       {
-        "id": "ASgxdge",
-        "title": "Drift Coffee Mug With Reactive Glaze",
+        "id": "prod007",
+        "title": "<text 36>",
+        "brands": [
+          {
+            "id": "prod016",
+            "name": "<text 3>"
+          }
+        ],
+        "images": [
+          {
+            "url": "https://images.example/11.jpg",
+            "cleaned_url": "https://images.example/11.jpg",
+            "is_main_image": true,
+            "shot_type": "hero",
+            "alt_text": "<text 54>"
+          },
+          {
+            "url": "https://images.example/12.jpg",
+            "cleaned_url": "https://images.example/12.jpg",
+            "is_main_image": false,
+            "shot_type": "lifestyle",
+            "alt_text": "<text 48>"
+          }
+        ],
         "offers": [
           {
-            "url": "https://buy.trychannel3.com/ASgxdge-1FRg-S666bu",
-            "domain": "cb2.com",
+            "url": "https://buy.trychannel3.com/prod007",
+            "domain": "shop-5.example",
             "price": {
               "price": 8,
               "compare_at_price": 12.95,
@@ -149,12 +289,34 @@
         ]
       },
       {
-        "id": "wyGTy1Y",
-        "title": "Stoneware Coffee Mug",
+        "id": "prod008",
+        "title": "<text 20>",
+        "brands": [
+          {
+            "id": "prod018",
+            "name": "<text 13>"
+          }
+        ],
+        "images": [
+          {
+            "url": "https://images.example/13.jpg",
+            "cleaned_url": "https://images.example/13.jpg",
+            "is_main_image": true,
+            "shot_type": "hero",
+            "alt_text": "<text 57>"
+          },
+          {
+            "url": "https://images.example/14.jpg",
+            "cleaned_url": "https://images.example/14.jpg",
+            "is_main_image": false,
+            "shot_type": "lifestyle",
+            "alt_text": "<text 67>"
+          }
+        ],
         "offers": [
           {
-            "url": "https://buy.trychannel3.com/wyGTy1Y-XRWM-S666bu",
-            "domain": "jossandmain.com",
+            "url": "https://buy.trychannel3.com/prod008",
+            "domain": "shop-6.example",
             "price": {
               "price": 35,
               "compare_at_price": 38,
@@ -169,87 +331,87 @@
     ]
   },
   "from_search_result": {
-    "url": "https://buy.trychannel3.com/2EZ4nBJ-MuWY-S666bu",
+    "url": "https://buy.trychannel3.com/prod001",
     "lookup": {
-      "id": "2EZ4nBJ",
-      "title": "Sur La Table Speckled Mug",
-      "description": "Rustic yet refined, this durable mug is the perfect go-to for everyday use. Crafted from stoneware, it features a speckled texture with small, scattered dark flecks against a warm, matte terracotta or dusty rose base color. The mug has a slightly tapered cylindrical shape and a sturdy handle, offering a comfortable grip and a capacity of 15 oz.",
+      "id": "prod001",
+      "title": "<text 25>",
+      "description": "<text 346>",
       "brands": [
         {
-          "id": "4hTv",
-          "name": "Sur La Table"
+          "id": "prod013",
+          "name": "<text 12>"
         }
       ],
       "images": [
         {
-          "url": "https://cdn.trychannel3.com/36c12be6-d0da-46a1-9991-ac9d95bc9599",
-          "cleaned_url": "https://cdn.trychannel3.com/4b9d5c3c-a28b-41fc-8c1c-d937f8ad9976",
+          "url": "https://images.example/15.jpg",
+          "cleaned_url": "https://images.example/16.jpg",
           "is_main_image": true,
           "shot_type": "hero",
-          "alt_text": "A speckled terracotta-colored ceramic mug with a handle."
+          "alt_text": "<text 56>"
         }
       ],
       "category": {
         "slug": "mugs",
-        "title": "Mugs",
+        "title": "<text 4>",
         "path": [
           {
             "slug": "home-garden",
-            "title": "Home & Garden"
+            "title": "<text 13>"
           },
           {
             "slug": "kitchen-dining",
-            "title": "Kitchen & Dining"
+            "title": "<text 16>"
           },
           {
             "slug": "tableware",
-            "title": "Tableware"
+            "title": "<text 9>"
           },
           {
             "slug": "drinkware",
-            "title": "Drinkware"
+            "title": "<text 9>"
           },
           {
             "slug": "mugs",
-            "title": "Mugs"
+            "title": "<text 4>"
           }
         ],
         "has_children": false
       },
       "gender": null,
-      "age": "adult",
+      "age": "<text 5>",
       "materials": [
-        "Stoneware"
+        "<text 9>"
       ],
       "key_features": [
-        "Durable",
-        "Everyday use",
-        "Dishwasher safe",
-        "Microwave safe",
-        "Rustic yet refined"
+        "<text 7>",
+        "<text 12>",
+        "<text 15>",
+        "<text 14>",
+        "<text 18>"
       ],
       "colors": [
         {
-          "hex": "#eecab1",
+          "hex": "<text 7>",
           "percentage": 0.4256
         },
         {
-          "hex": "#c89173",
+          "hex": "<text 7>",
           "percentage": 0.2856
         },
         {
-          "hex": "#e3b190",
+          "hex": "<text 7>",
           "percentage": 0.1717
         },
         {
-          "hex": "#f9eee5",
+          "hex": "<text 7>",
           "percentage": 0.0895
         }
       ],
       "offers": [
         {
-          "url": "https://buy.trychannel3.com/2EZ4nBJ-MuWY-S666bu",
-          "domain": "surlatable.com",
+          "url": "https://buy.trychannel3.com/prod001",
+          "domain": "shop-1.example",
           "price": {
             "price": 6.99,
             "compare_at_price": 13.95,
@@ -263,111 +425,115 @@
       "variants": {
         "options": [
           {
-            "name": "Color",
+            "name": "<text 5>",
             "values": [
               {
-                "label": "Grey",
+                "label": "<text 4>",
                 "exists": true,
                 "available": null,
-                "thumbnail_url": "https://cdn.trychannel3.com/5178222d-90e3-4200-9ae8-4b215c987c18",
-                "product_id": "7GIYhTU"
+                "thumbnail_url": "https://images.example/17.jpg",
+                "product_id": "prod019"
               },
               {
-                "label": "Ivory",
+                "label": "<text 5>",
                 "exists": true,
                 "available": null,
-                "thumbnail_url": "https://cdn.trychannel3.com/8839ee0c-eecc-4fde-b2dc-b81b1d47cf4c",
-                "product_id": "d9THAOw"
+                "thumbnail_url": "https://images.example/18.jpg",
+                "product_id": "prod020"
               },
               {
-                "label": "Pink",
+                "label": "<text 4>",
                 "exists": true,
                 "available": null,
-                "thumbnail_url": "https://cdn.trychannel3.com/36c12be6-d0da-46a1-9991-ac9d95bc9599",
-                "product_id": "2EZ4nBJ"
+                "thumbnail_url": "https://images.example/19.jpg",
+                "product_id": "prod001"
               }
             ]
           }
         ],
         "selected": [
           {
-            "name": "Color",
-            "label": "Pink"
+            "name": "<text 5>",
+            "label": "<text 4>"
           }
         ]
       },
       "structured_attributes": {
         "drinkware-shape": [
-          "Tapered"
+          "<text 7>"
         ],
         "pattern": [
-          "Texture"
+          "<text 7>"
         ],
         "microwave-compatibility": [
-          "Microwave safe"
+          "<text 14>"
         ],
         "drinkware-material": [
-          "Ceramic"
+          "<text 7>"
         ],
         "cleaning-instructions": [
-          "Dishwasher safe"
+          "<text 15>"
         ]
       },
       "ratings": null
     },
     "draft": {
-      "parentId": "SUR-LA-TABLE-SPECKLED-MUG",
-      "name": "Sur La Table Speckled Mug",
+      "parentId": "PRODUCT-A",
+      "name": "Product A",
       "category": "mugs",
-      "description": "A 15 oz stoneware mug with a speckled texture of small, scattered dark flecks over a matte base color. It has a slightly tapered cylindrical shape and a sturdy handle for a comfortable grip. The mug is durable and suited to everyday use. It is dishwasher safe and microwave safe.",
+      "description": "A 15 oz stoneware mug with a speckled texture of small, scattered dark flecks over a matte base color. It has a slightly tapered cylindrical shape and a sturdy handle for a comfortable grip. The mug is durable and suited to everyday use, and it is dishwasher safe and microwave safe.",
       "attributesOrder": [
         "color",
         "material",
         "shape",
-        "care"
+        "microwave_safe",
+        "dishwasher_safe"
       ],
       "variants": [
         {
-          "variantId": "SUR-LA-TABLE-SPECKLED-MUG-GREY",
+          "variantId": "PRODUCT-A-COLOR-1",
           "attributes": {
-            "color": "Grey",
+            "color": "color 1",
             "material": "Ceramic",
             "shape": "Tapered",
-            "care": "Dishwasher safe"
+            "microwave_safe": "Microwave safe",
+            "dishwasher_safe": "Dishwasher safe"
           },
           "priceCents": 699,
           "stock": 0,
-          "floorCents": 550,
+          "floorCents": 699,
           "flags": [],
           "purchasable": true,
           "leadTimeDays": 0
         },
         {
-          "variantId": "SUR-LA-TABLE-SPECKLED-MUG-IVORY",
+          "variantId": "PRODUCT-A-COLOR-2",
           "attributes": {
-            "color": "Ivory",
+            "color": "color 2",
             "material": "Ceramic",
             "shape": "Tapered",
-            "care": "Dishwasher safe"
+            "microwave_safe": "Microwave safe",
+            "dishwasher_safe": "Dishwasher safe"
           },
           "priceCents": 699,
           "stock": 0,
-          "floorCents": 550,
+          "floorCents": 699,
           "flags": [],
           "purchasable": true,
           "leadTimeDays": 0
         },
         {
-          "variantId": "SUR-LA-TABLE-SPECKLED-MUG-PINK",
+          "variantId": "PRODUCT-A-COLOR-3",
           "attributes": {
-            "color": "Pink",
+            "color": "color 3",
             "material": "Ceramic",
             "shape": "Tapered",
-            "care": "Dishwasher safe"
+            "microwave_safe": "Microwave safe",
+            "dishwasher_safe": "Dishwasher safe"
           },
           "priceCents": 699,
           "stock": 0,
-          "floorCents": 550,
+          "floorCents": 699,
           "flags": [],
           "purchasable": true,
           "leadTimeDays": 0
@@ -375,8 +541,8 @@
       ],
       "source": {
         "kind": "url",
-        "ref": "https://buy.trychannel3.com/2EZ4nBJ-MuWY-S666bu",
-        "merchant": "surlatable.com"
+        "ref": "https://buy.trychannel3.com/prod001",
+        "merchant": "shop-1.example"
       },
       "warnings": [
         "Stock is unknown: set stock before publishing.",
@@ -385,48 +551,48 @@
       "market": {
         "comparable": [
           {
-            "title": "Sur La Table Coupe Mug",
-            "merchant": "slt-sfcc-react-production.mobify-storefront.com",
-            "priceCents": 399,
-            "url": "https://buy.trychannel3.com/PHfJJB1-MuWY-S666bu"
+            "title": "Product I",
+            "merchant": "shop-8.example",
+            "priceCents": 1795,
+            "url": "https://buy.trychannel3.com/prod021"
           }
         ],
-        "lowCents": 399,
-        "medianCents": 399,
-        "highCents": 399,
-        "position": "above",
+        "lowCents": 1795,
+        "medianCents": 1795,
+        "highCents": 1795,
+        "position": "below",
         "priceCents": 699,
-        "checkedAt": "2026-11-09T05:38:40.968Z"
+        "checkedAt": "2026-11-09T05:47:42.882Z"
       }
     }
   },
   "from_photo": {
-    "image": "https://cdn.trychannel3.com/0e0d1776-1112-44c2-aaf0-4632c585a656",
+    "image": "https://images.example/20.jpg",
     "draft": {
-      "parentId": "SPECKLED-CERAMIC-MUG",
-      "name": "Speckled ceramic mug",
+      "parentId": "PRODUCT-X",
+      "name": "Product X",
       "category": "mugs",
-      "description": "A tall, tapered ceramic mug in a cream/off-white glaze with brown speckles throughout, featuring a large curved handle and glossy finish.",
+      "description": "A tall, tapered Product W in a glossy cream finish with brown speckles scattered across the body and handle.",
       "attributesOrder": [
-        "color",
+        "colour",
         "material",
         "finish",
-        "pattern",
-        "handle_style"
+        "shape",
+        "pattern"
       ],
       "variants": [
         {
-          "variantId": "SPECKLED-CERAMIC-MUG",
+          "variantId": "PRODUCT-X",
           "attributes": {
-            "color": "cream with brown speckles",
+            "colour": "cream with brown speckles",
             "material": "ceramic",
             "finish": "glossy",
-            "pattern": "speckled",
-            "handle_style": "large curved loop handle"
+            "shape": "tall tapered with curved handle",
+            "pattern": "speckled"
           },
-          "priceCents": 1449,
+          "priceCents": 4200,
           "stock": 0,
-          "floorCents": 1200,
+          "floorCents": 3550,
           "flags": [],
           "purchasable": true,
           "leadTimeDays": 0
@@ -438,79 +604,79 @@
       },
       "warnings": [
         "Read from a photo: check the name, category and attributes before publishing.",
-        "Not visible in the photo: capacity in ml or oz.",
+        "Not visible in the photo: capacity.",
         "Not visible in the photo: exact dimensions.",
         "Not visible in the photo: microwave and dishwasher safety.",
-        "Not visible in the photo: whether it is part of a matching dinnerware set.",
+        "Not visible in the photo: whether it is part of a larger dinnerware set.",
         "Add material, size or capacity and care to the description: a photo cannot show them.",
-        "Price set to $14.49, the market median of 8 comparable products: set your own.",
+        "Price set to $42.00, the market median of 8 comparable products: set your own.",
         "Stock is unknown: set stock before publishing."
       ],
       "market": {
         "comparable": [
           {
-            "title": "Speckled Mug",
-            "merchant": "wayfair.com",
+            "title": "Product J",
+            "merchant": "shop-9.example",
             "priceCents": 14680,
-            "url": "https://buy.trychannel3.com/jNU6X1y-BIP9-S666bu"
+            "url": "https://buy.trychannel3.com/prod022"
           },
           {
-            "title": "Speckled Secret Garden Hand Painted Ceramic Mug",
-            "merchant": "worldmarket.com",
+            "title": "Product K",
+            "merchant": "shop-10.example",
+            "priceCents": 7700,
+            "url": "https://buy.trychannel3.com/prod023"
+          },
+          {
+            "title": "Product L",
+            "merchant": "shop-11.example",
             "priceCents": 1299,
-            "url": "https://buy.trychannel3.com/HEqPnds-KgEF-S666bu"
+            "url": "https://buy.trychannel3.com/prod024"
           },
           {
-            "title": "Speckled Glitter Mug | Shop B",
-            "merchant": "shop-b.test",
+            "title": "Product M",
+            "merchant": "shop-12.example",
+            "priceCents": 5200,
+            "url": "https://buy.trychannel3.com/prod025"
+          },
+          {
+            "title": "Product N",
+            "merchant": "shop-13.example",
             "priceCents": 3199,
-            "url": "https://buy.trychannel3.com/ASPtkuo-83Z3-S666bu"
+            "url": "https://buy.trychannel3.com/prod026"
           },
           {
-            "title": "Speckled Ceramic Camper Mug",
-            "merchant": "bestbuy.com",
+            "title": "Product O",
+            "merchant": "shop-14.example",
             "priceCents": 1599,
-            "url": "https://buy.trychannel3.com/ceC3S7L-p1PB-S666bu"
+            "url": "https://buy.trychannel3.com/prod027"
           },
           {
-            "title": "Speckled Stoneware Mug",
-            "merchant": "crateandbarrel.com",
-            "priceCents": 1295,
-            "url": "https://buy.trychannel3.com/npIq7SC-FgTK-S666bu"
-          },
-          {
-            "title": "Sur La Table Speckled Mug",
-            "merchant": "slt-sfcc-react-production.mobify-storefront.com",
+            "title": "Product A",
+            "merchant": "shop-8.example",
             "priceCents": 699,
-            "url": "https://buy.trychannel3.com/d9THAOw-MuWY-S666bu"
+            "url": "https://buy.trychannel3.com/prod020"
           },
           {
-            "title": "Craft Stoneware Mug",
-            "merchant": "crateandbarrel.com",
-            "priceCents": 995,
-            "url": "https://buy.trychannel3.com/AmWtok8-FgTK-S666bu"
-          },
-          {
-            "title": "CLK151 Tall Mug 360ml / 12oz",
-            "merchant": "shop-d.test",
-            "priceCents": 4500,
-            "url": "https://buy.trychannel3.com/FtEr2FY-1JJW-S666bu"
+            "title": "Product J",
+            "merchant": "shop-15.example",
+            "priceCents": 5900,
+            "url": "https://buy.trychannel3.com/prod028"
           }
         ],
-        "lowCents": 995,
-        "medianCents": 1449,
-        "highCents": 4500,
+        "lowCents": 1299,
+        "medianCents": 4200,
+        "highCents": 7700,
         "position": "within",
-        "priceCents": 1449,
-        "checkedAt": "2026-11-09T05:38:50.503Z"
+        "priceCents": 4200,
+        "checkedAt": "2026-11-09T05:47:51.710Z"
       }
     }
   },
   "from_shop_page": {
-    "url": "https://pottery-studio.test/products/morning-mug",
+    "url": "https://shop-4.example/products/item",
     "lookup": {
-      "id": "prodmug1",
-      "title": "Morning mug",
+      "id": "prod005",
+      "title": "<text 15>",
       "description": null,
       "brands": [],
       "images": [],
@@ -522,8 +688,8 @@
       "colors": [],
       "offers": [
         {
-          "url": "https://buy.trychannel3.com/prodmug1-lookup-S666bu",
-          "domain": "pottery-studio.test",
+          "url": "https://buy.trychannel3.com/prod005",
+          "domain": "shop-4.example",
           "price": {
             "price": 54,
             "compare_at_price": null,
@@ -537,45 +703,45 @@
       "variants": {
         "options": [
           {
-            "name": "Color",
+            "name": "<text 5>",
             "values": [
               {
-                "label": "Sand",
+                "label": "<text 4>",
                 "exists": true,
                 "available": null,
                 "thumbnail_url": null,
                 "product_id": null
               },
               {
-                "label": "Shale",
+                "label": "<text 5>",
                 "exists": true,
                 "available": null,
                 "thumbnail_url": null,
                 "product_id": null
               },
               {
-                "label": "Mist",
+                "label": "<text 4>",
                 "exists": true,
                 "available": null,
                 "thumbnail_url": null,
                 "product_id": null
               },
               {
-                "label": "Luxardo",
+                "label": "<text 7>",
                 "exists": true,
                 "available": null,
                 "thumbnail_url": null,
                 "product_id": null
               },
               {
-                "label": "teal",
+                "label": "<text 4>",
                 "exists": true,
                 "available": null,
                 "thumbnail_url": null,
                 "product_id": null
               },
               {
-                "label": "Moss",
+                "label": "<text 4>",
                 "exists": true,
                 "available": null,
                 "thumbnail_url": null,
@@ -586,8 +752,8 @@
         ],
         "selected": [
           {
-            "name": "Color",
-            "label": "Sand"
+            "name": "<text 5>",
+            "label": "<text 4>"
           }
         ]
       },
@@ -595,10 +761,10 @@
       "ratings": null
     },
     "draft": {
-      "parentId": "MORNING-MUG",
-      "name": "Morning mug",
+      "parentId": "PRODUCT-E",
+      "name": "Product E",
       "category": "mugs",
-      "description": "A handcrafted ceramic coffee mug thrown on a potter's wheel, hand-trimmed, and finished with a hand-cut handle and a lead-free glaze. It is made from speckled brown stoneware clay and holds 16 ounces. The mug is microwave and dishwasher safe. Available in several color finishes.",
+      "description": "A handcrafted 16 ounce ceramic coffee mug thrown on a potter's wheel, hand-trimmed, and finished with a hand-cut handle and a lead-free glaze. It is made from speckled brown stoneware clay and comes in a choice of glaze colors. The mug is microwave and dishwasher safe.",
       "attributesOrder": [
         "color",
         "material",
@@ -608,9 +774,9 @@
       ],
       "variants": [
         {
-          "variantId": "MORNING-MUG-SAND",
+          "variantId": "PRODUCT-E-COLOR-1",
           "attributes": {
-            "color": "Sand",
+            "color": "color 1",
             "material": "Ceramic",
             "shape": "Round",
             "microwave_safe": "Microwave safe",
@@ -624,9 +790,9 @@
           "leadTimeDays": 0
         },
         {
-          "variantId": "MORNING-MUG-SHALE",
+          "variantId": "PRODUCT-E-COLOR-2",
           "attributes": {
-            "color": "Shale",
+            "color": "color 2",
             "material": "Ceramic",
             "shape": "Round",
             "microwave_safe": "Microwave safe",
@@ -640,9 +806,9 @@
           "leadTimeDays": 0
         },
         {
-          "variantId": "MORNING-MUG-MIST",
+          "variantId": "PRODUCT-E-COLOR-3",
           "attributes": {
-            "color": "Mist",
+            "color": "color 3",
             "material": "Ceramic",
             "shape": "Round",
             "microwave_safe": "Microwave safe",
@@ -656,9 +822,9 @@
           "leadTimeDays": 0
         },
         {
-          "variantId": "MORNING-MUG-LUXARDO",
+          "variantId": "PRODUCT-E-COLOR-4",
           "attributes": {
-            "color": "Luxardo",
+            "color": "color 4",
             "material": "Ceramic",
             "shape": "Round",
             "microwave_safe": "Microwave safe",
@@ -672,9 +838,9 @@
           "leadTimeDays": 0
         },
         {
-          "variantId": "MORNING-MUG-TEAL",
+          "variantId": "PRODUCT-E-COLOR-5",
           "attributes": {
-            "color": "teal",
+            "color": "color 5",
             "material": "Ceramic",
             "shape": "Round",
             "microwave_safe": "Microwave safe",
@@ -688,9 +854,9 @@
           "leadTimeDays": 0
         },
         {
-          "variantId": "MORNING-MUG-MOSS",
+          "variantId": "PRODUCT-E-COLOR-6",
           "attributes": {
-            "color": "Moss",
+            "color": "color 6",
             "material": "Ceramic",
             "shape": "Round",
             "microwave_safe": "Microwave safe",
@@ -706,8 +872,8 @@
       ],
       "source": {
         "kind": "url",
-        "ref": "https://pottery-studio.test/products/morning-mug",
-        "merchant": "pottery-studio.test"
+        "ref": "https://shop-4.example/products/item",
+        "merchant": "shop-4.example"
       },
       "warnings": [
         "Stock is unknown: set stock before publishing.",
@@ -716,34 +882,34 @@
       "market": {
         "comparable": [
           {
-            "title": "Ceramic Morning Mug",
-            "merchant": "shop-c.test",
+            "title": "Product S",
+            "merchant": "shop-16.example",
             "priceCents": 4400,
-            "url": "https://buy.trychannel3.com/NzQxX5H-BBpB-S666bu"
+            "url": "https://buy.trychannel3.com/prod029"
           },
           {
-            "title": "Shop B | Morning Ember Ceramic Mug",
-            "merchant": "shop-b.test",
+            "title": "Product T",
+            "merchant": "shop-13.example",
             "priceCents": 5499,
-            "url": "https://buy.trychannel3.com/QQyCvzS-83Z3-S666bu"
+            "url": "https://buy.trychannel3.com/prod030"
           },
           {
-            "title": "Good Morning ceramic mug 9cm",
-            "merchant": "endclothing.com",
+            "title": "Product U",
+            "merchant": "shop-17.example",
             "priceCents": 3500,
-            "url": "https://buy.trychannel3.com/DgrUPOz-thn8-S666bu"
+            "url": "https://buy.trychannel3.com/prod031"
           },
           {
-            "title": "Hand Painted Ceramic Mug",
-            "merchant": "worldmarket.com",
+            "title": "Product V",
+            "merchant": "shop-11.example",
             "priceCents": 999,
-            "url": "https://buy.trychannel3.com/Lg3EXlY-KgEF-S666bu"
+            "url": "https://buy.trychannel3.com/prod032"
           },
           {
-            "title": "Ceramic Mug",
-            "merchant": "qvc.com",
+            "title": "Product W",
+            "merchant": "shop-18.example",
             "priceCents": 1700,
-            "url": "https://buy.trychannel3.com/ldIS3j8-mn23-S666bu"
+            "url": "https://buy.trychannel3.com/prod033"
           }
         ],
         "lowCents": 1700,
@@ -751,7 +917,7 @@
         "highCents": 4400,
         "position": "above",
         "priceCents": 5400,
-        "checkedAt": "2026-11-09T05:38:59.037Z"
+        "checkedAt": "2026-11-09T05:48:10.128Z"
       }
     }
   }

@@ -80,9 +80,9 @@ describe("marketCheck", () => {
         {
           match: /mug/,
           products: [
-            p("a", "Speckled Stoneware Mug", [offer("crateandbarrel.com", 12.95)]),
-            p("b", "Handmade speckled mug 12 oz", [offer("etsy.com", 38), offer("potter.example", 42)]),
-            p("c", "Morning mug", [offer("pottery-studio.test", 54)]),
+            p("a", "Speckled Stoneware Mug", [offer("home-goods.example", 12.95)]),
+            p("b", "Handmade speckled mug 12 oz", [offer("makers-market.example", 38), offer("potter.example", 42)]),
+            p("c", "Morning mug", [offer("hearth-and-kiln.example", 54)]),
           ],
         },
       ],
@@ -90,9 +90,9 @@ describe("marketCheck", () => {
     const m = await marketCheck(MUG, { channel3: f.c3, now });
     expect(m).toEqual({
       comparable: [
-        { title: "Speckled Stoneware Mug", merchant: "crateandbarrel.com", priceCents: 1295, url: "https://buy.trychannel3.com/x-crateandbarrel.com" },
-        { title: "Handmade speckled mug 12 oz", merchant: "etsy.com", priceCents: 3800, url: "https://buy.trychannel3.com/x-etsy.com" },
-        { title: "Morning mug", merchant: "pottery-studio.test", priceCents: 5400, url: "https://buy.trychannel3.com/x-pottery-studio.test" },
+        { title: "Speckled Stoneware Mug", merchant: "home-goods.example", priceCents: 1295, url: "https://buy.trychannel3.com/x-home-goods.example" },
+        { title: "Handmade speckled mug 12 oz", merchant: "makers-market.example", priceCents: 3800, url: "https://buy.trychannel3.com/x-makers-market.example" },
+        { title: "Morning mug", merchant: "hearth-and-kiln.example", priceCents: 5400, url: "https://buy.trychannel3.com/x-hearth-and-kiln.example" },
       ],
       lowCents: 1295,
       medianCents: 3800,
@@ -109,7 +109,7 @@ describe("marketCheck", () => {
         {
           match: /mug/,
           products: [
-            p("ok", "Stoneware mug", [offer("hm.com", 7.99)]),
+            p("ok", "Stoneware mug", [offer("high-street.example", 7.99)]),
             p("plate", "Speckled dinner plate", [offer("plates.example", 20)]),
             p("size", "Speckled mug, 20 oz", [offer("big.example", 25)]),
             p("set", "Speckled mugs, set of 4", [offer("sets.example", 60)]),
@@ -119,7 +119,7 @@ describe("marketCheck", () => {
       ],
     });
     const m = await marketCheck(MUG, { channel3: f.c3, now });
-    expect(m?.comparable.map((c) => c.merchant)).toEqual(["hm.com"]);
+    expect(m?.comparable.map((c) => c.merchant)).toEqual(["high-street.example"]);
     expect(m?.position).toBe("above");
   });
 
@@ -144,11 +144,11 @@ describe("marketCheck", () => {
       search: [
         {
           match: /mug/,
-          products: [p("self", "Speckled mug", [offer("athome.com", 2.49)]), p("other", "Speckled mug", [offer("other.example", 30)])],
+          products: [p("self", "Speckled mug", [offer("discount-home.example", 2.49)]), p("other", "Speckled mug", [offer("other.example", 30)])],
         },
       ],
     });
-    const fromBuyLink = { ...MUG, source: { kind: "url" as const, ref: "https://buy.trychannel3.com/WUgi0Zl-VtLY-S666bu", merchant: "athome.com" } };
+    const fromBuyLink = { ...MUG, source: { kind: "url" as const, ref: "https://buy.trychannel3.com/DeF5678-QrS1-S666bu", merchant: "discount-home.example" } };
     const m = await marketCheck(fromBuyLink, { channel3: f.c3, now });
     expect(m?.comparable.map((c) => c.merchant)).toEqual(["other.example"]);
   });

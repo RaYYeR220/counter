@@ -4,18 +4,18 @@ import { ImportError } from "../src/deps";
 import { fromUrl } from "../src/from-url";
 import { fakeChannel3, offer, scriptedLlm } from "./fakes";
 
-const PAGE = "https://pottery-studio.test/products/morning-mug";
+const PAGE = "https://hearth-and-kiln.example/products/morning-mug";
 
 /** What a URL lookup returns for a small shop: options and a price, few facts. */
 const LOOKED_UP: C3Product = {
-  id: "y1atJDz",
+  id: "lkp0001",
   title: "Morning mug",
   description: "Wheel-thrown from speckled brown stoneware. Holds 16 ounces. Microwave and dishwasher safe.",
-  brands: [{ name: "Example Ceramics" }],
+  brands: [{ name: "Hearth and Kiln" }],
   category: { slug: "mugs", title: "Mugs" },
   materials: ["speckled brown stoneware clay", "lead free glaze"],
   key_features: ["16 ounce capacity", "Hand-cut handle"],
-  offers: [offer("other.example", 50), offer("pottery-studio.test", 54)],
+  offers: [offer("other.example", 50), offer("hearth-and-kiln.example", 54)],
   variants: {
     options: [
       {
@@ -117,30 +117,30 @@ describe("fromUrl", () => {
 
   it("fills in facts from Channel3's catalog entry when the page lookup is thin", async () => {
     const thin: C3Product = {
-      id: "y1atJDz",
+      id: "lkp0001",
       title: "Morning mug",
-      offers: [offer("pottery-studio.test", 54)],
+      offers: [offer("hearth-and-kiln.example", 54)],
       variants: { options: [{ name: "Color", values: [{ label: "Sand" }, { label: "Moss" }] }] },
       structured_attributes: {},
     };
     const canonical: C3Product = {
-      id: "prodmug1",
+      id: "cat0001",
       title: "Morning mug",
       description: "Wheel-thrown mug with a 16-ounce capacity.",
       key_features: ["Microwave and dishwasher safe"],
       category: { slug: "mugs", title: "Mugs" },
-      offers: [offer("pottery-studio.test", 54)],
+      offers: [offer("hearth-and-kiln.example", 54)],
       structured_attributes: { "drinkware-material": ["Ceramic"] },
     };
     const f = fakeChannel3({
       byUrl: { [PAGE]: thin },
-      byId: { prodmug1: canonical },
+      byId: { cat0001: canonical },
       search: [
         {
-          match: /Morning Mug/,
+          match: /Morning mug/i,
           products: [
             { id: "zzz", title: "Morning mug", offers: [offer("someone-else.example", 20)] },
-            { id: "prodmug1", title: "Morning mug", offers: [offer("pottery-studio.test", 54)] },
+            { id: "cat0001", title: "Morning mug", offers: [offer("hearth-and-kiln.example", 54)] },
           ],
         },
       ],
@@ -149,18 +149,18 @@ describe("fromUrl", () => {
       JSON.stringify({ attributes: [{ source: "Color", name: "glaze" }], description: "Holds 16 ounces. Microwave and dishwasher safe." }),
     ]);
     const d = await fromUrl(PAGE, { channel3: f.c3, llm: s.llm, now });
-    expect(f.fetched.at(-1)).toEqual(["prodmug1"]);
+    expect(f.fetched.at(-1)).toEqual(["cat0001"]);
     expect(d.category).toBe("mugs");
     expect(d.description).toBe("Holds 16 ounces. Microwave and dishwasher safe.");
     expect(String(s.requests[0]!.messages[1]!.content)).toContain("drinkware-material");
   });
 
   it("fetches the full catalog entry when the thin lookup already has its id", async () => {
-    const thin: C3Product = { id: "prodmug1", title: "Morning mug", offers: [offer("pottery-studio.test", 54)], structured_attributes: {} };
+    const thin: C3Product = { id: "cat0001", title: "Morning mug", offers: [offer("hearth-and-kiln.example", 54)], structured_attributes: {} };
     const full: C3Product = { ...thin, description: "Wheel-thrown mug.", category: { slug: "mugs", title: "Mugs" } };
-    const f = fakeChannel3({ byUrl: { [PAGE]: thin }, byId: { prodmug1: full } });
+    const f = fakeChannel3({ byUrl: { [PAGE]: thin }, byId: { cat0001: full } });
     const d = await fromUrl(PAGE, { channel3: f.c3, llm: scriptedLlm([JSON.stringify({ attributes: [], description: "Wheel-thrown mug." })]).llm, now });
-    expect(f.fetched).toEqual([["prodmug1"]]);
+    expect(f.fetched).toEqual([["cat0001"]]);
     expect(f.searches).toEqual([]);
     expect(d.category).toBe("mugs");
   });
@@ -168,7 +168,7 @@ describe("fromUrl", () => {
   it("records the merchant whose offer priced the draft", async () => {
     const f = fakeChannel3({ byUrl: { [PAGE]: LOOKED_UP } });
     const d = await fromUrl(PAGE, { channel3: f.c3, llm: scriptedLlm([GOOD_REPLY]).llm, now });
-    expect(d.source).toEqual({ kind: "url", ref: PAGE, merchant: "pottery-studio.test" });
+    expect(d.source).toEqual({ kind: "url", ref: PAGE, merchant: "hearth-and-kiln.example" });
   });
 
   it("says so when the price comes from another site than the page", async () => {
@@ -176,15 +176,15 @@ describe("fromUrl", () => {
     const d = await fromUrl(PAGE, { channel3: f.c3, llm: scriptedLlm([GOOD_REPLY]).llm, now });
     expect(d.variants[0]!.priceCents).toBe(5000);
     expect(d.warnings).toContainEqual(expect.stringMatching(/price.*other\.example.*check/i));
-    expect(d.source.merchant).toBe("pottery-studio.test");
+    expect(d.source.merchant).toBe("hearth-and-kiln.example");
   });
 
   it("treats the retailer behind a Channel3 link as the merchant", async () => {
-    const link = "https://buy.trychannel3.com/WUgi0Zl-VtLY-S666bu";
-    const f = fakeChannel3({ byUrl: { [link]: { ...LOOKED_UP, offers: [offer("athome.com", 2.49)] } } });
+    const link = "https://buy.trychannel3.com/DeF5678-QrS1-S666bu";
+    const f = fakeChannel3({ byUrl: { [link]: { ...LOOKED_UP, offers: [offer("discount-home.example", 2.49)] } } });
     const d = await fromUrl(link, { channel3: f.c3, llm: scriptedLlm([GOOD_REPLY]).llm, now });
-    expect(d.source.merchant).toBe("athome.com");
-    expect(d.warnings.join(" ")).not.toMatch(/athome\.com/);
+    expect(d.source.merchant).toBe("discount-home.example");
+    expect(d.warnings.join(" ")).not.toMatch(/discount-home\.example/);
   });
 
   it("still makes a draft when the model fails", async () => {
@@ -197,7 +197,7 @@ describe("fromUrl", () => {
 
   it("warns when the page has no price in dollars", async () => {
     const f = fakeChannel3({
-      byUrl: { [PAGE]: { ...LOOKED_UP, offers: [{ ...offer("pottery-studio.test", 50), price: { price: 50, currency: "EUR" } }] } },
+      byUrl: { [PAGE]: { ...LOOKED_UP, offers: [{ ...offer("hearth-and-kiln.example", 50), price: { price: 50, currency: "EUR" } }] } },
     });
     const d = await fromUrl(PAGE, { channel3: f.c3, llm: scriptedLlm([GOOD_REPLY]).llm, now });
     expect(d.variants[0]!.priceCents).toBe(0);

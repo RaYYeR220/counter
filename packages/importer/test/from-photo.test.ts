@@ -19,8 +19,8 @@ const SEEN = JSON.stringify({
 });
 
 const MARKET = [
-  { id: "a", title: "Speckled Stoneware Mug", offers: [offer("crateandbarrel.com", 12.95)] },
-  { id: "b", title: "Handmade speckled mug", offers: [offer("etsy.com", 38)] },
+  { id: "a", title: "Speckled Stoneware Mug", offers: [offer("home-goods.example", 12.95)] },
+  { id: "b", title: "Handmade speckled mug", offers: [offer("makers-market.example", 38)] },
   { id: "c", title: "Speckled mug, sage", offers: [offer("potter.example", 30)] },
 ];
 

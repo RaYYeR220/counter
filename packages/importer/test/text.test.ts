@@ -41,8 +41,8 @@ describe("cleanUrl", () => {
   });
 
   it("drops click ids on Channel3 buy links", () => {
-    expect(cleanUrl("https://buy.trychannel3.com/prodmug1-lXWd-S666bu?o=01M0MP&aid=01M6ZB")).toBe(
-      "https://buy.trychannel3.com/prodmug1-lXWd-S666bu",
+    expect(cleanUrl("https://buy.trychannel3.com/AbC1234-XyZ9-S666bu?o=01M0MP&aid=01M6ZB")).toBe(
+      "https://buy.trychannel3.com/AbC1234-XyZ9-S666bu",
     );
   });
 
