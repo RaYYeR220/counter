@@ -63,7 +63,7 @@ export interface ComputedCart {
   totals: CartTotals;
   validationStatus: ValidationStatus;
   amounts: CartAmounts;
-  discounts?: { codes: string[]; applied: AppliedDiscount[] };
+  discounts?: { codes?: string[]; applied: AppliedDiscount[] };
   selectedShipping?: ShippingQuote;
   /** Items that resolved to a catalog variant (in request order). */
   lines: PricedLine[];
@@ -155,7 +155,10 @@ export async function computeCart(
     else if (wanted > v.stock) issues.push(insufficientInventory(v, i, v.stock, wanted));
   });
 
-  // Discounts
+  // Discounts. `codes` echoes what the buyer entered; merchant-granted
+  // discounts that no code asked for are reported as automatic.
+  const requestedCodes = [...new Set((input.discounts?.codes ?? []).map((c) => c.trim()).filter(Boolean))];
+  const requested = new Set(requestedCodes.map(normCode));
   const applied: AppliedDiscount[] = [];
   let discount = 0;
   for (const d of opts.discounts ?? []) {
@@ -177,17 +180,15 @@ export async function computeCart(
       code: d.code,
       title: d.description,
       amount: money(amount),
-      automatic: false,
+      automatic: !requested.has(normCode(d.code)),
       method: lineIndex === undefined ? "ACROSS" : "EACH",
       ...(lineIndex === undefined ? {} : { allocations: [{ path: `items[${lineIndex}]`, amount: money(amount) }] }),
     });
   }
   const appliedCodes = new Set(applied.map((a) => normCode(a.code ?? "")));
-  const requestedCodes = (input.discounts?.codes ?? []).filter((c) => c.trim() !== "");
   for (const code of requestedCodes) {
     if (!appliedCodes.has(normCode(code))) issues.push(discountCodeInvalid(code));
   }
-  const codes = [...new Set([...requestedCodes, ...applied.map((a) => a.code ?? "").filter(Boolean)])];
 
   // Shipping
   const addr = input.shipping_address ?? undefined;
@@ -233,7 +234,9 @@ export async function computeCart(
     totals,
     validationStatus,
     amounts: { subtotal, discount, shipping, tax, total },
-    ...(codes.length || applied.length ? { discounts: { codes, applied } } : {}),
+    ...(requestedCodes.length || applied.length
+      ? { discounts: { ...(requestedCodes.length ? { codes: requestedCodes } : {}), applied } }
+      : {}),
     ...(selected ? { selectedShipping: selected } : {}),
     lines,
     resolvedCount: lines.length,

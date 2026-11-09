@@ -261,18 +261,18 @@ describe("computeCart: validation issues", () => {
 });
 
 describe("computeCart: discounts", () => {
-  it("applies discounts, reports them and taxes the discounted base", async () => {
+  it("applies merchant-granted discounts as automatic and taxes the discounted base", async () => {
     const c = await compute(cartBody({ items: [line(MUG, 2)] }), {
       discounts: [{ code: "BUNDLE10", amountCents: 500, description: "Two-mug bundle" }],
     });
+    // codes lists only what the buyer entered; nothing was entered here
     expect(c.discounts).toEqual({
-      codes: ["BUNDLE10"],
       applied: [
         {
           code: "BUNDLE10",
           title: "Two-mug bundle",
           amount: { currency_code: "USD", value: "5.00" },
-          automatic: false,
+          automatic: true,
           method: "ACROSS",
         },
       ],
@@ -313,6 +313,16 @@ describe("computeCart: discounts", () => {
     expect(c.amounts.total).toBeGreaterThanOrEqual(0);
   });
 
+  it("does not flag a merchant code that is no longer granted when echoed back", async () => {
+    const first = await compute(cartBody(), {
+      discounts: [{ code: "DEAL-7", amountCents: 100, description: "Agreed price" }],
+    });
+    // The platform echoes the previous cart, including its discounts block.
+    const c = await compute(cartBody({ discounts: first.discounts }));
+    expect(c.issues).toEqual([]);
+    expect(c.discounts).toBeUndefined();
+  });
+
   it("rejects a requested code it cannot apply", async () => {
     const c = await compute(cartBody({ discounts: { codes: ["NOPE"] } }));
     expect(c.validationStatus).toBe("INVALID");
@@ -323,10 +333,12 @@ describe("computeCart: discounts", () => {
   });
 
   it("does not flag a requested code that was applied", async () => {
-    const c = await compute(cartBody({ discounts: { codes: ["BUNDLE10"] } }), {
+    const c = await compute(cartBody({ discounts: { codes: ["bundle10"] } }), {
       discounts: [{ code: "BUNDLE10", amountCents: 100, description: "Bundle" }],
     });
     expect(c.issues).toEqual([]);
+    expect(c.discounts!.codes).toEqual(["bundle10"]);
+    expect(c.discounts!.applied[0]!.automatic).toBe(false);
   });
 });
 
