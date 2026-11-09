@@ -1,10 +1,75 @@
 import "server-only";
 import { createDb, DbCartRepo, DbCatalog, DbOrderSink, getShop, publicBaseUrl, type Db, type Shop } from "@counter/db";
-import { gatewayPublicKeyPem, StoreSyncClient } from "@counter/gateway";
+import { gatewayPublicKeyPem, StoreSyncClient, type OrderLookup } from "@counter/gateway";
 import { PayPal, SANDBOX_BASE } from "@counter/paypal";
 import { veniceClient } from "@counter/negotiate";
-import { DbShopDirectory, NegotiationService, offerDiscounts, PayPalOrderLookup, PayPalPayments, type ShopAccounts } from "@counter/platform";
-import { randomCartId, type StoreSyncDeps } from "@counter/store-sync";
+import {
+  DbShopDirectory,
+  NegotiationService,
+  offerDiscounts,
+  PayPalOrderLookup,
+  PayPalPayments,
+  SANDBOX_APPROVE_BASE,
+  type ShopAccounts,
+} from "@counter/platform";
+import { randomCartId, type PaymentPort, type StoreSyncDeps } from "@counter/store-sync";
+
+// ---------------------------------------------------------------------------
+// Benchmark switches, for local benchmark runs only (bench/purchase). Both are
+// refused on Vercel so a deployment can never run on a pinned clock or without
+// real payments.
+
+function localOnly(name: string): void {
+  if (process.env.VERCEL) throw new Error(`${name} is for local benchmark runs and must not be set on Vercel`);
+}
+
+let pinnedClock: Date | null | undefined;
+
+/** The store's clock. `COUNTER_CLOCK` (an ISO time) pins it, so delivery dates are the same on every run. */
+export function storeNow(): Date {
+  if (pinnedClock === undefined) {
+    const raw = process.env.COUNTER_CLOCK;
+    if (!raw) {
+      pinnedClock = null;
+    } else {
+      localOnly("COUNTER_CLOCK");
+      const at = new Date(raw);
+      if (Number.isNaN(at.getTime())) throw new Error(`COUNTER_CLOCK is not a valid ISO time: ${raw}`);
+      pinnedClock = at;
+    }
+  }
+  return pinnedClock ? new Date(pinnedClock) : new Date();
+}
+
+/** `PAYMENTS_MODE=stub`: PayPal is replaced by a stub that approves and authorizes every order. */
+export function paymentsStubbed(): boolean {
+  if (process.env.PAYMENTS_MODE !== "stub") return false;
+  localOnly("PAYMENTS_MODE=stub");
+  return true;
+}
+
+export const STUB_PAYER_ID = "BENCHPAYER01";
+
+/** One deterministic order per cart, always authorized. Payment is not what the benchmark measures. */
+const stubPayments: PaymentPort = {
+  async createOrder(_shop, cart) {
+    const orderId = `STUB-${cart.cartId}`;
+    return { orderId, approveUrl: `${SANDBOX_APPROVE_BASE}${orderId}` };
+  },
+  async patchOrder() {
+    return "ok";
+  },
+  async authorizeOrder(_shop, orderId) {
+    return { status: "COMPLETED", authorizationId: `AUTH-${orderId}`, payerId: STUB_PAYER_ID };
+  },
+};
+
+/** Every stub order reads as approved by the same payer. */
+const stubOrderLookup: OrderLookup = {
+  async approvalState(_shop, orderId) {
+    return { status: "APPROVED", payerId: STUB_PAYER_ID, approveUrl: `${SANDBOX_APPROVE_BASE}${orderId}` };
+  },
+};
 
 let dbHandle: Db | undefined;
 export function db(): Db {
@@ -73,12 +138,14 @@ export function storeSyncDeps(): StoreSyncDeps {
   return {
     catalog: new DbCatalog(d),
     carts: new DbCartRepo(d),
-    payments: new PayPalPayments(paypal(), shopAccounts, {
-      returnUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}`,
-      cancelUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}&cancelled=1`,
-    }),
+    payments: paymentsStubbed()
+      ? stubPayments
+      : new PayPalPayments(paypal(), shopAccounts, {
+          returnUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}`,
+          cancelUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}&cancelled=1`,
+        }),
     orders: new DbOrderSink(d, { publicBaseUrl: baseUrl() }),
-    now: () => new Date(),
+    now: storeNow,
     newCartId: randomCartId,
     discounts: offerDiscounts(d),
     onError: (err, where) => console.error("store-sync", where, err),
@@ -87,7 +154,7 @@ export function storeSyncDeps(): StoreSyncDeps {
 
 let directory: DbShopDirectory | undefined;
 export function shopDirectory(): DbShopDirectory {
-  return (directory ??= new DbShopDirectory(db()));
+  return (directory ??= new DbShopDirectory(db(), { now: storeNow }));
 }
 
 export function storeSyncClient(clientIdentifier: string): StoreSyncClient {
@@ -102,7 +169,8 @@ export function storeSyncClient(clientIdentifier: string): StoreSyncClient {
   });
 }
 
-export function orderLookup(): PayPalOrderLookup {
+export function orderLookup(): OrderLookup {
+  if (paymentsStubbed()) return stubOrderLookup;
   return new PayPalOrderLookup(paypal(), shopAccounts);
 }
 
