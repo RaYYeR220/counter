@@ -6,7 +6,7 @@ Each judging criterion and each requirement, with the exact evidence. Claim numb
 
 | What | Status |
 | --- | --- |
-| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Verified live on the sandbox** for the core path: AUTHORIZE order created by the Store Sync API, buyer approval in PayPal, authorize, capture on ship with tracking (JC-10001, LL-10001), void on cancel (NP-10001), partial refund (LL-10001), webhooks received and verified, and a second seller onboarded through Partner Referrals: Juniper Clay is now paid to its own sandbox business account, and JC-10006 was captured to it with `PayPal-Auth-Assertion` and a 2% platform fee to Counter. Order and capture ids: [docs/live-verification.md](docs/live-verification.md). A buyer-raised dispute is covered by fixture tests and not yet run live. |
+| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Verified live on the sandbox** for the core path: AUTHORIZE order created by the Store Sync API, buyer approval in PayPal, authorize, capture on ship with tracking (JC-10001, LL-10001), void on cancel (NP-10001), partial refund (LL-10001), webhooks received and verified, and a second seller onboarded through Partner Referrals: Juniper Clay is now paid to its own sandbox business account, and JC-10006 was captured to it with `PayPal-Auth-Assertion` and a 2% platform fee to Counter. Order and capture ids: [docs/live-verification.md](docs/live-verification.md). A buyer-raised dispute on JC-10002 (`PP-R-IJG-10197634`, item not received) arrived by webhook and was answered with the tracking number and the evidence PDF, which PayPal shows as submitted by the seller; PayPal's decision is pending. |
 
 ## Requirements
 
@@ -32,7 +32,7 @@ Each judging criterion and each requirement, with the exact evidence. Claim numb
 | Multi-merchant: Partner Referrals onboarding, payee, `PayPal-Auth-Assertion`, BN code | `packages/paypal/src/partner.ts`, `packages/platform/src/onboarding.ts`; P12 |
 | MCP server on the current revision with MCP Apps cards and a WebMCP bridge | `apps/web/app/mcp/route.ts`, `packages/gateway/src/apps`; L2 to L4 |
 | AI with code-enforced guardrails: engine has the final word, floors never reach the model, reply amounts checked against the deal | `packages/negotiate`; `packages/negotiate/test/seller.test.ts`, `engine.test.ts`; R7, P14 to P16 |
-| 918 passing tests, no network or keys needed | `pnpm -r test` (R9) |
+| 923 passing tests, no network or keys needed | `pnpm -r test` (R9) |
 
 ### Design
 

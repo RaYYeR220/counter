@@ -28,7 +28,7 @@ Rosa Marín and Theo throw, glaze and fire every piece at Juniper Clay, a two-pe
 
 | What | Status |
 | --- | --- |
-| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Verified live on the sandbox** for the core path: AUTHORIZE order created by the Store Sync API, buyer approval in PayPal, authorize, capture on ship with tracking (JC-10001, LL-10001), void on cancel (NP-10001), partial refund (LL-10001), webhooks received and verified, and a second seller onboarded through Partner Referrals: Juniper Clay is now paid to its own sandbox business account, and JC-10006 was captured to it with `PayPal-Auth-Assertion` and a 2% platform fee to Counter. Order and capture ids: [docs/live-verification.md](docs/live-verification.md). A buyer-raised dispute is covered by fixture tests and not yet run live. |
+| PayPal sandbox round trip on the deployment: create AUTHORIZE order, buyer approval, authorize, capture on ship, void and refund, webhooks, dispute evidence, partner onboarding | **Verified live on the sandbox** for the core path: AUTHORIZE order created by the Store Sync API, buyer approval in PayPal, authorize, capture on ship with tracking (JC-10001, LL-10001), void on cancel (NP-10001), partial refund (LL-10001), webhooks received and verified, and a second seller onboarded through Partner Referrals: Juniper Clay is now paid to its own sandbox business account, and JC-10006 was captured to it with `PayPal-Auth-Assertion` and a 2% platform fee to Counter. Order and capture ids: [docs/live-verification.md](docs/live-verification.md). A buyer-raised dispute on JC-10002 (`PP-R-IJG-10197634`, item not received) arrived by webhook and was answered with the tracking number and the evidence PDF, which PayPal shows as submitted by the seller; PayPal's decision is pending. |
 | PayPal's Postman collection run against the deployment | **Not yet run against the deployment.** The Node port of the collection passes in the test suite: 166 passed, 3 expected failures ([why](docs/store-sync-conformance.md#three-assertions-that-cannot-pass)). |
 | MCP Apps cards in a production chat client | Rendered in a stand-in host; not yet tried in a production chat client. |
 
@@ -127,7 +127,7 @@ Without the engine, the seller broke a rule once (8% off a single item, where th
 | Order tracking `POST /v2/checkout/orders/{id}/track` | `packages/paypal/src/tracking.ts` | Adds carrier and tracking number to the capture at shipment | `packages/paypal/test/tracking.test.ts`, `packages/platform/test/fulfilment.test.ts` |
 | Partner Referrals v2, merchant integrations, `PayPal-Auth-Assertion`, BN code | `packages/paypal/src/partner.ts`, `assertion.ts`, `transport.ts`; `packages/platform/src/onboarding.ts`; `apps/web/app/api/onboarding/*` | A shop connects its own PayPal account (payments, refunds, partner fee, merchant information, dispute permissions); Counter then acts on its behalf | `packages/paypal/test/partner.test.ts`, `assertion.test.ts`, `packages/platform/test/onboarding.test.ts` |
 | Webhooks `POST /v1/notifications/verify-webhook-signature` | `packages/paypal/src/webhooks.ts`, `packages/platform/src/webhooks.ts`, `apps/web/app/api/paypal/webhooks/route.ts` | Verifies each delivery over the exact bytes, handles it once per event id, updates orders, disputes and onboarding | `packages/paypal/test/webhooks.test.ts`, `packages/platform/test/webhooks.test.ts` |
-| Disputes v1: list, get, `provide-evidence`, `accept-claim` | `packages/paypal/src/disputes.ts`, `packages/platform/src/disputes.ts`, `pdf.ts` | Decides each dispute by rule from the order's record and uploads a generated evidence PDF (order, shipment, the agent's own request, the negotiation) | `packages/paypal/test/disputes.test.ts`, `packages/platform/test/disputes.test.ts` |
+| Disputes v1: list, get, `provide-evidence`, `provide-supporting-info`, `accept-claim` | `packages/paypal/src/disputes.ts`, `packages/platform/src/disputes.ts`, `pdf.ts` | Decides each dispute by rule from the order's record and uploads a generated evidence PDF (order, shipment, the agent's own request, the negotiation), as typed evidence while PayPal waits for the seller or as supporting info once PayPal reviews the case; a dispute whose webhook is late is read from PayPal and matched by capture id | `packages/paypal/test/disputes.test.ts`, `packages/platform/test/disputes.test.ts` |
 | Vault v3 setup tokens, payment tokens, charge a vaulted wallet | `packages/paypal/src/vault.ts` | Library helpers with tests; not called by the app yet | `packages/paypal/test/vault.test.ts` |
 
 ## AI usage
@@ -222,14 +222,14 @@ No network, no keys: PayPal and model calls run against fixtures, and database t
 | `packages/store-sync` | 302 | 3 expected failures: the Postman collection's 3 self-contradictory assertions, asserted to fail ([`docs/store-sync-conformance.md`](docs/store-sync-conformance.md)) |
 | `packages/importer` | 132 | 3 skipped: live Channel3 + model test (`IMPORTER_LIVE=1`) |
 | `packages/gateway` | 99 | |
-| `packages/platform` | 88 | |
-| `packages/paypal` | 84 | 3 skipped: live sandbox test (`PAYPAL_LIVE=1`) |
+| `packages/platform` | 91 | |
+| `packages/paypal` | 86 | 3 skipped: live sandbox test (`PAYPAL_LIVE=1`) |
 | `packages/negotiate` | 74 | |
 | `packages/db` | 50 | |
 | `packages/agent` | 39 | |
 | `bench` | 25 | |
 | `apps/web` | 25 | |
-| **Total** | **918** | 3 expected failures, 6 skipped |
+| **Total** | **923** | 3 expected failures, 6 skipped |
 
 The Store Sync conformance suite alone (`packages/store-sync/test/conformance.test.ts`, a Node port of PayPal's "PayPal Agentic Commerce" Postman collection) is 166 passed and 3 expected failures. `node bench/tasks/validate.mjs` checks the purchase task key against the catalog. The live sandbox test runs with:
 
