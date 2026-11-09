@@ -251,7 +251,7 @@ function ProductBody({ product }: { product: ProductDetail }) {
 }
 
 const VERDICTS: Record<NegotiationView["verdict"], { text: string; tone: string }> = {
-  accept: { text: "Accepted", tone: "ok" },
+  accept: { text: "Offer", tone: "ok" },
   clamped: { text: "Countered", tone: "warn" },
   refuse: { text: "Refused", tone: "bad" },
   none: { text: "No deal", tone: "muted" },
