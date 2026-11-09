@@ -1,4 +1,5 @@
-import type { Breakdown, OrderItem, OrderShipping, OrderView, PayPalEnv } from "./env";
+import type { Breakdown, Money, OrderItem, OrderShipping, OrderView, PayPalEnv } from "./env";
+import { captureAuthorization, refundCapture, voidAuthorization, type CaptureParams } from "./payments";
 import {
   authorizeOrder,
   createAuthorizeOrder,
@@ -41,5 +42,25 @@ export class PayPal {
 
   authorizeOrder(orderId: string, merchantId: string | undefined, requestId: string): Promise<AuthorizeResult> {
     return authorizeOrder(this.t, orderId, merchantId, requestId);
+  }
+
+  captureAuthorization(
+    authId: string,
+    merchantId: string | undefined,
+    p: CaptureParams,
+  ): Promise<{ captureId: string; status: string }> {
+    return captureAuthorization(this.t, authId, merchantId, p);
+  }
+
+  voidAuthorization(authId: string, merchantId?: string, requestId?: string): Promise<void> {
+    return voidAuthorization(this.t, authId, merchantId, requestId);
+  }
+
+  refundCapture(
+    captureId: string,
+    merchantId: string | undefined,
+    p: { amount?: Money; requestId: string },
+  ): Promise<{ refundId: string; status: string }> {
+    return refundCapture(this.t, captureId, merchantId, p);
   }
 }

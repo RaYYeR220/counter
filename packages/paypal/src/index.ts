@@ -15,3 +15,4 @@ export type { AccessToken } from "./token";
 export { PayPal } from "./client";
 export { REFERENCE_ID, approvalLink } from "./orders";
 export type { CreateAuthorizeOrderParams, AuthorizeResult } from "./orders";
+export type { CaptureParams } from "./payments";
