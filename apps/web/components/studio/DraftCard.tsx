@@ -5,6 +5,13 @@ import { floorParts, floorReason, type FloorSource } from "./floor";
 import type { ProductDraft } from "./types";
 import s from "./studio.module.css";
 
+/** The floor's actual distance below list, to one decimal: the 50¢ rounding can add a fraction of a percent. */
+function underList(priceCents: number, floorCents: number): string {
+  if (priceCents <= 0) return "0%";
+  const pct = Math.max(0, Math.round(((priceCents - floorCents) / priceCents) * 1000) / 10);
+  return `${Number.isInteger(pct) ? pct.toFixed(0) : pct.toFixed(1)}%`;
+}
+
 export interface EditableDraft {
   key: number;
   draft: ProductDraft;
@@ -217,7 +224,7 @@ export function DraftCard({
                       onCommit={(c) => setVariant(i, { floorCents: c }, { floorTyped: true })}
                     />
                     {v.priceCents > 0 ? (
-                      <span className={s.hint}>{Math.max(0, Math.round(((v.priceCents - v.floorCents) / v.priceCents) * 100))}% under list</span>
+                      <span className={s.hint}>{underList(v.priceCents, v.floorCents)} under list</span>
                     ) : null}
                   </td>
                   <td className={s.why}>
