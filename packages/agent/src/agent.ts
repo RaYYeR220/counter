@@ -17,7 +17,7 @@ export interface AgentStep {
   ms: number;
 }
 
-export type StoppedBy = "answer" | "max_steps" | "error" | "timeout";
+export type StoppedBy = "answer" | "max_steps" | "error" | "timeout" | "repeated_failure";
 
 export interface AgentResult {
   finalText: string;
@@ -38,6 +38,8 @@ export interface RunAgentOptions {
   mcp: readonly McpConnection[];
   /** Maximum tool calls in the run. */
   maxSteps: number;
+  /** Stop after the same call fails this many times in a row with the same error. Default 3. */
+  maxRepeatedFailures?: number;
   onStep?: (step: AgentStep) => void | Promise<void>;
   temperature?: number;
   maxTokens?: number;
@@ -115,6 +117,10 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentResult> {
   let stoppedBy: StoppedBy = "max_steps";
   let error: string | undefined;
   const started = clock();
+  // The same call failing the same way, over and over, is a dead end: warn once, then stop.
+  const maxRepeats = Math.max(2, opts.maxRepeatedFailures ?? 3);
+  let lastFailure = "";
+  let repeats = 0;
 
   /** Large outputs older than the most recent few become a one-line stub, and stay that way. */
   function compact(): void {
@@ -203,8 +209,23 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentResult> {
       const step = await execute(call);
       steps.push(step);
       await opts.onStep?.(step);
-      const seen = step.isError ? `Error: ${step.resultText}` : step.resultText;
+      let seen = step.isError ? `Error: ${step.resultText}` : step.resultText;
+      if (step.isError) {
+        const key = `${step.tool}|${JSON.stringify(step.args)}|${step.resultText}`;
+        repeats = key === lastFailure ? repeats + 1 : 1;
+        lastFailure = key;
+      } else {
+        repeats = 0;
+        lastFailure = "";
+      }
+      if (repeats === maxRepeats - 1) {
+        seen += `\n\nThis exact call has now failed ${repeats} times with the same error. Do not repeat it: tell the user what happened and what they can do instead.`;
+      }
       messages.push({ role: "tool", tool_call_id: call.id, content: shorten(seen, maxToolChars) });
+      if (repeats >= maxRepeats) {
+        stoppedBy = "repeated_failure";
+        break loop;
+      }
     }
     if (capped || steps.length >= opts.maxSteps) {
       stoppedBy = "max_steps";

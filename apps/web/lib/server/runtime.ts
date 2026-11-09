@@ -137,6 +137,27 @@ export async function sandboxKeys(): Promise<string[]> {
   return keys;
 }
 
+export function paypalConfigured(): boolean {
+  return Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET);
+}
+
+/**
+ * Used while PayPal credentials are missing: carts can still be priced and
+ * validated, and anything that needs a PayPal order fails with a clear named
+ * error instead of a crash.
+ */
+const paymentsNotConfigured: PaymentPort = {
+  async createOrder() {
+    throw new Error("PayPal payments are not configured for this deployment");
+  },
+  async patchOrder() {
+    throw new Error("PayPal payments are not configured for this deployment");
+  },
+  async authorizeOrder() {
+    throw new Error("PayPal payments are not configured for this deployment");
+  },
+};
+
 export function storeSyncDeps(): StoreSyncDeps {
   const d = db();
   return {
@@ -144,10 +165,12 @@ export function storeSyncDeps(): StoreSyncDeps {
     carts: new DbCartRepo(d),
     payments: paymentsStubbed()
       ? stubPayments
-      : new PayPalPayments(paypal(), shopAccounts, {
-          returnUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}`,
-          cancelUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}&cancelled=1`,
-        }),
+      : paypalConfigured()
+        ? new PayPalPayments(paypal(), shopAccounts, {
+            returnUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}`,
+            cancelUrl: (slug) => `${baseUrl()}/paypal/return?shop=${encodeURIComponent(slug)}&cancelled=1`,
+          })
+        : paymentsNotConfigured,
     orders: new StockKeepingOrderSink(d, new DbOrderSink(d, { publicBaseUrl: baseUrl() })),
     now: storeNow,
     newCartId: randomCartId,
