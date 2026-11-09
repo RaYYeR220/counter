@@ -1,0 +1,354 @@
+{
+  "version": 1,
+  "currency": "USD",
+  "shops": [
+    {
+      "slug": "juniper-clay",
+      "name": "Juniper Clay",
+      "tagline": "Wheel-thrown stoneware for the everyday table.",
+      "owner": "Rosa Marín",
+      "city": "Portland, OR",
+      "state": "OR",
+      "about": "I started Juniper Clay in a converted garage in Southeast Portland in 2019, and Theo joined me at the wheel two years later. Every piece is thrown, trimmed and glazed by one of us and fired in our own kiln, on a speckled stoneware body that lets little iron flecks show through every glaze. When something comes out of the kiln with a pinhole or a run, we sell it as a second and say so plainly.",
+      "policy": {
+        "returns_days": 30,
+        "ships_from_state": "OR",
+        "handling_days": 2,
+        "negotiation": { "enabled": true, "max_discount_pct": 15, "bundle_min_items": 3 }
+      },
+      "products": [
+        {
+          "parent_id": "JC-MUG-SPECKLE",
+          "name": "Speckled mug",
+          "category": "mugs",
+          "description": "Our everyday mug, wheel-thrown in speckled stoneware with a wide pulled handle that fits three fingers. Holds 8 oz, 12 oz or 16 oz filled to the rim. Dishwasher and microwave safe. Glazes: sage (soft green), ink (near-black with a blue edge), oat (creamy off-white) and rust (iron red-orange).",
+          "images": [],
+          "attributes_order": ["glaze", "size"],
+          "variants": [
+            {"variant_id":"JC-MUG-SPECKLE-SAGE-8","attributes":{"glaze":"sage","size":"8 oz"},"price":"30.00","cost":"9.50","floor":"25.50","stock":4,"weight_g":300,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-SAGE-12","attributes":{"glaze":"sage","size":"12 oz"},"price":"34.00","cost":"11.50","floor":"29.00","stock":6,"weight_g":380,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-SAGE-16","attributes":{"glaze":"sage","size":"16 oz"},"price":"38.00","cost":"13.00","floor":"32.50","stock":3,"weight_g":460,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-INK-8","attributes":{"glaze":"ink","size":"8 oz"},"price":"30.00","cost":"9.50","floor":"25.50","stock":7,"weight_g":300,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-INK-12","attributes":{"glaze":"ink","size":"12 oz"},"price":"34.00","cost":"11.50","floor":"29.00","stock":9,"weight_g":380,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-INK-16","attributes":{"glaze":"ink","size":"16 oz"},"price":"38.00","cost":"13.00","floor":"32.50","stock":0,"weight_g":460,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-OAT-8","attributes":{"glaze":"oat","size":"8 oz"},"price":"30.00","cost":"9.50","floor":"25.50","stock":5,"weight_g":300,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-OAT-12","attributes":{"glaze":"oat","size":"12 oz"},"price":"34.00","cost":"11.50","floor":"29.00","stock":11,"weight_g":380,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-OAT-16","attributes":{"glaze":"oat","size":"16 oz"},"price":"38.00","cost":"13.00","floor":"32.50","stock":4,"weight_g":460,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-RUST-8","attributes":{"glaze":"rust","size":"8 oz"},"price":"30.00","cost":"9.50","floor":"25.50","stock":0,"weight_g":300,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-RUST-12","attributes":{"glaze":"rust","size":"12 oz"},"price":"34.00","cost":"11.50","floor":"29.00","stock":2,"weight_g":380,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-MUG-SPECKLE-RUST-16","attributes":{"glaze":"rust","size":"16 oz"},"price":"38.00","cost":"13.00","floor":"32.50","stock":5,"weight_g":460,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "JC-MUG-SPECKLE-SECONDS",
+          "name": "Speckled mug (seconds)",
+          "category": "mugs",
+          "description": "The same speckled mug, pulled from the kiln with a cosmetic flaw: a pinhole, a glaze run, a thin spot near the rim or a slight wobble on the foot. Fully food safe, dishwasher and microwave safe, and the same 12 oz or 16 oz capacity. Priced about 30% below our firsts. Each listing is a second, not a first.",
+          "images": [],
+          "attributes_order": ["glaze", "size"],
+          "variants": [
+            {"variant_id":"JC-MUG-SPECKLE-SECONDS-SAGE-12","attributes":{"glaze":"sage","size":"12 oz"},"price":"24.00","cost":"11.50","floor":"20.50","stock":8,"weight_g":380,"active":true,"purchasable":true,"lead_time_days":0,"flags":["seconds"]},
+            {"variant_id":"JC-MUG-SPECKLE-SECONDS-SAGE-16","attributes":{"glaze":"sage","size":"16 oz"},"price":"27.00","cost":"13.00","floor":"23.00","stock":2,"weight_g":460,"active":true,"purchasable":true,"lead_time_days":0,"flags":["seconds"]},
+            {"variant_id":"JC-MUG-SPECKLE-SECONDS-INK-12","attributes":{"glaze":"ink","size":"12 oz"},"price":"24.00","cost":"11.50","floor":"20.50","stock":3,"weight_g":380,"active":true,"purchasable":true,"lead_time_days":0,"flags":["seconds"]},
+            {"variant_id":"JC-MUG-SPECKLE-SECONDS-INK-16","attributes":{"glaze":"ink","size":"16 oz"},"price":"27.00","cost":"13.00","floor":"23.00","stock":5,"weight_g":460,"active":true,"purchasable":true,"lead_time_days":0,"flags":["seconds"]},
+            {"variant_id":"JC-MUG-SPECKLE-SECONDS-OAT-12","attributes":{"glaze":"oat","size":"12 oz"},"price":"24.00","cost":"11.50","floor":"20.50","stock":0,"weight_g":380,"active":true,"purchasable":true,"lead_time_days":0,"flags":["seconds"]},
+            {"variant_id":"JC-MUG-SPECKLE-SECONDS-OAT-16","attributes":{"glaze":"oat","size":"16 oz"},"price":"27.00","cost":"13.00","floor":"23.00","stock":1,"weight_g":460,"active":true,"purchasable":true,"lead_time_days":0,"flags":["seconds"]}
+          ]
+        },
+        {
+          "parent_id": "JC-BOWL-EVERYDAY",
+          "name": "Everyday bowl",
+          "category": "bowls",
+          "description": "A straight-walled bowl for cereal, soup or a big salad, thrown on the same speckled stoneware as our mugs. The 6 in holds about 20 oz and the 8 in about 36 oz. Dishwasher, microwave and oven safe to 400°F.",
+          "images": [],
+          "attributes_order": ["glaze", "size"],
+          "variants": [
+            {"variant_id":"JC-BOWL-EVERYDAY-SAGE-6","attributes":{"glaze":"sage","size":"6 in"},"price":"28.00","cost":"9.00","floor":"24.00","stock":10,"weight_g":420,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-BOWL-EVERYDAY-SAGE-8","attributes":{"glaze":"sage","size":"8 in"},"price":"36.00","cost":"12.00","floor":"31.00","stock":6,"weight_g":700,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-BOWL-EVERYDAY-INK-6","attributes":{"glaze":"ink","size":"6 in"},"price":"28.00","cost":"9.00","floor":"24.00","stock":12,"weight_g":420,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-BOWL-EVERYDAY-INK-8","attributes":{"glaze":"ink","size":"8 in"},"price":"36.00","cost":"12.00","floor":"31.00","stock":0,"weight_g":700,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-BOWL-EVERYDAY-OAT-6","attributes":{"glaze":"oat","size":"6 in"},"price":"28.00","cost":"9.00","floor":"24.00","stock":9,"weight_g":420,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-BOWL-EVERYDAY-OAT-8","attributes":{"glaze":"oat","size":"8 in"},"price":"36.00","cost":"12.00","floor":"31.00","stock":7,"weight_g":700,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-BOWL-EVERYDAY-RUST-6","attributes":{"glaze":"rust","size":"6 in"},"price":"28.00","cost":"9.00","floor":"24.00","stock":3,"weight_g":420,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-BOWL-EVERYDAY-RUST-8","attributes":{"glaze":"rust","size":"8 in"},"price":"36.00","cost":"12.00","floor":"31.00","stock":4,"weight_g":700,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "JC-PLATE-DINNER",
+          "name": "Dinner plate",
+          "category": "plates",
+          "description": "A 10.5 in dinner plate with a low rolled rim and an unglazed foot ring. Sold single, as a pair, or as a set of 4, which works out cheaper per plate. Dishwasher and microwave safe. Glazed in oat or ink only.",
+          "images": [],
+          "attributes_order": ["glaze", "set_size"],
+          "variants": [
+            {"variant_id":"JC-PLATE-DINNER-OAT-SINGLE","attributes":{"glaze":"oat","set_size":"single"},"price":"36.00","cost":"12.00","floor":"31.00","stock":14,"weight_g":750,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-PLATE-DINNER-OAT-PAIR","attributes":{"glaze":"oat","set_size":"pair"},"price":"70.00","cost":"24.00","floor":"59.50","stock":5,"weight_g":1500,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-PLATE-DINNER-OAT-SET4","attributes":{"glaze":"oat","set_size":"set of 4"},"price":"128.00","cost":"48.00","floor":"109.00","stock":3,"weight_g":3000,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-PLATE-DINNER-INK-SINGLE","attributes":{"glaze":"ink","set_size":"single"},"price":"36.00","cost":"12.00","floor":"31.00","stock":6,"weight_g":750,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-PLATE-DINNER-INK-PAIR","attributes":{"glaze":"ink","set_size":"pair"},"price":"70.00","cost":"24.00","floor":"59.50","stock":0,"weight_g":1500,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-PLATE-DINNER-INK-SET4","attributes":{"glaze":"ink","set_size":"set of 4"},"price":"128.00","cost":"48.00","floor":"109.00","stock":0,"weight_g":3000,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "JC-POUROVER",
+          "name": "Pour-over set",
+          "category": "coffee",
+          "description": "A cone dripper that takes #2 filters and the 20 oz carafe it sits on, glazed to match in sage (soft green), ink (near-black) or oat (creamy off-white). Three spiral ribs and a single hole give an even drawdown. Dishwasher safe, though hand-washing keeps the glaze glossy longer.",
+          "images": [],
+          "attributes_order": ["glaze"],
+          "variants": [
+            {"variant_id":"JC-POUROVER-SAGE","attributes":{"glaze":"sage"},"price":"88.00","cost":"30.00","floor":"75.00","stock":0,"weight_g":1300,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-POUROVER-INK","attributes":{"glaze":"ink"},"price":"88.00","cost":"30.00","floor":"75.00","stock":2,"weight_g":1300,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"JC-POUROVER-OAT","attributes":{"glaze":"oat"},"price":"88.00","cost":"30.00","floor":"75.00","stock":1,"weight_g":1300,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "JC-BOWL-SERVING",
+          "name": "Large serving bowl",
+          "category": "bowls",
+          "description": "A 12 in serving bowl that holds about 4 quarts, thrown to order in the glaze you pick. We start it the day you order and it ships in about 3 weeks, after drying, bisque and glaze firing. Dishwasher safe, though a piece this size is happier hand-washed.",
+          "images": [],
+          "attributes_order": ["glaze"],
+          "variants": [
+            {"variant_id":"JC-BOWL-SERVING-SAGE","attributes":{"glaze":"sage"},"price":"120.00","cost":"38.00","floor":"102.00","stock":4,"weight_g":2400,"active":true,"purchasable":true,"lead_time_days":21,"flags":["made_to_order"]},
+            {"variant_id":"JC-BOWL-SERVING-INK","attributes":{"glaze":"ink"},"price":"120.00","cost":"38.00","floor":"102.00","stock":4,"weight_g":2400,"active":true,"purchasable":true,"lead_time_days":21,"flags":["made_to_order"]},
+            {"variant_id":"JC-BOWL-SERVING-OAT","attributes":{"glaze":"oat"},"price":"120.00","cost":"38.00","floor":"102.00","stock":4,"weight_g":2400,"active":true,"purchasable":true,"lead_time_days":21,"flags":["made_to_order"]},
+            {"variant_id":"JC-BOWL-SERVING-RUST","attributes":{"glaze":"rust"},"price":"120.00","cost":"38.00","floor":"102.00","stock":4,"weight_g":2400,"active":true,"purchasable":true,"lead_time_days":21,"flags":["made_to_order"]}
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "northpaw-roasters",
+      "name": "Northpaw Roasters",
+      "tagline": "Small-batch coffee, roasted a few blocks from Lake Superior.",
+      "owner": "Marit Halvorsen",
+      "city": "Duluth, MN",
+      "state": "MN",
+      "about": "I roast every batch on a 12-kilo drum roaster in an old boat-repair shop near the harbor, and your order goes out the day after it's roasted. Our single origins come from two importers we've bought from since 2018. The blends are built for how Duluth actually drinks coffee: strong, hot, and a lot of it.",
+      "policy": {
+        "returns_days": 14,
+        "ships_from_state": "MN",
+        "handling_days": 1,
+        "negotiation": { "enabled": true, "max_discount_pct": 10, "bundle_min_items": 3 }
+      },
+      "products": [
+        {
+          "parent_id": "NP-GUJI",
+          "name": "Ethiopia Guji Hambela",
+          "category": "single-origin",
+          "description": "A washed heirloom lot from the Hambela Wamena district, roasted light to keep jasmine and bergamot up front with a lemon-candy finish. Best as pour-over or drip. Light roast only.",
+          "images": [],
+          "attributes_order": ["roast", "grind", "bag"],
+          "variants": [
+            {"variant_id":"NP-GUJI-LIGHT-WB-250","attributes":{"roast":"light","grind":"whole bean","bag":"250 g"},"price":"19.00","cost":"6.80","floor":"17.50","stock":18,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-GUJI-LIGHT-WB-1KG","attributes":{"roast":"light","grind":"whole bean","bag":"1 kg"},"price":"62.00","cost":"24.00","floor":"56.00","stock":6,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-GUJI-LIGHT-DRIP-250","attributes":{"roast":"light","grind":"drip","bag":"250 g"},"price":"19.00","cost":"6.80","floor":"17.50","stock":12,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-GUJI-LIGHT-DRIP-1KG","attributes":{"roast":"light","grind":"drip","bag":"1 kg"},"price":"62.00","cost":"24.00","floor":"56.00","stock":3,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-GUJI-LIGHT-FP-250","attributes":{"roast":"light","grind":"French press","bag":"250 g"},"price":"19.00","cost":"6.80","floor":"17.50","stock":7,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-GUJI-LIGHT-FP-1KG","attributes":{"roast":"light","grind":"French press","bag":"1 kg"},"price":"62.00","cost":"24.00","floor":"56.00","stock":0,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "NP-HUILA",
+          "name": "Colombia Huila",
+          "category": "single-origin",
+          "description": "From smallholder farms around Pitalito, Huila, roasted medium for milk chocolate, red apple and a round caramel body. Works in anything from a drip machine to an espresso basket. Medium roast.",
+          "images": [],
+          "attributes_order": ["roast", "grind", "bag"],
+          "variants": [
+            {"variant_id":"NP-HUILA-MED-WB-250","attributes":{"roast":"medium","grind":"whole bean","bag":"250 g"},"price":"18.00","cost":"6.20","floor":"16.50","stock":22,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-HUILA-MED-WB-1KG","attributes":{"roast":"medium","grind":"whole bean","bag":"1 kg"},"price":"58.00","cost":"21.50","floor":"52.50","stock":8,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-HUILA-MED-ESP-250","attributes":{"roast":"medium","grind":"espresso","bag":"250 g"},"price":"18.00","cost":"6.20","floor":"16.50","stock":9,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-HUILA-MED-ESP-1KG","attributes":{"roast":"medium","grind":"espresso","bag":"1 kg"},"price":"58.00","cost":"21.50","floor":"52.50","stock":0,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-HUILA-MED-DRIP-250","attributes":{"roast":"medium","grind":"drip","bag":"250 g"},"price":"18.00","cost":"6.20","floor":"16.50","stock":0,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-HUILA-MED-DRIP-1KG","attributes":{"roast":"medium","grind":"drip","bag":"1 kg"},"price":"58.00","cost":"21.50","floor":"52.50","stock":0,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-HUILA-MED-FP-250","attributes":{"roast":"medium","grind":"French press","bag":"250 g"},"price":"18.00","cost":"6.20","floor":"16.50","stock":6,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-HUILA-MED-FP-1KG","attributes":{"roast":"medium","grind":"French press","bag":"1 kg"},"price":"58.00","cost":"21.50","floor":"52.50","stock":2,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "NP-HUILA-DECAF",
+          "name": "Colombia Huila Decaf",
+          "category": "single-origin",
+          "description": "The same Huila coffee, decaffeinated by the Swiss Water process (no solvents, 99.9% caffeine-free) before we roast it medium. Milk chocolate and dried cherry, a touch softer than the regular lot. Medium roast.",
+          "images": [],
+          "attributes_order": ["roast", "grind", "bag"],
+          "variants": [
+            {"variant_id":"NP-HUILA-DECAF-MED-WB-250","attributes":{"roast":"medium","grind":"whole bean","bag":"250 g"},"price":"20.00","cost":"7.40","floor":"18.00","stock":10,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":["decaf"]},
+            {"variant_id":"NP-HUILA-DECAF-MED-WB-1KG","attributes":{"roast":"medium","grind":"whole bean","bag":"1 kg"},"price":"64.00","cost":"26.00","floor":"58.00","stock":0,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":["decaf"]},
+            {"variant_id":"NP-HUILA-DECAF-MED-DRIP-250","attributes":{"roast":"medium","grind":"drip","bag":"250 g"},"price":"20.00","cost":"7.40","floor":"18.00","stock":7,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":["decaf"]},
+            {"variant_id":"NP-HUILA-DECAF-MED-FP-250","attributes":{"roast":"medium","grind":"French press","bag":"250 g"},"price":"20.00","cost":"7.40","floor":"18.00","stock":5,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":["decaf"]}
+          ]
+        },
+        {
+          "parent_id": "NP-LAKEFRONT",
+          "name": "Lakefront Blend",
+          "category": "blends",
+          "description": "Our house blend of Brazil Cerrado and Guatemala Huehuetenango. Roasted medium it is nutty and sweet with brown sugar; roasted dark it turns to baker's chocolate and toasted walnut. The coffee we drink all day at the roastery.",
+          "images": [],
+          "attributes_order": ["roast", "grind", "bag"],
+          "variants": [
+            {"variant_id":"NP-LAKEFRONT-MED-WB-250","attributes":{"roast":"medium","grind":"whole bean","bag":"250 g"},"price":"16.00","cost":"5.20","floor":"14.50","stock":14,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-LAKEFRONT-MED-WB-1KG","attributes":{"roast":"medium","grind":"whole bean","bag":"1 kg"},"price":"52.00","cost":"18.50","floor":"47.00","stock":9,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-LAKEFRONT-MED-DRIP-250","attributes":{"roast":"medium","grind":"drip","bag":"250 g"},"price":"16.00","cost":"5.20","floor":"14.50","stock":10,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-LAKEFRONT-MED-FP-250","attributes":{"roast":"medium","grind":"French press","bag":"250 g"},"price":"16.00","cost":"5.20","floor":"14.50","stock":6,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-LAKEFRONT-DARK-WB-250","attributes":{"roast":"dark","grind":"whole bean","bag":"250 g"},"price":"16.00","cost":"5.20","floor":"14.50","stock":8,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-LAKEFRONT-DARK-WB-1KG","attributes":{"roast":"dark","grind":"whole bean","bag":"1 kg"},"price":"52.00","cost":"18.50","floor":"47.00","stock":4,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-LAKEFRONT-DARK-DRIP-250","attributes":{"roast":"dark","grind":"drip","bag":"250 g"},"price":"16.00","cost":"5.20","floor":"14.50","stock":0,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-LAKEFRONT-DARK-FP-250","attributes":{"roast":"dark","grind":"French press","bag":"250 g"},"price":"16.00","cost":"5.20","floor":"14.50","stock":5,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "NP-NIGHTSHIFT",
+          "name": "Night Shift Espresso Blend",
+          "category": "blends",
+          "description": "Built for espresso: a Brazil natural and a Sumatra, roasted dark for heavy body, dark chocolate and a little smoke. Pulls well at 1:2 and stands up to milk. Dark roast.",
+          "images": [],
+          "attributes_order": ["roast", "grind", "bag"],
+          "variants": [
+            {"variant_id":"NP-NIGHTSHIFT-DARK-WB-250","attributes":{"roast":"dark","grind":"whole bean","bag":"250 g"},"price":"17.00","cost":"5.60","floor":"15.50","stock":15,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-NIGHTSHIFT-DARK-WB-1KG","attributes":{"roast":"dark","grind":"whole bean","bag":"1 kg"},"price":"55.00","cost":"19.50","floor":"49.50","stock":5,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-NIGHTSHIFT-DARK-ESP-250","attributes":{"roast":"dark","grind":"espresso","bag":"250 g"},"price":"17.00","cost":"5.60","floor":"15.50","stock":11,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"NP-NIGHTSHIFT-DARK-ESP-1KG","attributes":{"roast":"dark","grind":"espresso","bag":"1 kg"},"price":"55.00","cost":"19.50","floor":"49.50","stock":2,"weight_g":1040,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "NP-NIGHTSHIFT-DECAF",
+          "name": "Night Shift Decaf",
+          "category": "blends",
+          "description": "Night Shift's decaf twin: Swiss Water decaf Brazil and Colombia roasted dark for the same chocolate-heavy shot without the caffeine. 99.9% caffeine-free. Dark roast, 250 g bags only.",
+          "images": [],
+          "attributes_order": ["roast", "grind", "bag"],
+          "variants": [
+            {"variant_id":"NP-NIGHTSHIFT-DECAF-DARK-WB-250","attributes":{"roast":"dark","grind":"whole bean","bag":"250 g"},"price":"19.00","cost":"6.60","floor":"17.50","stock":6,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":["decaf"]},
+            {"variant_id":"NP-NIGHTSHIFT-DECAF-DARK-ESP-250","attributes":{"roast":"dark","grind":"espresso","bag":"250 g"},"price":"19.00","cost":"6.60","floor":"17.50","stock":8,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":["decaf"]}
+          ]
+        },
+        {
+          "parent_id": "NP-KENYA",
+          "name": "Kenya Nyeri AA",
+          "category": "single-origin",
+          "description": "A small allocation from the Gatomboya washing station in Nyeri: blackcurrant, grapefruit and a syrupy body. Limited lot, so when it is gone it is gone until next season. Light roast, 250 g bags only.",
+          "images": [],
+          "attributes_order": ["roast", "grind", "bag"],
+          "variants": [
+            {"variant_id":"NP-KENYA-LIGHT-WB-250","attributes":{"roast":"light","grind":"whole bean","bag":"250 g"},"price":"24.00","cost":"8.80","floor":"22.00","stock":5,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":["limited"]},
+            {"variant_id":"NP-KENYA-LIGHT-DRIP-250","attributes":{"roast":"light","grind":"drip","bag":"250 g"},"price":"24.00","cost":"8.80","floor":"22.00","stock":0,"weight_g":270,"active":true,"purchasable":true,"lead_time_days":0,"flags":["limited"]}
+          ]
+        },
+        {
+          "parent_id": "NP-CHOICE",
+          "name": "Roaster's Choice subscription",
+          "category": "subscriptions",
+          "description": "A different single origin every two weeks, picked by whoever is on the roaster that day. Subscription only: billed per shipment, pause or cancel any time from your account. Not sold as a one-off bag.",
+          "images": [],
+          "attributes_order": ["roast", "grind", "bag"],
+          "variants": [
+            {"variant_id":"NP-CHOICE-ROT-WB-250","attributes":{"roast":"rotating","grind":"whole bean","bag":"250 g"},"price":"17.00","cost":"6.00","floor":"15.50","stock":40,"weight_g":270,"active":true,"purchasable":false,"lead_time_days":0,"flags":["subscription_only"]},
+            {"variant_id":"NP-CHOICE-ROT-DRIP-250","attributes":{"roast":"rotating","grind":"drip","bag":"250 g"},"price":"17.00","cost":"6.00","floor":"15.50","stock":40,"weight_g":270,"active":true,"purchasable":false,"lead_time_days":0,"flags":["subscription_only"]}
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "loop-and-lantern",
+      "name": "Loop & Lantern",
+      "tagline": "Hand-dyed yarn in small lots, from the Blue Ridge.",
+      "owner": "Tess Whitaker",
+      "city": "Asheville, NC",
+      "state": "NC",
+      "about": "I dye every skein by hand in my studio in Asheville's River Arts District, eight to twelve skeins to a pot. Each pot is its own dye lot and comes out a shade different from the last, so every listing shows the lot number. Buy everything for one project from the same lot; when a lot sells out, the next one will be close but never identical.",
+      "policy": {
+        "returns_days": 30,
+        "ships_from_state": "NC",
+        "handling_days": 2,
+        "negotiation": { "enabled": true, "max_discount_pct": 12, "bundle_min_items": 5 }
+      },
+      "products": [
+        {
+          "parent_id": "LL-HARBOR",
+          "name": "Harbor",
+          "category": "yarn",
+          "description": "A deep teal-blue, darkest in the folds and brighter where the dye broke across the surface. Dyed on fingering, DK and worsted. Bases: fingering is Lantern Sock (75/25 superwash merino/nylon, 400 m per 100 g skein), DK is Hearth DK (superwash merino, 230 m per skein), worsted is Ridge Worsted (superwash merino, 200 m per skein) and bulky is Bramble Bulky (non-superwash merino, 110 m per skein).",
+          "images": [],
+          "attributes_order": ["weight", "colorway", "dye_lot", "pack"],
+          "variants": [
+            {"variant_id":"LL-HARBOR-FINGERING-L114-1","attributes":{"weight":"fingering","colorway":"Harbor","dye_lot":"L114","pack":"1 skein"},"price":"28.00","cost":"11.50","floor":"25.00","stock":3,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-HARBOR-FINGERING-L114-5","attributes":{"weight":"fingering","colorway":"Harbor","dye_lot":"L114","pack":"5 skeins"},"price":"130.00","cost":"57.50","floor":"114.50","stock":0,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-HARBOR-FINGERING-L117-1","attributes":{"weight":"fingering","colorway":"Harbor","dye_lot":"L117","pack":"1 skein"},"price":"28.00","cost":"11.50","floor":"25.00","stock":4,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-HARBOR-FINGERING-L117-5","attributes":{"weight":"fingering","colorway":"Harbor","dye_lot":"L117","pack":"5 skeins"},"price":"130.00","cost":"57.50","floor":"114.50","stock":2,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-HARBOR-DK-L116-1","attributes":{"weight":"DK","colorway":"Harbor","dye_lot":"L116","pack":"1 skein"},"price":"28.00","cost":"11.50","floor":"25.00","stock":6,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-HARBOR-DK-L116-5","attributes":{"weight":"DK","colorway":"Harbor","dye_lot":"L116","pack":"5 skeins"},"price":"130.00","cost":"57.50","floor":"114.50","stock":1,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-HARBOR-WORSTED-L119-1","attributes":{"weight":"worsted","colorway":"Harbor","dye_lot":"L119","pack":"1 skein"},"price":"30.00","cost":"12.50","floor":"26.50","stock":8,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-HARBOR-WORSTED-L119-5","attributes":{"weight":"worsted","colorway":"Harbor","dye_lot":"L119","pack":"5 skeins"},"price":"140.00","cost":"62.50","floor":"123.50","stock":2,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "LL-EMBER",
+          "name": "Ember",
+          "category": "yarn",
+          "description": "A rusty orange with darker cinnamon speckles that read as a heathered glow from a few feet away. Dyed on DK, worsted and bulky. Bases: fingering is Lantern Sock (75/25 superwash merino/nylon, 400 m per 100 g skein), DK is Hearth DK (superwash merino, 230 m per skein), worsted is Ridge Worsted (superwash merino, 200 m per skein) and bulky is Bramble Bulky (non-superwash merino, 110 m per skein).",
+          "images": [],
+          "attributes_order": ["weight", "colorway", "dye_lot", "pack"],
+          "variants": [
+            {"variant_id":"LL-EMBER-DK-L121-1","attributes":{"weight":"DK","colorway":"Ember","dye_lot":"L121","pack":"1 skein"},"price":"28.00","cost":"11.50","floor":"25.00","stock":4,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-EMBER-DK-L121-5","attributes":{"weight":"DK","colorway":"Ember","dye_lot":"L121","pack":"5 skeins"},"price":"130.00","cost":"57.50","floor":"114.50","stock":0,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-EMBER-DK-L124-1","attributes":{"weight":"DK","colorway":"Ember","dye_lot":"L124","pack":"1 skein"},"price":"28.00","cost":"11.50","floor":"25.00","stock":3,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-EMBER-DK-L124-5","attributes":{"weight":"DK","colorway":"Ember","dye_lot":"L124","pack":"5 skeins"},"price":"130.00","cost":"57.50","floor":"114.50","stock":3,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-EMBER-WORSTED-L122-1","attributes":{"weight":"worsted","colorway":"Ember","dye_lot":"L122","pack":"1 skein"},"price":"30.00","cost":"12.50","floor":"26.50","stock":0,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-EMBER-WORSTED-L122-5","attributes":{"weight":"worsted","colorway":"Ember","dye_lot":"L122","pack":"5 skeins"},"price":"140.00","cost":"62.50","floor":"123.50","stock":0,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-EMBER-BULKY-L123-1","attributes":{"weight":"bulky","colorway":"Ember","dye_lot":"L123","pack":"1 skein"},"price":"32.00","cost":"13.50","floor":"28.50","stock":5,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-EMBER-BULKY-L123-5","attributes":{"weight":"bulky","colorway":"Ember","dye_lot":"L123","pack":"5 skeins"},"price":"150.00","cost":"67.50","floor":"132.00","stock":1,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "LL-FOGLINE",
+          "name": "Fog Line",
+          "category": "yarn",
+          "description": "A soft, slightly blue-leaning grey, and the only grey we dye. Quiet enough for a whole sweater. Dyed on fingering, worsted and bulky. Bases: fingering is Lantern Sock (75/25 superwash merino/nylon, 400 m per 100 g skein), DK is Hearth DK (superwash merino, 230 m per skein), worsted is Ridge Worsted (superwash merino, 200 m per skein) and bulky is Bramble Bulky (non-superwash merino, 110 m per skein).",
+          "images": [],
+          "attributes_order": ["weight", "colorway", "dye_lot", "pack"],
+          "variants": [
+            {"variant_id":"LL-FOGLINE-FINGERING-L108-1","attributes":{"weight":"fingering","colorway":"Fog Line","dye_lot":"L108","pack":"1 skein"},"price":"28.00","cost":"11.50","floor":"25.00","stock":7,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-FOGLINE-FINGERING-L108-5","attributes":{"weight":"fingering","colorway":"Fog Line","dye_lot":"L108","pack":"5 skeins"},"price":"130.00","cost":"57.50","floor":"114.50","stock":1,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-FOGLINE-WORSTED-L111-1","attributes":{"weight":"worsted","colorway":"Fog Line","dye_lot":"L111","pack":"1 skein"},"price":"30.00","cost":"12.50","floor":"26.50","stock":4,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-FOGLINE-WORSTED-L111-5","attributes":{"weight":"worsted","colorway":"Fog Line","dye_lot":"L111","pack":"5 skeins"},"price":"140.00","cost":"62.50","floor":"123.50","stock":2,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-FOGLINE-BULKY-L109-1","attributes":{"weight":"bulky","colorway":"Fog Line","dye_lot":"L109","pack":"1 skein"},"price":"32.00","cost":"13.50","floor":"28.50","stock":3,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-FOGLINE-BULKY-L109-5","attributes":{"weight":"bulky","colorway":"Fog Line","dye_lot":"L109","pack":"5 skeins"},"price":"150.00","cost":"67.50","floor":"132.00","stock":0,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-FOGLINE-BULKY-L112-1","attributes":{"weight":"bulky","colorway":"Fog Line","dye_lot":"L112","pack":"1 skein"},"price":"32.00","cost":"13.50","floor":"28.50","stock":2,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-FOGLINE-BULKY-L112-5","attributes":{"weight":"bulky","colorway":"Fog Line","dye_lot":"L112","pack":"5 skeins"},"price":"150.00","cost":"67.50","floor":"132.00","stock":0,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "LL-MARIGOLD",
+          "name": "Marigold",
+          "category": "yarn",
+          "description": "A warm golden yellow with tonal shifts toward saffron. Bright on its own and a good stripe against greys and blues. Dyed on fingering and DK. Bases: fingering is Lantern Sock (75/25 superwash merino/nylon, 400 m per 100 g skein), DK is Hearth DK (superwash merino, 230 m per skein), worsted is Ridge Worsted (superwash merino, 200 m per skein) and bulky is Bramble Bulky (non-superwash merino, 110 m per skein).",
+          "images": [],
+          "attributes_order": ["weight", "colorway", "dye_lot", "pack"],
+          "variants": [
+            {"variant_id":"LL-MARIGOLD-FINGERING-L126-1","attributes":{"weight":"fingering","colorway":"Marigold","dye_lot":"L126","pack":"1 skein"},"price":"28.00","cost":"11.50","floor":"25.00","stock":10,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-MARIGOLD-FINGERING-L126-5","attributes":{"weight":"fingering","colorway":"Marigold","dye_lot":"L126","pack":"5 skeins"},"price":"130.00","cost":"57.50","floor":"114.50","stock":4,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-MARIGOLD-DK-L127-1","attributes":{"weight":"DK","colorway":"Marigold","dye_lot":"L127","pack":"1 skein"},"price":"28.00","cost":"11.50","floor":"25.00","stock":0,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-MARIGOLD-DK-L127-5","attributes":{"weight":"DK","colorway":"Marigold","dye_lot":"L127","pack":"5 skeins"},"price":"130.00","cost":"57.50","floor":"114.50","stock":2,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        },
+        {
+          "parent_id": "LL-BLACKBERRY",
+          "name": "Blackberry Jam",
+          "category": "yarn",
+          "description": "A deep, inky purple with flashes of magenta where the dye pooled. Dyed on worsted. Bases: fingering is Lantern Sock (75/25 superwash merino/nylon, 400 m per 100 g skein), DK is Hearth DK (superwash merino, 230 m per skein), worsted is Ridge Worsted (superwash merino, 200 m per skein) and bulky is Bramble Bulky (non-superwash merino, 110 m per skein).",
+          "images": [],
+          "attributes_order": ["weight", "colorway", "dye_lot", "pack"],
+          "variants": [
+            {"variant_id":"LL-BLACKBERRY-WORSTED-L118-1","attributes":{"weight":"worsted","colorway":"Blackberry Jam","dye_lot":"L118","pack":"1 skein"},"price":"30.00","cost":"12.50","floor":"26.50","stock":6,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-BLACKBERRY-WORSTED-L118-5","attributes":{"weight":"worsted","colorway":"Blackberry Jam","dye_lot":"L118","pack":"5 skeins"},"price":"140.00","cost":"62.50","floor":"123.50","stock":0,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-BLACKBERRY-WORSTED-L120-1","attributes":{"weight":"worsted","colorway":"Blackberry Jam","dye_lot":"L120","pack":"1 skein"},"price":"30.00","cost":"12.50","floor":"26.50","stock":11,"weight_g":115,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]},
+            {"variant_id":"LL-BLACKBERRY-WORSTED-L120-5","attributes":{"weight":"worsted","colorway":"Blackberry Jam","dye_lot":"L120","pack":"5 skeins"},"price":"140.00","cost":"62.50","floor":"123.50","stock":3,"weight_g":575,"active":true,"purchasable":true,"lead_time_days":0,"flags":[]}
+          ]
+        }
+      ]
+    }
+  ]
+}

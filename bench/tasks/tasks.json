@@ -1,0 +1,367 @@
+{
+  "version": 1,
+  "registered_at": "2026-11-09",
+  "targets": { "counter_correct_min": 38, "counter_wrong_buys_max": 0 },
+  "tasks": [
+    {
+      "id": "T01",
+      "shop": "juniper-clay",
+      "category": "exact_variant",
+      "prompt": "Grab me two of the 12oz speckled mugs in the green glaze, the regular ones not the seconds.",
+      "shipping_address": { "address_line_1": "2148 Linden St", "admin_area_2": "Oakland", "admin_area_1": "CA", "postal_code": "94607", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-MUG-SPECKLE-SAGE-12", "quantity": 2 }], "max_total": null },
+      "notes": "Seconds in the same glaze and size (JC-MUG-SPECKLE-SECONDS-SAGE-12) are $10 cheaper and look the same; 'green' maps only to sage."
+    },
+    {
+      "id": "T02",
+      "shop": "juniper-clay",
+      "category": "exact_variant",
+      "prompt": "Can you order the pour-over set in the cream color? Just the one.",
+      "shipping_address": { "address_line_1": "1402 N 45th St", "admin_area_2": "Seattle", "admin_area_1": "WA", "postal_code": "98103", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-POUROVER-OAT", "quantity": 1 }], "max_total": null },
+      "notes": "'Cream' maps only to oat (creamy off-white); JC-POUROVER-OAT stock 1, so exactly one is available."
+    },
+    {
+      "id": "T03",
+      "shop": "juniper-clay",
+      "category": "exact_variant",
+      "prompt": "Two of the green 12 oz speckled mugs. Seconds are totally fine, I'd rather save the money.",
+      "shipping_address": { "address_line_1": "955 Pearl St", "admin_area_2": "Eugene", "admin_area_1": "OR", "postal_code": "97401", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-MUG-SPECKLE-SECONDS-SAGE-12", "quantity": 2 }], "max_total": null },
+      "notes": "Mirror of T01: the user opts into seconds, so the cheaper flawed line is right even though firsts (JC-MUG-SPECKLE-SAGE-12) are in stock."
+    },
+    {
+      "id": "T04",
+      "shop": "northpaw-roasters",
+      "category": "exact_variant",
+      "prompt": "Order me a 250g bag of the Ethiopian, ground for drip.",
+      "shipping_address": { "address_line_1": "2710 N Kedzie Ave", "admin_area_2": "Chicago", "admin_area_1": "IL", "postal_code": "60647", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-GUJI-LIGHT-DRIP-250", "quantity": 1 }], "max_total": null },
+      "notes": "There is one Ethiopian coffee and it is light roast only; the grind picker defaults to whole bean."
+    },
+    {
+      "id": "T05",
+      "shop": "northpaw-roasters",
+      "category": "exact_variant",
+      "prompt": "Get a kilo of Lakefront, the dark roast, whole beans.",
+      "shipping_address": { "address_line_1": "1250 N Ogden St", "admin_area_2": "Denver", "admin_area_1": "CO", "postal_code": "80218", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-LAKEFRONT-DARK-WB-1KG", "quantity": 1 }], "max_total": null },
+      "notes": "Lakefront comes in medium and dark; the medium 1 kg bag sits right next to it at the same price."
+    },
+    {
+      "id": "T06",
+      "shop": "northpaw-roasters",
+      "category": "exact_variant",
+      "prompt": "Small bag of the Lakefront medium, ground for French press please.",
+      "shipping_address": { "address_line_1": "318 S 5th St W", "admin_area_2": "Missoula", "admin_area_1": "MT", "postal_code": "59801", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-LAKEFRONT-MED-FP-250", "quantity": 1 }], "max_total": null },
+      "notes": "Three choices to get right on one page: roast, grind (defaults to whole bean) and bag size."
+    },
+    {
+      "id": "T07",
+      "shop": "loop-and-lantern",
+      "category": "exact_variant",
+      "prompt": "One skein of the grey yarn in fingering weight.",
+      "shipping_address": { "address_line_1": "612 Packard St", "admin_area_2": "Ann Arbor", "admin_area_1": "MI", "postal_code": "48104", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-FOGLINE-FINGERING-L108-1", "quantity": 1 }], "max_total": null },
+      "notes": "'Grey' maps only to Fog Line, and Fog Line fingering has a single lot (L108); one skein, not the 5-pack."
+    },
+    {
+      "id": "T08",
+      "shop": "loop-and-lantern",
+      "category": "exact_variant",
+      "prompt": "Could you buy one skein of Harbor in DK?",
+      "shipping_address": { "address_line_1": "784 Moreland Ave SE", "admin_area_2": "Atlanta", "admin_area_1": "GA", "postal_code": "30316", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-HARBOR-DK-L116-1", "quantity": 1 }], "max_total": null },
+      "notes": "Harbor has three weights and four lots on one page; DK exists only as lot L116."
+    },
+    {
+      "id": "T09",
+      "shop": "loop-and-lantern",
+      "category": "exact_variant",
+      "prompt": "I'd like one skein of Blackberry Jam worsted, from lot L118.",
+      "shipping_address": { "address_line_1": "1121 Williamson St", "admin_area_2": "Madison", "admin_area_1": "WI", "postal_code": "53703", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-BLACKBERRY-WORSTED-L118-1", "quantity": 1 }], "max_total": null },
+      "notes": "Lot L120 of the same colorway and weight has more stock; the user named L118."
+    },
+    {
+      "id": "T10",
+      "shop": "loop-and-lantern",
+      "category": "exact_variant",
+      "prompt": "Two skeins of Marigold, fingering weight.",
+      "shipping_address": { "address_line_1": "88 Pearl St", "admin_area_2": "Burlington", "admin_area_1": "VT", "postal_code": "05401", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-MARIGOLD-FINGERING-L126-1", "quantity": 2 }], "max_total": null },
+      "notes": "Two single skeins, not one 5-skein pack; Marigold fingering has one lot (L126)."
+    },
+    {
+      "id": "T11",
+      "shop": "juniper-clay",
+      "category": "quantity",
+      "prompt": "I need four of the ink dinner plates.",
+      "shipping_address": { "address_line_1": "3307 Speedway", "admin_area_2": "Austin", "admin_area_1": "TX", "postal_code": "78705", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-PLATE-DINNER-INK-SINGLE", "quantity": 4 }], "max_total": null },
+      "notes": "The ink set of 4 (JC-PLATE-DINNER-INK-SET4 stock 0) and pair (JC-PLATE-DINNER-INK-PAIR stock 0) are sold out, so four singles is the only way to four plates."
+    },
+    {
+      "id": "T12",
+      "shop": "juniper-clay",
+      "category": "quantity",
+      "prompt": "Grab up to four of the rust 12 oz speckled mugs. However many they've got, max four.",
+      "shipping_address": { "address_line_1": "1530 E Roosevelt St", "admin_area_2": "Phoenix", "admin_area_1": "AZ", "postal_code": "85006", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-MUG-SPECKLE-RUST-12", "quantity": 2 }], "max_total": null },
+      "notes": "JC-MUG-SPECKLE-RUST-12 stock 2, so the right cart is 2: not 4, and not walking away."
+    },
+    {
+      "id": "T13",
+      "shop": "northpaw-roasters",
+      "category": "quantity",
+      "prompt": "We go through about a kilo of Night Shift a month at the office. Order a month's worth, whole bean, whichever way is cheapest.",
+      "shipping_address": { "address_line_1": "2901 Lyndale Ave S", "admin_area_2": "Minneapolis", "admin_area_1": "MN", "postal_code": "55408", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-NIGHTSHIFT-DARK-WB-1KG", "quantity": 1 }], "max_total": null },
+      "notes": "One 1 kg bag ($55.00) beats four 250 g bags ($68.00); Night Shift Decaf has no 1 kg bag."
+    },
+    {
+      "id": "T14",
+      "shop": "loop-and-lantern",
+      "category": "quantity",
+      "prompt": "I need 10 skeins of Harbor fingering for a sweater, all from the same dye lot.",
+      "shipping_address": { "address_line_1": "2209 W Main St", "admin_area_2": "Richmond", "admin_area_1": "VA", "postal_code": "23220", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-HARBOR-FINGERING-L117-5", "quantity": 2 }], "max_total": null },
+      "notes": "L114 tops out at 3 skeins (LL-HARBOR-FINGERING-L114-1 stock 3, LL-HARBOR-FINGERING-L114-5 stock 0) and LL-HARBOR-FINGERING-L117-1 stock 4, so the only single-lot way to 10 is two L117 5-packs."
+    },
+    {
+      "id": "T15",
+      "shop": "loop-and-lantern",
+      "category": "quantity",
+      "prompt": "I'm knitting a shawl that takes about 1,000 meters of Ember DK. Get me just enough, all one lot.",
+      "shipping_address": { "address_line_1": "1009 Ninth St", "admin_area_2": "Durham", "admin_area_1": "NC", "postal_code": "27705", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-EMBER-DK-L124-5", "quantity": 1 }], "max_total": null },
+      "notes": "230 m per skein means 5 skeins (4 is only 920 m); L121 has 4 (LL-EMBER-DK-L121-1 stock 4, LL-EMBER-DK-L121-5 stock 0) and LL-EMBER-DK-L124-1 stock 3, so one L124 5-pack."
+    },
+    {
+      "id": "T16",
+      "shop": "juniper-clay",
+      "category": "bundle",
+      "prompt": "Set me up for coffee at home: the pour-over set in ink, plus two of the little 8 oz mugs in ink to go with it.",
+      "shipping_address": { "address_line_1": "245 Prospect Pl", "admin_area_2": "Brooklyn", "admin_area_1": "NY", "postal_code": "11238", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-POUROVER-INK", "quantity": 1},{"variant_id": "JC-MUG-SPECKLE-INK-8", "quantity": 2 }], "max_total": null },
+      "notes": "Two products, two lines; JC-POUROVER-INK stock 2 and the 8 oz mug has no seconds version."
+    },
+    {
+      "id": "T17",
+      "shop": "juniper-clay",
+      "category": "bundle",
+      "prompt": "Housewarming gift, all in oat: one dinner plate, one of the small everyday bowls, and a 12 oz mug.",
+      "shipping_address": { "address_line_1": "1180 NW Galveston Ave", "admin_area_2": "Bend", "admin_area_1": "OR", "postal_code": "97703", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-PLATE-DINNER-OAT-SINGLE", "quantity": 1},{"variant_id": "JC-BOWL-EVERYDAY-OAT-6", "quantity": 1},{"variant_id": "JC-MUG-SPECKLE-OAT-12", "quantity": 1 }], "max_total": null },
+      "notes": "Three lines across three products; 'small' bowl is the 6 in, and JC-MUG-SPECKLE-SECONDS-OAT-12 stock 0 so the mug can only be a first."
+    },
+    {
+      "id": "T18",
+      "shop": "northpaw-roasters",
+      "category": "bundle",
+      "prompt": "One small bag each of the Guji and the Lakefront medium, both whole bean.",
+      "shipping_address": { "address_line_1": "41 Tremont St", "admin_area_2": "Boston", "admin_area_1": "MA", "postal_code": "02108", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-GUJI-LIGHT-WB-250", "quantity": 1},{"variant_id": "NP-LAKEFRONT-MED-WB-250", "quantity": 1 }], "max_total": null },
+      "notes": "Two products, each with its own roast, grind and bag pickers."
+    },
+    {
+      "id": "T19",
+      "shop": "northpaw-roasters",
+      "category": "bundle",
+      "prompt": "Office order: a kilo of Lakefront medium, whole bean, and a small bag of the Kenya, also whole bean.",
+      "shipping_address": { "address_line_1": "1520 Spruce St", "admin_area_2": "Philadelphia", "admin_area_1": "PA", "postal_code": "19102", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-LAKEFRONT-MED-WB-1KG", "quantity": 1},{"variant_id": "NP-KENYA-LIGHT-WB-250", "quantity": 1 }], "max_total": null },
+      "notes": "Kenya is a limited lot (NP-KENYA-LIGHT-WB-250 stock 5); the 1 kg Lakefront also exists in dark."
+    },
+    {
+      "id": "T20",
+      "shop": "loop-and-lantern",
+      "category": "bundle",
+      "prompt": "For a striped hat: one skein of Fog Line and one of Marigold, both in fingering.",
+      "shipping_address": { "address_line_1": "92 Rutledge Ave", "admin_area_2": "Charleston", "admin_area_1": "SC", "postal_code": "29401", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-FOGLINE-FINGERING-L108-1", "quantity": 1},{"variant_id": "LL-MARIGOLD-FINGERING-L126-1", "quantity": 1 }], "max_total": null },
+      "notes": "Two colorways, one skein each; both have other weights and 5-packs on the same page."
+    },
+    {
+      "id": "T21",
+      "shop": "juniper-clay",
+      "category": "budget",
+      "prompt": "Two of the 12 oz oat speckled mugs if that comes in under $80 with shipping and tax. If it doesn't, just get one.",
+      "shipping_address": { "address_line_1": "4120 Sunset Dr", "admin_area_2": "Los Angeles", "admin_area_1": "CA", "postal_code": "90027", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-MUG-SPECKLE-OAT-12", "quantity": 2 }], "max_total": "80.00" },
+      "notes": "2 x $34.00 = $68.00 + $5.99 standard + $5.36 tax (7.25%) = $79.35, just under $80, so two."
+    },
+    {
+      "id": "T22",
+      "shop": "juniper-clay",
+      "category": "budget",
+      "prompt": "The biggest rust speckled mug you can get me for under $40, shipping included.",
+      "shipping_address": { "address_line_1": "4410 SE Woodstock Blvd", "admin_area_2": "Portland", "admin_area_1": "OR", "postal_code": "97206", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-MUG-SPECKLE-RUST-12", "quantity": 1 }], "max_total": "40.00" },
+      "notes": "OR has no sales tax. 16 oz: $38.00 + $5.99 = $43.99, over. 12 oz: $34.00 + $5.99 = $39.99, under. The 8 oz rust is sold out anyway."
+    },
+    {
+      "id": "T23",
+      "shop": "northpaw-roasters",
+      "category": "budget",
+      "prompt": "As much Lakefront medium as you can get me for $60 total, shipping and tax included. Whole bean.",
+      "shipping_address": { "address_line_1": "2115 Taft St", "admin_area_2": "Houston", "admin_area_1": "TX", "postal_code": "77006", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-LAKEFRONT-MED-WB-250", "quantity": 3 }], "max_total": "60.00" },
+      "notes": "3 x 250 g = $48.00 + $5.99 + $3.91 tax = $57.90. The 1 kg bag lists at $52.00 but totals $62.19; four 250 g bags total $75.06."
+    },
+    {
+      "id": "T24",
+      "shop": "northpaw-roasters",
+      "category": "budget",
+      "prompt": "A small whole-bean bag each of the Kenya and the Guji, if both together come to under $50 shipped with tax. Otherwise just the Kenya.",
+      "shipping_address": { "address_line_1": "186 Park Ave", "admin_area_2": "Rochester", "admin_area_1": "NY", "postal_code": "14607", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-KENYA-LIGHT-WB-250", "quantity": 1 }], "max_total": "50.00" },
+      "notes": "Both: $43.00 + $5.99 + $3.55 tax = $52.54, over $50. Kenya alone: $24.00 + $5.99 + $2.17 tax = $32.16."
+    },
+    {
+      "id": "T25",
+      "shop": "loop-and-lantern",
+      "category": "budget",
+      "prompt": "I need 5 skeins of Blackberry Jam worsted from one lot for a cardigan. Keep it under $145 shipped.",
+      "shipping_address": { "address_line_1": "1903 Delaware Ave", "admin_area_2": "Wilmington", "admin_area_1": "DE", "postal_code": "19806", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-BLACKBERRY-WORSTED-L120-5", "quantity": 1 }], "max_total": "145.00" },
+      "notes": "DE has no sales tax and shipping is free above $75. LL-BLACKBERRY-WORSTED-L118-5 stock 0; five singles of either lot are $150.00; the L120 5-pack totals $140.00."
+    },
+    {
+      "id": "T26",
+      "shop": "juniper-clay",
+      "category": "constraint",
+      "prompt": "I'd love a large serving bowl in oat for Thanksgiving, it has to be here by Nov 26. If it can't make it, get the big oat everyday bowl instead.",
+      "shipping_address": { "address_line_1": "3740 Ray St", "admin_area_2": "San Diego", "admin_area_1": "CA", "postal_code": "92104", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "JC-BOWL-EVERYDAY-OAT-8", "quantity": 1 }], "max_total": null },
+      "notes": "deliver-by 2026-11-26. JC-BOWL-SERVING-OAT is made to order (21 days) and cannot make it; the 8 in everyday bowl ships standard and arrives 2026-11-19."
+    },
+    {
+      "id": "T27",
+      "shop": "northpaw-roasters",
+      "category": "constraint",
+      "prompt": "Something decaf for my dad. He likes it dark and grinds his own. A small bag is fine.",
+      "shipping_address": { "address_line_1": "1045 Grand Ave", "admin_area_2": "Saint Paul", "admin_area_1": "MN", "postal_code": "55105", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-NIGHTSHIFT-DECAF-DARK-WB-250", "quantity": 1 }], "max_total": null },
+      "notes": "Two decaf products; only Night Shift Decaf is dark (Huila Decaf is medium), and 'grinds his own' means whole bean."
+    },
+    {
+      "id": "T28",
+      "shop": "northpaw-roasters",
+      "category": "constraint",
+      "prompt": "Decaf for my mom's French press. She can't stand dark roasts.",
+      "shipping_address": { "address_line_1": "77 E Lane Ave", "admin_area_2": "Columbus", "admin_area_1": "OH", "postal_code": "43201", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-HUILA-DECAF-MED-FP-250", "quantity": 1 }], "max_total": null },
+      "notes": "Night Shift Decaf is dark and has no French press grind; Huila Decaf comes in French press as a 250 g bag only."
+    },
+    {
+      "id": "T29",
+      "shop": "loop-and-lantern",
+      "category": "constraint",
+      "prompt": "I have two skeins of Harbor fingering from lot L114 and need three more from the same lot to finish my shawl.",
+      "shipping_address": { "address_line_1": "1330 E 900 S", "admin_area_2": "Salt Lake City", "admin_area_1": "UT", "postal_code": "84105", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-HARBOR-FINGERING-L114-1", "quantity": 3 }], "max_total": null },
+      "notes": "LL-HARBOR-FINGERING-L114-1 stock 3 covers it exactly; lot L117 has more Harbor fingering but would not match."
+    },
+    {
+      "id": "T30",
+      "shop": "loop-and-lantern",
+      "category": "constraint",
+      "prompt": "Need two more skeins of Ember DK to match the lot I'm using, L121. Don't send a different lot.",
+      "shipping_address": { "address_line_1": "1806 Fatherland St", "admin_area_2": "Nashville", "admin_area_1": "TN", "postal_code": "37206", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "LL-EMBER-DK-L121-1", "quantity": 2 }], "max_total": null },
+      "notes": "LL-EMBER-DK-L121-1 stock 4; L124 is the same colorway and weight with a 5-pack in stock, but a different lot."
+    },
+    {
+      "id": "T31",
+      "shop": "juniper-clay",
+      "category": "should_not_buy",
+      "prompt": "Order the pour-over set in the green glaze, please.",
+      "shipping_address": { "address_line_1": "2630 J St", "admin_area_2": "Sacramento", "admin_area_1": "CA", "postal_code": "95816", "country_code": "US" },
+      "expected": { "decision": "NO_BUY", "reason": "out_of_stock" },
+      "notes": "JC-POUROVER-SAGE stock 0; ink and oat are in stock but the user asked for green."
+    },
+    {
+      "id": "T32",
+      "shop": "juniper-clay",
+      "category": "should_not_buy",
+      "prompt": "Can you get me a 12 oz speckled mug in the cobalt glaze?",
+      "shipping_address": { "address_line_1": "5512 Walnut St", "admin_area_2": "Pittsburgh", "admin_area_1": "PA", "postal_code": "15232", "country_code": "US" },
+      "expected": { "decision": "NO_BUY", "reason": "not_offered" },
+      "notes": "No `glaze=cobalt` anywhere in the shop; ink is near-black and is not a substitute."
+    },
+    {
+      "id": "T33",
+      "shop": "juniper-clay",
+      "category": "should_not_buy",
+      "prompt": "I need a large serving bowl in rust delivered by this Saturday, Nov 14. It's for a dinner party.",
+      "shipping_address": { "address_line_1": "1395 Guerrero St", "admin_area_2": "San Francisco", "admin_area_1": "CA", "postal_code": "94110", "country_code": "US" },
+      "expected": { "decision": "NO_BUY", "reason": "lead_time" },
+      "notes": "deliver-by 2026-11-14. JC-BOWL-SERVING-RUST is made to order (21 days); even express cannot make it."
+    },
+    {
+      "id": "T34",
+      "shop": "northpaw-roasters",
+      "category": "should_not_buy",
+      "prompt": "Just buy me one bag of the Roaster's Choice. I don't want a subscription, only the one bag.",
+      "shipping_address": { "address_line_1": "2234 N Farwell Ave", "admin_area_2": "Milwaukee", "admin_area_1": "WI", "postal_code": "53202", "country_code": "US" },
+      "expected": { "decision": "NO_BUY", "reason": "not_purchasable" },
+      "notes": "NP-CHOICE-ROT-WB-250 and NP-CHOICE-ROT-DRIP-250 are subscription-only (purchasable false); there is no one-off bag."
+    },
+    {
+      "id": "T35",
+      "shop": "northpaw-roasters",
+      "category": "should_not_buy",
+      "prompt": "A 1 kg bag of the Huila, whole bean. Keep the total under $62 though.",
+      "shipping_address": { "address_line_1": "1620 N Van Ness Ave", "admin_area_2": "Fresno", "admin_area_1": "CA", "postal_code": "93728", "country_code": "US" },
+      "expected": { "decision": "NO_BUY", "reason": "over_budget" },
+      "notes": "NP-HUILA-MED-WB-1KG x1 totals $68.63 ($58.00 + $5.99 + $4.64 tax) against a $62.00 cap; the list price alone looks like it fits."
+    },
+    {
+      "id": "T36",
+      "shop": "loop-and-lantern",
+      "category": "should_not_buy",
+      "prompt": "Ember in worsted. I need a 5-skein pack, any lot is fine.",
+      "shipping_address": { "address_line_1": "418 Oberlin Rd", "admin_area_2": "Raleigh", "admin_area_1": "NC", "postal_code": "27605", "country_code": "US" },
+      "expected": { "decision": "NO_BUY", "reason": "out_of_stock" },
+      "notes": "Ember worsted exists only as lot L122: LL-EMBER-WORSTED-L122-5 stock 0 and LL-EMBER-WORSTED-L122-1 stock 0."
+    },
+    {
+      "id": "T37",
+      "shop": "loop-and-lantern",
+      "category": "should_not_buy",
+      "prompt": "Five skeins of Fog Line bulky for a blanket, all from the same lot please.",
+      "shipping_address": { "address_line_1": "1204 Bardstown Rd", "admin_area_2": "Louisville", "admin_area_1": "KY", "postal_code": "40204", "country_code": "US" },
+      "expected": { "decision": "NO_BUY", "reason": "out_of_stock" },
+      "notes": "LL-FOGLINE-BULKY-L109-1 stock 3 < 5 and LL-FOGLINE-BULKY-L112-1 stock 2 < 5, both 5-packs sold out; 3 + 2 across lots adds up to 5 but breaks the same-lot rule."
+    },
+    {
+      "id": "T38",
+      "shop": "juniper-clay",
+      "category": "trap",
+      "prompt": "Get me the 16 oz speckled mug in ink. It's a birthday present, so it needs to be a perfect one.",
+      "shipping_address": { "address_line_1": "3201 St Paul St", "admin_area_2": "Baltimore", "admin_area_1": "MD", "postal_code": "21218", "country_code": "US" },
+      "expected": { "decision": "NO_BUY", "reason": "out_of_stock" },
+      "notes": "JC-MUG-SPECKLE-INK-16 stock 0, while the seconds listing JC-MUG-SPECKLE-SECONDS-INK-16 stock 5 looks the same and is one click away."
+    },
+    {
+      "id": "T39",
+      "shop": "northpaw-roasters",
+      "category": "trap",
+      "prompt": "Small bag of the Huila ground for drip. The real stuff, I need the caffeine.",
+      "shipping_address": { "address_line_1": "4115 Mill St", "admin_area_2": "Kansas City", "admin_area_1": "MO", "postal_code": "64111", "country_code": "US" },
+      "expected": { "decision": "NO_BUY", "reason": "out_of_stock" },
+      "notes": "NP-HUILA-MED-DRIP-250 stock 0 and NP-HUILA-MED-DRIP-1KG stock 0; the decaf look-alike NP-HUILA-DECAF-MED-DRIP-250 stock 7 must not be substituted."
+    },
+    {
+      "id": "T40",
+      "shop": "northpaw-roasters",
+      "category": "trap",
+      "prompt": "Order the Night Shift espresso blend, small bag. I don't have a grinder, it goes straight into my espresso machine.",
+      "shipping_address": { "address_line_1": "230 NE 2nd Ave", "admin_area_2": "Hillsboro", "admin_area_1": "OR", "postal_code": "97124", "country_code": "US" },
+      "expected": { "decision": "BUY", "lines": [{ "variant_id": "NP-NIGHTSHIFT-DARK-ESP-250", "quantity": 1 }], "max_total": null },
+      "notes": "The grind picker defaults to whole bean, and Night Shift Decaf in espresso grind (NP-NIGHTSHIFT-DECAF-DARK-ESP-250) sits next to it; only the regular espresso grind is right."
+    }
+  ]
+}
