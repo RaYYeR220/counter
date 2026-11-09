@@ -1,0 +1,99 @@
+/*
+ * Counter's app design tokens, shared by Studio, Playground and the docs pages.
+ *
+ * The values are the Console's token set (`CONSOLE_TOKENS` in
+ * lib/console/theme.ts), under the same `--cx-*` names, so the app surfaces
+ * and the Console draw with one palette. Change a value in both places, or
+ * point the Console at this file, and every surface follows.
+ *
+ * Scope: any element with the `app-theme` class. Light by default; dark from
+ * the system setting unless `data-theme="light"`, or forced with
+ * `data-theme="dark"`. The choice is shared with the Console through
+ * localStorage (`counter.console.theme`).
+ */
+
+.app-theme {
+  --cx-font: var(--font-geist-sans, "Geist"), ui-sans-serif, system-ui, sans-serif;
+  --cx-font-mono: var(--font-geist-mono, "Geist Mono"), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --cx-font-size: 14px;
+  --cx-radius-widget: 10px;
+  --cx-radius-control: 7px;
+  --cx-radius-chip: 999px;
+  --cx-space-gutter: 20px;
+
+  --cx-canvas: #f1f2f4;
+  --cx-surface: #ffffff;
+  --cx-surface-2: #f7f8f9;
+  --cx-surface-3: #edeff2;
+  --cx-ink: #15171c;
+  --cx-ink-2: #3a3f48;
+  --cx-muted: #69707b;
+  --cx-line: #e2e4e8;
+  --cx-line-strong: #cbd0d6;
+  --cx-accent: #2e54d8;
+  --cx-accent-ink: #ffffff;
+  --cx-accent-soft: #e8edfc;
+  --cx-floor: #d92d20;
+  --cx-ok: #16794c;
+  --cx-ok-soft: #e3f2ea;
+  --cx-warn: #9a5b06;
+  --cx-warn-soft: #fbf0dc;
+  --cx-bad: #b42318;
+  --cx-bad-soft: #fce9e7;
+  --cx-shadow: 0 1px 2px rgba(21, 23, 28, 0.06);
+
+  color-scheme: light;
+}
+
+/* Dark: the Console's dark set. Declared twice (forced, and from the system setting). */
+.app-theme[data-theme="dark"] {
+  --cx-canvas: #0e1014;
+  --cx-surface: #161920;
+  --cx-surface-2: #1c2028;
+  --cx-surface-3: #232833;
+  --cx-ink: #eceef2;
+  --cx-ink-2: #c5cad3;
+  --cx-muted: #8b93a0;
+  --cx-line: #262b34;
+  --cx-line-strong: #363c47;
+  --cx-accent: #7d97ff;
+  --cx-accent-ink: #0e1014;
+  --cx-accent-soft: #1e2747;
+  --cx-floor: #ff5a4e;
+  --cx-ok: #4cc38a;
+  --cx-ok-soft: #12291f;
+  --cx-warn: #e6a23c;
+  --cx-warn-soft: #2b2213;
+  --cx-bad: #ff6b5e;
+  --cx-bad-soft: #311815;
+  --cx-shadow: none;
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-theme:not([data-theme="light"]) {
+    --cx-canvas: #0e1014;
+    --cx-surface: #161920;
+    --cx-surface-2: #1c2028;
+    --cx-surface-3: #232833;
+    --cx-ink: #eceef2;
+    --cx-ink-2: #c5cad3;
+    --cx-muted: #8b93a0;
+    --cx-line: #262b34;
+    --cx-line-strong: #363c47;
+    --cx-accent: #7d97ff;
+    --cx-accent-ink: #0e1014;
+    --cx-accent-soft: #1e2747;
+    --cx-floor: #ff5a4e;
+    --cx-ok: #4cc38a;
+    --cx-ok-soft: #12291f;
+    --cx-warn: #e6a23c;
+    --cx-warn-soft: #2b2213;
+    --cx-bad: #ff6b5e;
+    --cx-bad-soft: #311815;
+    --cx-shadow: none;
+
+    color-scheme: dark;
+  }
+}
