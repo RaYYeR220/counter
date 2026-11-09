@@ -6,3 +6,5 @@ export * from "./errors";
 export * from "./fulfilment";
 export * from "./webhooks";
 export * from "./onboarding";
+export * from "./disputes";
+export * from "./pdf";
