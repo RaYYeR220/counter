@@ -173,7 +173,12 @@ async function runOnce(model, arm, task) {
     return { runId, result, outcome, caps, seconds };
   } finally {
     await conn?.close().catch(() => undefined);
-    if (tmp) rmSync(tmp, { recursive: true, force: true });
+    // The browser can hold its profile files for a moment after closing (Windows); a leftover temp dir is harmless.
+    if (tmp) {
+      try {
+        rmSync(tmp, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
+      } catch {}
+    }
   }
 }
 
