@@ -6,7 +6,8 @@ import type {
   PayPalCart,
   StoreSyncDeps,
 } from "@counter/store-sync";
-import { DbCartRepo, DbCatalog, DbOrderSink, createTestDb, seedCatalog, type Db } from "../src/index";
+import { DbCartRepo, DbCatalog, DbOrderSink, seedCatalog, type Db } from "../src/index";
+import { createTestDb } from "../src/testing";
 
 export const SHOP = "juniper-clay";
 export const NOW = new Date("2026-11-09T15:00:00.000Z");

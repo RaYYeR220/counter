@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { carts, createTestDb, disputes, events, negotiations, orders, shops, variants } from "../src/index";
+import { createTestDb } from "../src/testing";
+import { carts, disputes, events, negotiations, orders, shops, variants } from "../src/index";
 
 describe("createTestDb", () => {
   it("starts empty with every table migrated", async () => {

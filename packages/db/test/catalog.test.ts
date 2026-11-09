@@ -3,7 +3,6 @@ import { beforeAll, describe, expect, it } from "vitest";
 import catalog from "../src/seed/catalog.json" with { type: "json" };
 import {
   DbCatalog,
-  createTestDb,
   getShop,
   listShops,
   listVariants,
@@ -12,6 +11,7 @@ import {
   variants,
   type Db,
 } from "../src/index";
+import { createTestDb } from "../src/testing";
 
 const cents = (v: string) => Math.round(Number(v) * 100);
 
