@@ -9,3 +9,5 @@ export * from "./validate";
 export * from "./compute";
 export * from "./memory";
 export * from "./auth";
+export * from "./ports";
+export * from "./handlers";

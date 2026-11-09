@@ -120,3 +120,40 @@ export function discountCodeInvalid(code: string): ValidationIssue {
     resolution_options: [{ action: "MODIFY_CART", label: "Remove the discount code" }],
   };
 }
+
+export function paymentDeclined(token: string, reason: string): ValidationIssue {
+  return {
+    code: "PAYMENT_ERROR",
+    type: "BUSINESS_RULE",
+    severity: "ERROR",
+    message: "Payment was declined",
+    user_message: "The payment could not be completed. Try a different payment method.",
+    field: "payment_method.token",
+    context: { specific_issue: "PAYMENT_DECLINED", decline_reason: reason, payment_token: token },
+    resolution_options: [{ action: "USE_DIFFERENT_PAYMENT", label: "Use a different payment method" }],
+  };
+}
+
+export function paymentExpired(token: string): ValidationIssue {
+  return {
+    code: "PAYMENT_ERROR",
+    type: "BUSINESS_RULE",
+    severity: "ERROR",
+    message: "Payment approval has expired",
+    user_message: "The payment approval expired. Approve the payment again to finish checkout.",
+    field: "payment_method.token",
+    context: { specific_issue: "PAYMENT_EXPIRED", payment_token: token },
+    resolution_options: [{ action: "USE_DIFFERENT_PAYMENT", label: "Approve the payment again" }],
+  };
+}
+
+export function cartAlreadyCompleted(): ValidationIssue {
+  return {
+    code: "BUSINESS_RULE_ERROR",
+    type: "BUSINESS_RULE",
+    severity: "ERROR",
+    message: "Cart is already completed",
+    user_message: "This order has already been placed. Start a new cart to buy more.",
+    field: "status",
+  };
+}
