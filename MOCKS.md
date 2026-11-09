@@ -21,7 +21,7 @@ Everything Counter fakes, where, and why. Production runs none of the benchmark 
 ### Demo shops sell through the platform's PayPal account
 
 - **Where:** `merchantRef` and `shopAccounts` in `apps/web/lib/server/runtime.ts`; Studio (`apps/web/components/studio/StudioView.tsx`).
-- **What it does:** the three demo shops have no PayPal account of their own. Their tokens name a stable placeholder merchant (`COUNTER-<SLUG>`), their orders are paid to the platform's sandbox account, and no platform fee is taken. Test shops created in Studio can connect their own sandbox account through Partner Referrals.
+- **What it does:** Northpaw Roasters and Loop & Lantern have no PayPal account of their own. Their tokens name a stable placeholder merchant (`COUNTER-<SLUG>`), their orders are paid to the platform's sandbox account, and no platform fee is taken. Juniper Clay is connected to its own sandbox business account through Partner Referrals, so its orders name that account as `payee` and pay Counter a 2% platform fee on capture. Test shops created in Studio can connect their own sandbox account the same way.
 - **Why:** every visitor sees the same three shops without a PayPal signup.
 
 ### Merchant sign-in
