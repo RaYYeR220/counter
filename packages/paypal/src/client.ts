@@ -83,6 +83,14 @@ export class PayPal {
     return voidAuthorization(this.t, authId, merchantId, requestId);
   }
 
+  refundCapture(
+    captureId: string,
+    merchantId: string | undefined,
+    p: { amount?: Money; requestId: string },
+  ): Promise<{ refundId: string; status: string }> {
+    return refundCapture(this.t, captureId, merchantId, p);
+  }
+
   addTracking(orderId: string, merchantId: string | undefined, p: TrackingParams): Promise<void> {
     return addTracking(this.t, orderId, merchantId, p);
   }
@@ -136,13 +144,5 @@ export class PayPal {
 
   chargeVaulted(p: ChargeVaultedParams): Promise<ChargeVaultedResult> {
     return chargeVaulted(this.t, p);
-  }
-
-  refundCapture(
-    captureId: string,
-    merchantId: string | undefined,
-    p: { amount?: Money; requestId: string },
-  ): Promise<{ refundId: string; status: string }> {
-    return refundCapture(this.t, captureId, merchantId, p);
   }
 }

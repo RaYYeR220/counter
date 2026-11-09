@@ -1,4 +1,4 @@
-import type { Breakdown, Money, OrderItem } from "./env";
+import type { Breakdown, OrderItem } from "./env";
 
 const DECIMAL = /^\d+(\.\d{1,2})?$/;
 
@@ -43,9 +43,4 @@ export function checkAmount(b: Breakdown, items: OrderItem[]): void {
 /** PayPal wire shape for a money value. */
 export function wireMoney(currency: string, value: string): { currency_code: string; value: string } {
   return { currency_code: currency, value };
-}
-
-export function moneyOf(m: Money): { currency_code: string; value: string } {
-  toCents(m.value, "amount");
-  return wireMoney(m.currency, m.value);
 }
