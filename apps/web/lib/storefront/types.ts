@@ -135,7 +135,7 @@ export interface Quote {
 
 export type CheckoutResponse =
   | { status: "redirect"; approval_url: string; cart_id: string }
-  | { status: "bench"; message: string; total_cents: number }
+  | { status: "bench"; message: string; total_cents: number; handoff_url: string }
   | { status: "invalid"; message: string; issues: QuoteIssue[] }
   | { status: "not_configured"; message: string }
   | { status: "error"; message: string };

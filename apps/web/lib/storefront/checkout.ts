@@ -2,15 +2,18 @@ import "server-only";
 import { logEvent, withCartRetry } from "@counter/db";
 import { PayPalPayments } from "@counter/platform";
 import { checkoutCart, createCart, toCents, type PayPalCart, type StoreSyncDeps, type ValidationIssue } from "@counter/store-sync";
-import { baseUrl, db, paypal, shopAccounts, storeSyncDeps } from "@/lib/server/runtime";
+import { baseUrl, db, paymentsStubbed, paypal, shopAccounts, STUB_PAYER_ID, storeSyncDeps } from "@/lib/server/runtime";
 import { storeSyncCart, type QuoteRequest } from "./pricing";
 import type { QuoteIssue } from "./types";
 
 export const STOREFRONT_CLIENT = "Storefront";
 
-/** PayPal can be called only once the platform's REST credentials are set. */
+/**
+ * PayPal can be called only once the platform's REST credentials are set.
+ * Local runs with `PAYMENTS_MODE=stub` use the stub payment port instead.
+ */
 export function paymentsConfigured(): boolean {
-  return Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET);
+  return paymentsStubbed() || Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET);
 }
 
 function shopPath(slug: string, path: string): string {
@@ -23,6 +26,7 @@ function shopPath(slug: string, path: string): string {
  * and cancel pages differ, so the buyer comes back to the shop.
  */
 export function storefrontDeps(): StoreSyncDeps {
+  if (paymentsStubbed()) return storeSyncDeps();
   return {
     ...storeSyncDeps(),
     payments: new PayPalPayments(paypal(), shopAccounts, {
@@ -71,10 +75,15 @@ export async function startCheckout(slug: string, req: QuoteRequest): Promise<St
 
   if (result.status === 201 && out.id && out.payment_method?.approval_url) {
     const total = out.totals?.total?.value;
+    // With stubbed payments there is no PayPal page; the order counts as approved straight away.
+    const approvalUrl =
+      paymentsStubbed() && out.payment_method.token
+        ? shopPath(slug, `/checkout/complete?token=${encodeURIComponent(out.payment_method.token)}&PayerID=${STUB_PAYER_ID}`)
+        : out.payment_method.approval_url;
     return {
       ok: true,
       cartId: out.id,
-      approvalUrl: out.payment_method.approval_url,
+      approvalUrl,
       totalCents: total ? toCents(total) : null,
     };
   }

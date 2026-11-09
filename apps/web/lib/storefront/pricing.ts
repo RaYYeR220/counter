@@ -2,7 +2,7 @@ import "server-only";
 import { DbCatalog, listVariants } from "@counter/db";
 import { computeCart, FREE_STANDARD_FROM_CENTS, toCents, type PayPalCart } from "@counter/store-sync";
 import { z } from "zod";
-import { db } from "@/lib/server/runtime";
+import { db, storeNow } from "@/lib/server/runtime";
 import { attributeOrder } from "./catalog";
 import { attributeLabel } from "./format";
 import type { AddressInput, CartLineInput, Quote, QuoteLine } from "./types";
@@ -84,7 +84,7 @@ export function storeSyncCart(req: QuoteRequest): PayPalCart {
  * catalog, exactly as an agent's cart is priced. Until a state is given, tax
  * is left out (and reported as pending) rather than guessed.
  */
-export async function quoteCart(slug: string, req: QuoteRequest, now: Date = new Date()): Promise<Quote> {
+export async function quoteCart(slug: string, req: QuoteRequest, now: Date = storeNow()): Promise<Quote> {
   const cart = storeSyncCart(req);
   const state = cart.shipping_address?.admin_area_1;
   const [computed, rows] = await Promise.all([

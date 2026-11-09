@@ -47,6 +47,16 @@ export function benchGate(req: Request): Response | null {
   return null;
 }
 
+/** What the shopper saw at checkout, for the hand-off page. */
+export interface BenchSummary {
+  lines: Array<{ variant_id: string; name: string; quantity: number; unit_cents: number; line_cents: number }>;
+  subtotal_cents: number;
+  discount_cents: number;
+  shipping: { id: string; name: string; price_cents: number; estimated_delivery: string } | null;
+  tax_cents: number;
+  total_cents: number;
+}
+
 export interface BenchCapture {
   runId: string;
   shop: string;
@@ -57,6 +67,7 @@ export interface BenchCapture {
   total: string | null;
   validation_status: string | null;
   source: "storefront" | "api";
+  summary?: BenchSummary;
 }
 
 export async function recordBenchCheckout(capture: BenchCapture): Promise<{ id: number; at: string }> {
@@ -72,4 +83,12 @@ export async function listBenchCheckouts(runId: string, shop?: string) {
     limit: 200,
   });
   return rows.map((r) => ({ id: r.id, at: r.at.toISOString(), ...(r.payload as unknown as BenchCapture) }));
+}
+
+/** One captured checkout by its event id, or null. */
+export async function getBenchCheckout(id: number) {
+  const row = await db().query.events.findFirst({
+    where: (e, { and, eq }) => and(eq(e.id, id), eq(e.type, BENCH_EVENT)),
+  });
+  return row ? { id: row.id, at: row.at.toISOString(), ...(row.payload as unknown as BenchCapture) } : null;
 }
