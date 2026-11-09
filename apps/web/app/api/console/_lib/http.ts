@@ -1,6 +1,7 @@
 import "server-only";
 import type { Shop } from "@counter/db";
 import { requireShop } from "@/lib/console/server/data";
+import { merchantView } from "@/lib/console/server/session";
 
 export function json(status: number, body: unknown, headers: Record<string, string> = {}): Response {
   return Response.json(body, { status, headers: { "cache-control": "no-store", ...headers } });
@@ -18,6 +19,19 @@ export async function shopFrom(ctx: ShopCtx): Promise<{ shop: Shop } | { respons
   if (shop === undefined) return { response: json(503, { error: "database_not_configured", message: "The shop's database isn't configured" }) };
   if (!shop) return { response: json(404, { error: "not_found", message: `No shop called ${slug}` }) };
   return { shop };
+}
+
+/**
+ * Floors, costs, orders and negotiation transcripts are the shop's own: they
+ * need a merchant session (POST /api/console/session). Answers 401 without one.
+ */
+export function requireMerchantView(req: Request, shop: Shop, doing = "see this"): Response | null {
+  if (merchantView(req, shop.slug)) return null;
+  return json(401, {
+    ok: false,
+    error: "merchant_session_required",
+    message: `Sign in as ${shop.name} to ${doing}. Floors and costs are private to the shop.`,
+  });
 }
 
 export function failure(err: unknown, where: string): Response {

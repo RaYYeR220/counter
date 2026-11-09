@@ -48,6 +48,11 @@ export const pendingShipments = {
     return entry;
   },
 
+  /** Forgets every prepared shipment, e.g. when the merchant signs out. */
+  clear() {
+    emit([]);
+  },
+
   discard(id: string) {
     patch(id, { status: "discarded", message: "Discarded. Nothing was shipped." });
   },

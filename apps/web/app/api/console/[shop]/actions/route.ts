@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { actionError, runAction } from "@/lib/console/server/actions";
 import type { ConsoleAction } from "@/lib/console/types";
-import { allow, clientIp, json, sameOrigin, shopFrom, type ShopCtx } from "../../_lib/http";
+import { allow, clientIp, json, requireMerchantView, sameOrigin, shopFrom, type ShopCtx } from "../../_lib/http";
 
 // A market check runs one Channel3 search per product.
 export const maxDuration = 60;
@@ -19,8 +19,9 @@ const Action = z.discriminatedUnion("kind", [
 /**
  * Merchant actions from the Console: ship, cancel and refund orders, change a
  * floor, re-check market prices. Runs the platform's own fulfilment code on
- * the server, so no merchant credential ever reaches the browser. Only this
- * site's pages may call it, a few times a minute per visitor.
+ * the server, so no merchant credential ever reaches the browser. It needs a
+ * merchant session, and only this site's pages may call it, a few times a
+ * minute per visitor.
  */
 export async function POST(req: Request, ctx: ShopCtx): Promise<Response> {
   if (!sameOrigin(req)) return json(403, { ok: false, message: "Actions can only be sent from the Console" });
@@ -40,6 +41,8 @@ export async function POST(req: Request, ctx: ShopCtx): Promise<Response> {
   try {
     const found = await shopFrom(ctx);
     if ("response" in found) return found.response;
+    const denied = requireMerchantView(req, found.shop, "act on its orders and prices");
+    if (denied) return denied;
     return json(200, await runAction(found.shop, action));
   } catch (err) {
     const { status, message } = actionError(err);

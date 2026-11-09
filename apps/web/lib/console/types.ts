@@ -139,6 +139,8 @@ export interface ConsoleSummary {
   lastEventId: number;
   includesDemo: boolean;
   aiEnabled: boolean;
+  /** This request holds a merchant session for the shop. */
+  merchant: boolean;
   counts: {
     events: number;
     carts: number;

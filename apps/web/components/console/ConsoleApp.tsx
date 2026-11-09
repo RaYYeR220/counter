@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { buildConsoleAi } from "@/lib/console/ai/harness";
 import { pendingShipments } from "@/lib/console/ai/pending";
 import { consoleBus, type ConsoleRequest } from "@/lib/console/bus";
-import { consoleApi } from "@/lib/console/client";
+import { consoleApi, needsSignIn } from "@/lib/console/client";
 import { ago } from "@/lib/console/format";
 import {
   buildStudioData,
@@ -58,36 +58,50 @@ export interface ConsoleAppProps {
 type Boot =
   | { state: "loading" }
   | { state: "error"; message: string }
+  | { state: "locked"; summary: ConsoleSummary }
   | { state: "ready"; summary: ConsoleSummary; snapshot: ConsoleSnapshot };
 
-/** Loads the shop's activity, then hands it to Studio. */
+/**
+ * Loads the shop's activity, then hands it to Studio. The data is the shop's
+ * own (floors, costs, orders), so without a merchant session the Console
+ * shows a sign-in gate instead.
+ */
 export default function ConsoleApp(props: ConsoleAppProps) {
   const [boot, setBoot] = useState<Boot>({ state: "loading" });
   const [attempt, setAttempt] = useState(0);
+  const reload = useCallback(() => setAttempt((n) => n + 1), []);
 
   useEffect(() => {
     const ctl = new AbortController();
     const slug = props.shop;
-    Promise.all([
-      consoleApi.summary(slug, ctl.signal),
-      consoleApi.events(slug, undefined, ctl.signal),
-      consoleApi.orders(slug, ctl.signal),
-      consoleApi.negotiations(slug, ctl.signal),
-      consoleApi.catalog(slug, ctl.signal),
-    ])
-      .then(([summary, ev, or, ne, ca]) =>
-        setBoot({
-          state: "ready",
-          summary,
-          snapshot: { shopName: summary.shop.name, events: ev.events, orders: or.orders, negotiations: ne.negotiations, variants: ca.variants },
-        }),
-      )
-      .catch((err: unknown) => {
-        if (ctl.signal.aborted) return;
-        setBoot({ state: "error", message: err instanceof Error ? err.message : "The Console couldn't load." });
+    let summary: ConsoleSummary | undefined;
+    (async () => {
+      summary = await consoleApi.summary(slug, ctl.signal);
+      if (!summary.merchant) return setBoot({ state: "locked", summary });
+      const [ev, or, ne, ca] = await Promise.all([
+        consoleApi.events(slug, undefined, ctl.signal),
+        consoleApi.orders(slug, ctl.signal),
+        consoleApi.negotiations(slug, ctl.signal),
+        consoleApi.catalog(slug, ctl.signal),
+      ]);
+      setBoot({
+        state: "ready",
+        summary,
+        snapshot: { shopName: summary.shop.name, events: ev.events, orders: or.orders, negotiations: ne.negotiations, variants: ca.variants },
       });
+    })().catch((err: unknown) => {
+      if (ctl.signal.aborted) return;
+      if (summary && needsSignIn(err)) return setBoot({ state: "locked", summary });
+      setBoot({ state: "error", message: err instanceof Error ? err.message : "The Console couldn’t load." });
+    });
     return () => ctl.abort();
   }, [props.shop, attempt]);
+
+  const signOut = useCallback(async () => {
+    await consoleApi.signOut().catch(() => undefined);
+    pendingShipments.clear();
+    reload();
+  }, [reload]);
 
   if (boot.state === "loading") return <ConsoleSkeleton />;
   if (boot.state === "error") {
@@ -95,13 +109,83 @@ export default function ConsoleApp(props: ConsoleAppProps) {
       <div className={s.failed} role="alert">
         <h1>The Console couldn&rsquo;t load {props.shop}</h1>
         <p>{boot.message}</p>
-        <button type="button" className={s.button} onClick={() => setAttempt((n) => n + 1)}>
+        <button type="button" className={s.button} onClick={reload}>
           Try again
         </button>
       </div>
     );
   }
-  return <ConsoleStudio {...props} summary={boot.summary} snapshot={boot.snapshot} />;
+  if (boot.state === "locked") return <MerchantGate summary={boot.summary} onSignedIn={reload} />;
+  return <ConsoleStudio key={attempt} {...props} summary={boot.summary} snapshot={boot.snapshot} onSignOut={signOut} onLocked={reload} />;
+}
+
+function Identity({ summary }: { summary: ConsoleSummary }) {
+  return (
+    <div className={s.identity}>
+      <span className={s.mark} aria-hidden>
+        <svg viewBox="0 0 20 20" width="20" height="20">
+          <path d="M2 14h16" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M7 9v10" stroke="var(--cx-floor)" strokeWidth="1.6" />
+          <circle cx="13" cy="14" r="2.6" fill="currentColor" />
+        </svg>
+      </span>
+      <div className={s.shopName}>
+        <strong>{summary.shop.name}</strong>
+        <span>
+          {summary.shop.owner}, {summary.shop.city}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+const SIGN_IN_FAILED = "The sign-in didn’t go through; try again.";
+
+/** Shown without a merchant session: the shop's data stays private until its merchant signs in. */
+function MerchantGate({ summary, onSignedIn }: { summary: ConsoleSummary; onSignedIn: () => void }) {
+  const [themeMode] = useState<ConsoleMode>(initialMode);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const first = summary.shop.owner.split(" ")[0] ?? summary.shop.owner;
+
+  const open = async () => {
+    setBusy(true);
+    setError(null);
+    const out = await consoleApi.signIn(summary.shop.slug).catch(() => ({ ok: false, message: SIGN_IN_FAILED }));
+    if (out.ok) {
+      onSignedIn();
+      return;
+    }
+    setBusy(false);
+    setError(out.message ?? SIGN_IN_FAILED);
+  };
+
+  return (
+    <div className={`${s.root} ag-theme-mode`} data-ag-theme-mode={themeMode}>
+      <style>{tokenCss(`.${s.root}`)}</style>
+      <header className={s.bar}>
+        <Identity summary={summary} />
+      </header>
+      <main className={s.gate}>
+        <section className={s.gateCard} aria-labelledby="console-gate-title">
+          <h1 id="console-gate-title">This is {first}&rsquo;s merchant console.</h1>
+          <p>Floors and costs are private to the shop. The buyer agents that shop here never see them.</p>
+          <p className={s.gateStats}>
+            {summary.counts.carts} carts and {summary.counts.orders} orders from AI agents in the last 30 days.
+          </p>
+          <button type="button" className={s.primaryButton} onClick={() => void open()} disabled={busy}>
+            {busy ? "Opening…" : `View as ${first} (demo merchant)`}
+          </button>
+          {error ? (
+            <p className={s.gateError} role="alert">
+              {error}
+            </p>
+          ) : null}
+          <p className={s.gateNote}>Demo sign-in: it opens the shop on this browser for 12 hours.</p>
+        </section>
+      </main>
+    </div>
+  );
 }
 
 export function ConsoleSkeleton() {
@@ -156,7 +240,15 @@ function subscribeNarrow(onChange: () => void) {
 
 type Toast = { id: number; ok: boolean; text: string };
 
-function ConsoleStudio({ shop: slug, licenseKey, aiModels, summary, snapshot }: ConsoleAppProps & { summary: ConsoleSummary; snapshot: ConsoleSnapshot }) {
+function ConsoleStudio({
+  shop: slug,
+  licenseKey,
+  aiModels,
+  summary,
+  snapshot,
+  onSignOut,
+  onLocked,
+}: ConsoleAppProps & { summary: ConsoleSummary; snapshot: ConsoleSnapshot; onSignOut: () => void; onLocked: () => void }) {
   const apiRef = useRef<AgStudioApi<ConsoleRegistry> | null>(null);
   const readyRef = useRef(false);
   const data = useRef({
@@ -281,7 +373,13 @@ function ConsoleStudio({ shop: slug, licenseKey, aiModels, summary, snapshot }: 
             await Promise.all(follow);
           }
           setLive({ at: Date.now(), ok: true });
-        } catch {
+        } catch (err) {
+          // The session ran out: back to the sign-in gate.
+          if (needsSignIn(err)) {
+            stopped = true;
+            onLocked();
+            return;
+          }
           setLive((l) => ({ ...l, ok: false }));
         }
       }
@@ -294,7 +392,7 @@ function ConsoleStudio({ shop: slug, licenseKey, aiModels, summary, snapshot }: 
       clearTimeout(timer);
       clearInterval(clock);
     };
-  }, [slug, applyOrders, applyNegotiations, applyVariants]);
+  }, [slug, applyOrders, applyNegotiations, applyVariants, onLocked]);
 
   // --- Actions and popups -----------------------------------------------------
   const act = useCallback(
@@ -467,21 +565,7 @@ function ConsoleStudio({ shop: slug, licenseKey, aiModels, summary, snapshot }: 
     <div className={`${s.root} ag-theme-mode`} data-ag-theme-mode={themeMode}>
       <style>{tokenCss(`.${s.root}`)}</style>
       <header className={s.bar}>
-        <div className={s.identity}>
-          <span className={s.mark} aria-hidden>
-            <svg viewBox="0 0 20 20" width="20" height="20">
-              <path d="M2 14h16" stroke="currentColor" strokeWidth="1.6" />
-              <path d="M7 9v10" stroke="var(--cx-floor)" strokeWidth="1.6" />
-              <circle cx="13" cy="14" r="2.6" fill="currentColor" />
-            </svg>
-          </span>
-          <div className={s.shopName}>
-            <strong>{summary.shop.name}</strong>
-            <span>
-              {summary.shop.owner}, {summary.shop.city}
-            </span>
-          </div>
-        </div>
+        <Identity summary={summary} />
 
         <nav className={s.tabs} aria-label="Console pages">
           {PAGES.map((p) => (
@@ -520,6 +604,9 @@ function ConsoleStudio({ shop: slug, licenseKey, aiModels, summary, snapshot }: 
           ) : null}
           <button type="button" className={`${s.button} ${s.wide}`} data-active={mode === "edit" && focusPanel === "edit"} onClick={() => openPanel("edit")}>
             {mode === "edit" && focusPanel === "edit" ? "Done" : "Customize"}
+          </button>
+          <button type="button" className={s.quietButton} onClick={onSignOut} title={`Close ${summary.shop.name}’s merchant session on this browser`}>
+            Sign out
           </button>
           <button
             type="button"

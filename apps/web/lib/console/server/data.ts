@@ -397,6 +397,7 @@ export async function loadSummary(shop: Shop): Promise<ConsoleSummary> {
     lastEventId: Number(r.last_event_id ?? 0),
     includesDemo: r.demo === true,
     aiEnabled: aiEnabled(),
+    merchant: false,
     counts: {
       events: Number(r.events ?? 0),
       carts: Number(r.carts ?? 0),

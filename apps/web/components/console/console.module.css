@@ -343,3 +343,76 @@
   .shopName span { display: none; }
   .button { padding: 0 10px; }
 }
+
+/* Sign-in gate, shown without a merchant session. */
+.gate {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  overflow-y: auto;
+}
+
+.gateCard {
+  width: min(460px, 100%);
+  padding: 28px 28px 24px;
+  border: 1px solid var(--cx-line);
+  border-radius: var(--cx-radius-widget);
+  background: var(--cx-surface);
+  box-shadow: var(--cx-shadow);
+  box-sizing: border-box;
+}
+
+.gateCard h1 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.gateCard p {
+  margin: 0 0 12px;
+  color: var(--cx-ink-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.gateCard .gateStats {
+  padding-left: 10px;
+  border-left: 1.5px solid var(--cx-floor);
+  color: var(--cx-muted);
+  font-size: 13px;
+}
+
+.primaryButton {
+  height: 36px;
+  margin-top: 6px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--cx-radius-control);
+  background: var(--cx-accent);
+  color: var(--cx-accent-ink);
+  font: 500 14px var(--cx-font);
+  cursor: pointer;
+}
+
+.primaryButton:disabled { opacity: 0.6; cursor: progress; }
+.primaryButton:focus-visible { outline: 2px solid var(--cx-accent); outline-offset: 2px; }
+
+.gateCard .gateError { margin: 12px 0 0; color: var(--cx-bad); font-size: 13px; }
+.gateCard .gateNote { margin: 14px 0 0; color: var(--cx-muted); font-size: 12px; }
+
+.quietButton {
+  height: 32px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  color: var(--cx-muted);
+  font: 500 13px var(--cx-font);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.quietButton:hover { color: var(--cx-ink); }
+.quietButton:focus-visible { outline: 2px solid var(--cx-accent); outline-offset: 2px; border-radius: 4px; }
