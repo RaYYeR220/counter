@@ -58,6 +58,30 @@ export function addBusinessDays(from: Date, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** Calendar date (UTC midnight) that is `days` calendar days after `from`. */
+export function addCalendarDays(from: Date, days: number): Date {
+  const d = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate()));
+  d.setUTCDate(d.getUTCDate() + Math.max(0, Math.floor(days)));
+  return d;
+}
+
+export interface DispatchTiming {
+  /** Calendar days of made-to-order work before the order can be packed. */
+  leadTimeDays?: number;
+  /** Business days the shop needs to pack and hand over a ready order. */
+  handlingDays?: number;
+}
+
+/**
+ * The day an order leaves the shop: lead time (calendar days) first, then
+ * handling (business days). Transit is counted from this date.
+ */
+export function dispatchDate(now: Date, timing: DispatchTiming = {}): Date {
+  const ready = addCalendarDays(now, timing.leadTimeDays ?? 0);
+  const handed = addBusinessDays(ready, Math.max(0, Math.floor(timing.handlingDays ?? 0)));
+  return new Date(`${handed}T00:00:00.000Z`);
+}
+
 /**
  * Shipping quotes for an address. Domestic (US) only: anywhere else, or no
  * address at all, yields no options.
@@ -66,13 +90,15 @@ export function quoteShipping(
   addr: Address | null | undefined,
   subtotal: Cents,
   now: Date,
+  timing: DispatchTiming = {},
 ): ShippingQuote[] {
   if (!shipsTo(addr)) return [];
+  const from = dispatchDate(now, timing);
   return RATES.map((r) => ({
     id: r.id,
     name: r.name,
     description: r.description,
     priceCents: r.id === "STANDARD" && subtotal >= FREE_STANDARD_FROM_CENTS ? 0 : r.priceCents,
-    estimatedDelivery: addBusinessDays(now, r.businessDays),
+    estimatedDelivery: addBusinessDays(from, r.businessDays),
   }));
 }

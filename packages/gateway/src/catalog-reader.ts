@@ -124,7 +124,7 @@ export interface FeedShop {
   about?: string;
   city?: string;
   state?: string;
-  policy?: { returns_days?: number; ships_from_state?: string };
+  policy?: { returns_days?: number; ships_from_state?: string; handling_days?: number };
   products: FeedProduct[];
 }
 
@@ -271,9 +271,6 @@ function availability(v: FeedVariant): string {
   return `in stock (${v.stock} left)`;
 }
 
-function addDays(d: Date, days: number): Date {
-  return new Date(d.getTime() + days * 86_400_000);
-}
 
 export interface JsonShopDirectoryOptions {
   now?: () => Date;
@@ -385,14 +382,14 @@ export class JsonShopDirectory implements ShopDirectory {
         flags: [...(v.flags ?? [])],
         lead_time_days: v.lead_time_days ?? 0,
         availability: availability(v),
-        delivery: this.delivery(v),
+        delivery: this.delivery(v, shop.policy?.handling_days ?? 0),
       })),
     };
   }
 
-  private delivery(v: FeedVariant): DeliveryEstimate[] {
-    const start = addDays(this.now(), v.lead_time_days ?? 0);
-    return quoteShipping({ country_code: "US" }, toCents(v.price), start).map((q) => ({
+  private delivery(v: FeedVariant, handlingDays: number): DeliveryEstimate[] {
+    const timing = { leadTimeDays: v.lead_time_days ?? 0, handlingDays };
+    return quoteShipping({ country_code: "US" }, toCents(v.price), this.now(), timing).map((q) => ({
       id: q.id,
       name: q.name,
       price: fmt(q.priceCents),

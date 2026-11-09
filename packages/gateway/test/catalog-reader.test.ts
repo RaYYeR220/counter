@@ -127,8 +127,9 @@ describe("getProduct", () => {
       flags: [],
       lead_time_days: 0,
       delivery: [
-        { id: "STANDARD", price: "5.99", estimated_delivery: "2026-11-16" },
-        { id: "EXPRESS", price: "14.99", estimated_delivery: "2026-11-11" },
+        // Mon Nov 9 + 2 handling days -> ships Wed Nov 11
+        { id: "STANDARD", price: "5.99", estimated_delivery: "2026-11-18" },
+        { id: "EXPRESS", price: "14.99", estimated_delivery: "2026-11-13" },
       ],
     });
     const ink16 = p!.variants.find((v) => v.variant_id === "JC-MUG-SPECKLE-INK-16")!;
@@ -139,10 +140,11 @@ describe("getProduct", () => {
     const p = await dir.getProduct("juniper-clay", "JC-BOWL-SERVING");
     const v = p!.variants[0]!;
     expect(v).toMatchObject({ lead_time_days: 21, flags: ["made_to_order"] });
-    // Ordered Mon Nov 9; thrown for 21 days (Mon Nov 30), then 5 / 2 business days in transit. Free standard over $75.
+    // Ordered Mon Nov 9; thrown for 21 days (Mon Nov 30), 2 handling days (ships Wed Dec 2),
+    // then 5 / 2 business days in transit. Free standard over $75.
     expect(v.delivery).toEqual([
-      { id: "STANDARD", name: "Standard", price: "0.00", estimated_delivery: "2026-12-07" },
-      { id: "EXPRESS", name: "Express", price: "14.99", estimated_delivery: "2026-12-02" },
+      { id: "STANDARD", name: "Standard", price: "0.00", estimated_delivery: "2026-12-09" },
+      { id: "EXPRESS", name: "Express", price: "14.99", estimated_delivery: "2026-12-04" },
     ]);
   });
 

@@ -129,6 +129,8 @@ export async function computeCart(
   const lines: PricedLine[] = [];
   const issues: ValidationIssue[] = [];
   let subtotal = 0;
+  let leadTimeDays = 0;
+  let handlingDays = 0;
 
   reqItems.forEach((req, i) => {
     const v = found[i];
@@ -148,6 +150,8 @@ export async function computeCart(
       unitCents: v.priceCents,
     });
     subtotal += v.priceCents * req.quantity;
+    leadTimeDays = Math.max(leadTimeDays, v.leadTimeDays ?? 0);
+    handlingDays = Math.max(handlingDays, v.handlingDays ?? 0);
 
     const wanted = requestedPerVariant.get(v.variantId) ?? req.quantity;
     if (!v.active) issues.push(itemDiscontinued(v, i));
@@ -195,7 +199,7 @@ export async function computeCart(
   if (!addr) issues.push(missingShippingAddress());
   else if (!shipsTo(addr)) issues.push(internationalShipping(addr.country_code));
 
-  const quotes = quoteShipping(addr, subtotal, opts.now);
+  const quotes = quoteShipping(addr, subtotal, opts.now, { leadTimeDays, handlingDays });
   const wantedOption = input.available_shipping_options?.find((o) => o.is_selected)?.id;
   const selected =
     quotes.find((q) => q.id === wantedOption) ?? quotes.find((q) => q.id === DEFAULT_SHIPPING_OPTION) ?? quotes[0];

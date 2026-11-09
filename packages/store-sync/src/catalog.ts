@@ -10,6 +10,10 @@ export interface CatalogVariant {
   stock: number;
   attributes: Record<string, string>;
   active: boolean;
+  /** Calendar days before the item is ready to ship (made-to-order work). */
+  leadTimeDays?: number;
+  /** Business days the shop needs to pack and hand over a ready order. */
+  handlingDays?: number;
 }
 
 export interface CatalogPort {

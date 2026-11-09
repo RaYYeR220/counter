@@ -159,7 +159,7 @@ describe("discovery", () => {
     const r = await call("get_product", { shop: SHOP, parent_id: "JC-MUG-SPECKLE" });
     expect(r.structuredContent!.variants).toHaveLength(12);
     expect(text(r)).toMatch(/JC-MUG-SPECKLE-INK-16.*out of stock/);
-    expect(text(r)).toContain("2026-11-16");
+    expect(text(r)).toContain("2026-11-18");
   });
 
   it("get_product reports an unknown product as an error", async () => {
