@@ -6,7 +6,7 @@ Buyer agents can haggle with a Counter shop. A seller agent (a model) does the t
 
 1. The seller agent sees the cart's list prices, stock, the shop's discount rules and the shop's voice (owner, about). It never sees floors or costs.
 2. It proposes a deal with one tool, `propose_deal`: a unit price per line, or a percent off the cart.
-3. The engine (`packages/negotiate/src/engine.ts`) accepts the proposal, clamps it to the closest deal the rules allow, or refuses it. Rules: never below floor, never above list, total discount at most the shop's cap, at most 5% off each unit unless the cart is a bundle (enough units, or two different items), no discount at all when the shop has negotiation off, nothing for out-of-stock lines.
+3. The engine (`packages/negotiate/src/engine.ts`) accepts the proposal, clamps it to the closest deal the rules allow, or refuses it. A proposal below the floor is answered above it (the floor plus 40% of the gap to list, rounded up to 50 cents), so one lowball never reveals where the floor is. Rules: never below floor, never above list, total discount at most the shop's cap, at most 5% off each unit unless the cart is a bundle (enough units, or two different items), no discount at all when the shop has negotiation off, nothing for out-of-stock lines.
 4. The seller writes its reply. Every dollar amount in the reply must be one of the engine's numbers. If not, the reply is requested once more, then replaced by a template.
 5. An approved deal becomes an offer, bound to the buyer agent, the shop, the exact lines and quantities, and a 30-minute expiry. Store Sync applies it at checkout as a discount.
 
@@ -37,30 +37,33 @@ Every cart line is in stock, so every scenario is about price. Targets for the e
 
 ## Results
 
-Reported run: `results/negotiation.json` (120 runs: 60 scenarios × 2 models, temperature 0.2, up to 3 proposals per turn). Model 1 and model 2 are the two models listed in `scenarios.json`, in order.
+Reported run: `results/negotiation.json` (120 runs: 60 scenarios × 2 models, temperature 0.2, up to 3 proposals per turn), made after the floor guard shipped. Model 1 and model 2 are the two models listed in `scenarios.json`, in order.
 
 | | Model 1 | Model 2 | Both |
 | --- | --- | --- | --- |
-| Below floor: engine / no engine / prompt-only | 0 / 1 / 0 | 0 / 0 / 0 | **0** / 1 / 0 |
-| Any rule broken: engine / no engine / prompt-only | 0 / 2 / 1 | 0 / 0 / 0 | **0** / 2 / 1 |
-| Later proposals that would have sold below floor (runs) | 3 (1) | 2 (2) | 5 (3) |
-| Seller proposed again after the engine accepted (runs) | 1 | 6 | 7 |
-| Drafts flagged by the reply check | 5 | 22 | 27 |
-| Replies: model / rewritten / template | 55 / 5 / 0 | 45 / 4 / 11 | 100 / 9 / 11 |
+| Below floor: engine / no engine / prompt-only | 0 / 0 / 0 | 0 / 0 / 0 | **0** / 0 / 0 |
+| Any rule broken: engine / no engine / prompt-only | 0 / 1 / 0 | 0 / 0 / 0 | **0** / 1 / 0 |
+| Proposals the engine stopped: below floor / other rule | 0 / 1 | 1 / 0 | 1 / 1 |
+| Seller proposed again after the engine accepted (runs) | 0 | 11 | 11 |
+| Drafts flagged by the reply check | 7 | 22 | 29 |
+| Replies: model / rewritten / template | 53 / 7 / 0 | 45 / 4 / 11 | 98 / 11 / 11 |
 | Replies that disagree with the deal | 0 | 0 | **0** |
+| Offers issued / offers that differ from the deal | 59 / 0 | 60 / 0 | 119 / 0 |
 | Median discount (all arms) | 5% | 5% | 5% |
-| p50 / p90 latency per turn | 3.8 s / 5.7 s | 3.0 s / 5.5 s | |
-| Spend | $0.024 | $0.027 | $0.051 |
+| p50 / p90 latency per turn | 4.2 s / 14.4 s | 3.0 s / 7.5 s | |
+| Spend | $0.027 | $0.030 | $0.057 |
 
-All three targets were met. Two earlier full runs (made while fixing the issues below) also had 0 below-floor sales and 0 rule violations in the engine arm.
+All three targets were met. Three earlier full runs, made while fixing the issues below and before the floor guard, also had 0 below-floor sales and 0 rule violations in the engine arm.
 
 ## What we learned
 
-**First offers were mostly safe; follow-ups were not.** Both models open low: the median first proposal was 5% off. Applied without the engine, first proposals crossed a floor once (8% off a coffee sampler put one bag at $17.48 against a $17.50 floor) and broke the small-cart rule once (8% off two 5-skein packs, which are two units, not a bundle). Most of the risk came after the engine answered: sellers often proposed again, deeper. One went 5% → 10% on the coffee sampler, another 10% → 15% on a pour-over set with two mugs. Four follow-up proposals would have sold below floor, on top of the one first proposal. The engine clamped each one to the floor. A seller that treats the pricing check as a limit to probe is the case code enforcement exists for.
+**First offers were mostly safe; follow-ups were not.** Both models open low: the median proposal was 5% off. In this run the no-engine seller broke one rule (8% off a single item where the cap for a non-bundle is 5%), and one of model 2's follow-up proposals went to 10% off a bundle, which would have priced a line below its floor; the engine clamped both. Across the earlier runs the pattern was the same and larger: first proposals crossed a floor once ($17.48 against a $17.50 floor on a coffee sampler), and four follow-up proposals would have sold below floor. Model 2 keeps proposing after the engine has already accepted (11 of 60 runs here), usually deeper each time. A seller that treats the pricing check as a limit to probe is the case code enforcement exists for.
 
-**Telling the model the floors held on this set.** The prompt-only seller never crossed a floor in 120 runs, but it still broke a rule once (7% off a single pack against a 5% limit). Prompt rules worked here; they are not a guarantee, and the scenarios are single-turn.
+**A lowball should not reveal the floor.** The first engine answered an offer below the floor with exactly the floor, so one "$5 or I leave" told the buyer agent the merchant's floor. It now answers above it: the floor plus 40% of the gap to list, rounded up to the next 50 cents. An offer at or above the floor is still taken as it is.
 
-**The reply check fired only on buyers' numbers.** All 27 flagged drafts repeated the buyer's own figure to turn it down ("I can't get to $5, but..."). None misquoted the engine's deal. The check stays strict on purpose: a buyer agent reads amounts, not tone, so "$5" next to "$32.30" in one reply is ambiguous to a parser. The cost was 9 rewrites and 11 template replies (all 11 templates from model 2).
+**Telling the model the floors held on this set.** The prompt-only seller never crossed a floor in any run. In an earlier run it broke a rule once (7% off a single pack against a 5% limit). Prompt rules worked here; they are not a guarantee, and the scenarios are single-turn.
+
+**The reply check fired only on buyers' numbers.** All flagged drafts repeated the buyer's own figure to turn it down ("I can't get to $5, but..."). None misquoted the engine's deal. The check stays strict on purpose: a buyer agent reads amounts, not tone, so "$5" next to "$32.30" in one reply is ambiguous to a parser. The cost in this run was 11 rewrites and 11 template replies (all 11 templates from model 2).
 
 **Bugs the first run found** (fixed before the reported run):
 
