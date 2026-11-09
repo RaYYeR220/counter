@@ -1,0 +1,436 @@
+/* Custom Studio widgets. Every colour and font is a Console token (lib/console/theme.ts). */
+
+.fill {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  font-family: var(--cx-font);
+  color: var(--cx-ink);
+  container-type: inline-size;
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  padding: 0 2px 10px;
+  font-size: 11.5px;
+  color: var(--cx-muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footnote {
+  flex: none;
+  padding: 10px 2px 0;
+  border-top: 1px solid var(--cx-line);
+  font-size: 12px;
+  color: var(--cx-muted);
+}
+
+.footnote strong {
+  color: var(--cx-ink);
+  font-weight: 600;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: var(--cx-radius-chip);
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--cx-surface-3);
+  color: var(--cx-ink-2);
+}
+
+.chip[data-tone="ok"] { background: var(--cx-ok-soft); color: var(--cx-ok); }
+.chip[data-tone="warn"] { background: var(--cx-warn-soft); color: var(--cx-warn); }
+.chip[data-tone="bad"] { background: var(--cx-bad-soft); color: var(--cx-bad); }
+.chip[data-tone="accent"] { background: var(--cx-accent-soft); color: var(--cx-accent); }
+
+.agent {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* --- Agent stream ------------------------------------------------------- */
+
+.stream {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.streamRow {
+  display: grid;
+  grid-template-columns: 44px minmax(84px, 120px) minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--cx-line);
+  font-size: 12.5px;
+  border-radius: 6px;
+}
+
+.streamRow:last-child { border-bottom: 0; }
+
+.streamRow[data-new="true"] {
+  animation: arrive 1.6s ease-out;
+}
+
+@keyframes arrive {
+  from { background: var(--cx-accent-soft); }
+  to { background: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .streamRow[data-new="true"] { animation: none; }
+}
+
+.time {
+  font-variant-numeric: tabular-nums;
+  color: var(--cx-muted);
+  font-size: 11.5px;
+}
+
+.agentButton {
+  all: unset;
+  cursor: pointer;
+  min-width: 0;
+  border-radius: 4px;
+}
+
+.agentButton:focus-visible {
+  outline: 2px solid var(--cx-accent);
+  outline-offset: 2px;
+}
+
+.agentButton[aria-pressed="true"] .agent {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.what {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--cx-ink-2);
+}
+
+.ref {
+  margin-left: 6px;
+  color: var(--cx-muted);
+}
+
+.amount {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  font-weight: 500;
+}
+
+.latency {
+  font-variant-numeric: tabular-nums;
+  min-width: 46px;
+  text-align: right;
+  color: var(--cx-muted);
+  font-size: 11.5px;
+}
+
+/* --- Floor ladder ------------------------------------------------------- */
+
+.ladder {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rung {
+  display: grid;
+  grid-template-columns: minmax(130px, 32%) minmax(0, 1fr) 86px;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--cx-line);
+  cursor: default;
+}
+
+.rung:last-child { border-bottom: 0; }
+
+.rung[data-selected="true"] { background: var(--cx-surface-2); }
+
+.rungLabel {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12.5px;
+}
+
+.rungTitle {
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rungMeta {
+  display: flex;
+  gap: 8px;
+  color: var(--cx-muted);
+  font-size: 11.5px;
+  min-width: 0;
+}
+
+.track {
+  position: relative;
+  height: 50px;
+}
+
+.rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 26px;
+  height: 1px;
+  background: var(--cx-line-strong);
+}
+
+/* Prices the seller agent can never agree to. */
+.zone {
+  position: absolute;
+  left: 0;
+  top: 19px;
+  height: 15px;
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--cx-floor) 16%, transparent) 0 2px,
+    transparent 2px 6px
+  );
+  border-radius: 3px 0 0 3px;
+}
+
+.floorLine {
+  position: absolute;
+  top: 14px;
+  width: 0;
+  height: 24px;
+  border-left: 1.5px solid var(--cx-floor);
+}
+
+.floorLabel,
+.markLabel,
+.listLabel {
+  position: absolute;
+  top: 38px;
+  transform: translateX(-50%);
+  font-size: 10.5px;
+  line-height: 12px;
+  white-space: nowrap;
+  color: var(--cx-muted);
+}
+
+.floorLabel { color: var(--cx-floor); font-weight: 500; }
+
+.listTick {
+  position: absolute;
+  top: 21px;
+  width: 0;
+  height: 11px;
+  border-left: 1px solid var(--cx-ink-2);
+}
+
+.path {
+  position: absolute;
+  top: 25.5px;
+  height: 2px;
+  background: color-mix(in srgb, var(--cx-accent) 45%, transparent);
+}
+
+.ask,
+.answer,
+.final {
+  position: absolute;
+  top: 26px;
+  transform: translate(-50%, -50%);
+}
+
+.ask {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  background: var(--cx-surface);
+}
+
+.answer {
+  width: 8px;
+  height: 8px;
+  background: var(--cx-ink-2);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.final {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--cx-accent);
+  box-shadow: 0 0 0 2px var(--cx-surface);
+}
+
+.finalValue {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.verdict {
+  justify-self: end;
+}
+
+.legendRing,
+.legendDiamond,
+.legendDot,
+.legendFloor {
+  display: inline-block;
+  flex: none;
+}
+
+.legendRing { width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--cx-muted); }
+.legendDiamond { width: 7px; height: 7px; background: var(--cx-ink-2); transform: rotate(45deg); }
+.legendDot { width: 10px; height: 10px; border-radius: 50%; background: var(--cx-accent); }
+.legendFloor { width: 0; height: 12px; border-left: 1.5px solid var(--cx-floor); }
+
+/* --- Market position ---------------------------------------------------- */
+
+.instrument {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.instrumentRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 30%) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--cx-line);
+}
+
+.instrumentRow:last-child { border-bottom: 0; }
+
+.gauge {
+  position: relative;
+  height: 44px;
+}
+
+.scale {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20px;
+  height: 1px;
+  background: var(--cx-line-strong);
+}
+
+.band {
+  position: absolute;
+  top: 13px;
+  height: 15px;
+  border-radius: 3px;
+  background: var(--cx-surface-3);
+  border: 1px solid var(--cx-line-strong);
+}
+
+.median {
+  position: absolute;
+  top: 10px;
+  height: 21px;
+  width: 0;
+  border-left: 2px solid var(--cx-ink-2);
+}
+
+.ours {
+  position: absolute;
+  top: 3px;
+  width: 0;
+  height: 27px;
+  border-left: 2px solid var(--cx-accent);
+}
+
+.ours::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: -3px;
+  border: 5px solid transparent;
+  border-top: 6px solid var(--cx-accent);
+}
+
+.gaugeLabel {
+  position: absolute;
+  top: 32px;
+  transform: translateX(-50%);
+  font-size: 10.5px;
+  color: var(--cx-muted);
+  white-space: nowrap;
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  font-size: 12.5px;
+}
+
+.price strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.delta[data-tone="up"] { color: var(--cx-warn); }
+.delta[data-tone="down"] { color: var(--cx-ok); }
+
+@container (max-width: 520px) {
+  .streamRow { grid-template-columns: 40px minmax(70px, 96px) minmax(0, 1fr) auto; }
+  .latency { display: none; }
+  .rung { grid-template-columns: minmax(0, 1fr) 76px; }
+  .rung .track { grid-column: 1 / -1; grid-row: 2; }
+  .instrumentRow { grid-template-columns: minmax(0, 1fr) auto; }
+  .instrumentRow .gauge { grid-column: 1 / -1; grid-row: 2; }
+}
