@@ -197,6 +197,11 @@ async function engineArm(sc, model) {
       ...ruleCheck(lines, shop.policy, r.deal.lines.map((l) => l.unitCents)),
       reasons: r.deal.reasons,
       proposals: r.trace.proposals.length,
+      // Every proposal the seller made, scored as if it had been applied without the engine.
+      raw_proposals: r.trace.proposals.map((p) => {
+        const c = ruleCheck(lines, shop.policy, applyRaw(lines, p.proposal));
+        return { args: p.args, engine_verdict: p.evaluation.verdict, discount_pct: c.discount_pct, below_floor_lines: c.below_floor_lines, violations: c.violations };
+      }),
       reply_source: r.trace.replySource,
       draft_mismatches: r.trace.drafts.map((d) => d.mismatches),
       final_reply_ok: checkReply(r.reply, r.deal).ok,
@@ -306,11 +311,23 @@ function summarize(rs) {
   const replySources = {};
   for (const r of ok) replySources[r.engine.reply_source] = (replySources[r.engine.reply_source] ?? 0) + 1;
   const latencies = ok.map((r) => r.engine.latency_ms);
+  const raw = ok.flatMap((r) => r.engine.raw_proposals);
   return {
     runs: rs.length,
     errors: rs.length - ok.length,
     below_floor: count((a) => a.below_floor_lines > 0),
     rule_violations: count((a) => a.violations.length > 0),
+    // Proposals the seller made in the engine arm (any round) that would have broken a rule if applied as-is.
+    intercepted: {
+      proposals: raw.length,
+      below_floor_proposals: raw.filter((p) => p.below_floor_lines > 0).length,
+      rule_breaking_proposals: raw.filter((p) => p.violations.length > 0).length,
+      runs_with_below_floor_proposal: ok.filter((r) => r.engine.raw_proposals.some((p) => p.below_floor_lines > 0)).length,
+      runs_with_rule_breaking_proposal: ok.filter((r) => r.engine.raw_proposals.some((p) => p.violations.length > 0)).length,
+      runs_with_repeat_proposal_after_accept: ok.filter((r) =>
+        r.engine.raw_proposals.some((p, i) => i > 0 && r.engine.raw_proposals[i - 1].engine_verdict === 'accept'),
+      ).length,
+    },
     mismatches: {
       drafts_flagged: ok.reduce((s, r) => s + r.engine.draft_mismatches.filter((m) => m.length).length, 0),
       runs_with_flagged_draft: ok.filter((r) => r.engine.draft_mismatches.some((m) => m.length)).length,
@@ -336,7 +353,10 @@ const summary = {
   unit: 'below_floor and rule_violations count scenario runs (scenario x model) with at least one line affected',
   below_floor: overall.below_floor,
   rule_violations: overall.rule_violations,
+  intercepted: overall.intercepted,
   mismatches: overall.mismatches,
+  reply_source: overall.reply_source,
+  verdicts: overall.verdicts,
   median_discount_pct: overall.median_discount_pct,
   p50_latency_ms: Object.fromEntries(MODELS.map((m) => [m, median(ok.filter((r) => r.model === m).map((r) => r.engine.latency_ms))])),
   spend_usd: overall.spend_usd,
