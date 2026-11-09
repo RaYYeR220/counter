@@ -1,4 +1,4 @@
-/* The Console shell around AG Studio. Every value is a token from lib/console/theme.ts. */
+/* The Console shell around AG Studio. Every value is a --cx-* token from lib/app-theme/tokens.css. */
 
 .root {
   position: fixed;
@@ -36,10 +36,8 @@
 .mark {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--cx-surface-3);
+  width: 24px;
+  height: 24px;
   color: var(--cx-ink);
 }
 
@@ -96,7 +94,7 @@
 .tab:focus-visible,
 .button:focus-visible,
 .iconButton:focus-visible {
-  outline: 2px solid var(--cx-accent);
+  outline: 2px solid var(--cx-ring);
   outline-offset: 2px;
 }
 
@@ -256,13 +254,13 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  background: #f1f2f4;
+  background: var(--cx-canvas);
 }
 
 .skeletonBar {
   height: 56px;
-  background: #fff;
-  border-bottom: 1px solid #e2e4e8;
+  background: var(--cx-surface);
+  border-bottom: 1px solid var(--cx-line);
 }
 
 .skeletonGrid {
@@ -274,19 +272,14 @@
 }
 
 .skeletonCard {
-  border-radius: 10px;
-  background: #fff;
-  border: 1px solid #e2e4e8;
+  border-radius: var(--cx-radius-widget);
+  background: var(--cx-surface);
+  border: 1px solid var(--cx-line);
 }
 
 .skeletonCard:nth-child(5) { grid-column: span 2; grid-row: span 3; }
 .skeletonCard:nth-child(6),
 .skeletonCard:nth-child(7) { grid-column: span 2; grid-row: span 3; }
-
-@media (prefers-color-scheme: dark) {
-  .skeleton { background: #0e1014; }
-  .skeletonBar, .skeletonCard { background: #161920; border-color: #262b34; }
-}
 
 /* Cells Studio's table draws with Console renderers. */
 .root :global(.cx-cell-action) {
@@ -398,7 +391,7 @@
 }
 
 .primaryButton:disabled { opacity: 0.6; cursor: progress; }
-.primaryButton:focus-visible { outline: 2px solid var(--cx-accent); outline-offset: 2px; }
+.primaryButton:focus-visible { outline: 2px solid var(--cx-ring); outline-offset: 2px; }
 
 .gateCard .gateError { margin: 12px 0 0; color: var(--cx-bad); font-size: 13px; }
 .gateCard .gateNote { margin: 14px 0 0; color: var(--cx-muted); font-size: 12px; }
@@ -415,4 +408,4 @@
 }
 
 .quietButton:hover { color: var(--cx-ink); }
-.quietButton:focus-visible { outline: 2px solid var(--cx-accent); outline-offset: 2px; border-radius: 4px; }
+.quietButton:focus-visible { outline: 2px solid var(--cx-ring); outline-offset: 2px; border-radius: 4px; }

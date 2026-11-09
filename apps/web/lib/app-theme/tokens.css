@@ -1,98 +1,152 @@
 /*
- * Counter's app design tokens, shared by Studio, Playground and the docs pages.
+ * Counter's design tokens: one set for the landing page, Playground, Studio,
+ * the docs pages and the Console (whose AG Studio theme in
+ * lib/console/theme.ts points every param at these variables).
  *
- * The values are the Console's token set (`CONSOLE_TOKENS` in
- * lib/console/theme.ts), under the same `--cx-*` names, so the app surfaces
- * and the Console draw with one palette. Change a value in both places, or
- * point the Console at this file, and every surface follows.
+ * Ground, ink and hairlines are warm neutrals; coral is the one accent and is
+ * drawn as a line or a ring (focus, the floor, the picked variant), never as a
+ * fill. Actions are ink. The glaze colours come from the demo shop's catalog
+ * and colour the landing's dot cluster and the chart series.
  *
  * Scope: any element with the `app-theme` class. Light by default; dark from
  * the system setting unless `data-theme="light"`, or forced with
- * `data-theme="dark"`. The choice is shared with the Console through
- * localStorage (`counter.console.theme`).
+ * `data-theme="dark"`. The Console picks its mode itself with
+ * `data-ag-theme-mode` (console-light / console-dark). The choice is shared
+ * through localStorage (`counter.console.theme`, see theme.ts).
  */
 
 .app-theme {
-  --cx-font: var(--font-geist-sans, "Geist"), ui-sans-serif, system-ui, sans-serif;
-  --cx-font-mono: var(--font-geist-mono, "Geist Mono"), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --cx-font: var(--font-general-sans, "General Sans"), ui-sans-serif, system-ui, sans-serif;
+  --cx-font-mono: var(--font-plex-mono, "IBM Plex Mono"), ui-monospace, "SFMono-Regular", Menlo, monospace;
   --cx-font-size: 14px;
-  --cx-radius-widget: 10px;
-  --cx-radius-control: 7px;
+  --cx-radius-control: 10px;
+  --cx-radius-widget: 14px;
+  --cx-radius-panel: 18px;
+  --cx-radius-card: 24px;
   --cx-radius-chip: 999px;
   --cx-space-gutter: 20px;
+  --cx-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --cx-canvas: #f1f2f4;
-  --cx-surface: #ffffff;
-  --cx-surface-2: #f7f8f9;
-  --cx-surface-3: #edeff2;
-  --cx-ink: #15171c;
-  --cx-ink-2: #3a3f48;
-  --cx-muted: #69707b;
-  --cx-line: #e2e4e8;
-  --cx-line-strong: #cbd0d6;
-  --cx-accent: #2e54d8;
-  --cx-accent-ink: #ffffff;
-  --cx-accent-soft: #e8edfc;
-  --cx-floor: #d92d20;
-  --cx-ok: #16794c;
-  --cx-ok-soft: #e3f2ea;
-  --cx-warn: #9a5b06;
-  --cx-warn-soft: #fbf0dc;
-  --cx-bad: #b42318;
-  --cx-bad-soft: #fce9e7;
-  --cx-shadow: 0 1px 2px rgba(21, 23, 28, 0.06);
+  --cx-canvas: #f2f0ea;
+  --cx-surface: #f7f5f0;
+  --cx-surface-2: #efede6;
+  --cx-surface-3: #ebe8df;
+  --cx-ink: #1a1915;
+  --cx-ink-2: #57554e;
+  --cx-muted: #6f6c64;
+  --cx-line: #e0ddd5;
+  --cx-line-strong: #cfcbc1;
+  --cx-hair: rgba(26, 25, 21, 0.1);
+  --cx-hair-2: rgba(26, 25, 21, 0.17);
+  --cx-accent: #1a1915;
+  --cx-accent-ink: #f7f5f0;
+  --cx-accent-soft: #e6e3da;
+  --cx-ring: #e5533d;
+  --cx-ring-ink: #c2402c;
+  --cx-ring-soft: rgba(229, 83, 61, 0.09);
+  --cx-floor: #e5533d;
+  --cx-ok: #3f7a4a;
+  --cx-ok-soft: #e3ebdc;
+  --cx-warn: #94600f;
+  --cx-warn-soft: #f3e8d2;
+  --cx-bad: #b3361f;
+  --cx-bad-soft: #f6e1dc;
+  --cx-shadow: none;
+
+  --cx-sage: #9fb291;
+  --cx-glaze-ink: #262d3a;
+  --cx-oat: #e9e0cb;
+  --cx-rust: #a9502e;
+
+  --cx-chart-1: #7f9a6e;
+  --cx-chart-2: #3b4658;
+  --cx-chart-3: #c0923f;
+  --cx-chart-4: #a9502e;
+  --cx-chart-5: #5b7a86;
+  --cx-chart-6: #e5533d;
+  --cx-chart-7: #8a877e;
+  --cx-chart-8: #c9c3b5;
 
   color-scheme: light;
 }
 
-/* Dark: the Console's dark set. Declared twice (forced, and from the system setting). */
-.app-theme[data-theme="dark"] {
-  --cx-canvas: #0e1014;
-  --cx-surface: #161920;
-  --cx-surface-2: #1c2028;
-  --cx-surface-3: #232833;
-  --cx-ink: #eceef2;
-  --cx-ink-2: #c5cad3;
-  --cx-muted: #8b93a0;
-  --cx-line: #262b34;
-  --cx-line-strong: #363c47;
-  --cx-accent: #7d97ff;
-  --cx-accent-ink: #0e1014;
-  --cx-accent-soft: #1e2747;
-  --cx-floor: #ff5a4e;
-  --cx-ok: #4cc38a;
-  --cx-ok-soft: #12291f;
-  --cx-warn: #e6a23c;
-  --cx-warn-soft: #2b2213;
-  --cx-bad: #ff6b5e;
-  --cx-bad-soft: #311815;
+/* Dark: a warm near-black ground, the same coral. Declared twice (forced, and from the system setting). */
+.app-theme[data-theme="dark"],
+.app-theme[data-ag-theme-mode="console-dark"] {
+  --cx-canvas: #161512;
+  --cx-surface: #1d1c18;
+  --cx-surface-2: #24231e;
+  --cx-surface-3: #2b2924;
+  --cx-ink: #f2efe8;
+  --cx-ink-2: #c8c4b9;
+  --cx-muted: #9a958a;
+  --cx-line: #2e2c27;
+  --cx-line-strong: #3d3a33;
+  --cx-hair: rgba(242, 239, 232, 0.1);
+  --cx-hair-2: rgba(242, 239, 232, 0.17);
+  --cx-accent: #f2efe8;
+  --cx-accent-ink: #161512;
+  --cx-accent-soft: #2e2c27;
+  --cx-ring: #e5533d;
+  --cx-ring-ink: #f07a63;
+  --cx-ring-soft: rgba(229, 83, 61, 0.14);
+  --cx-floor: #e5533d;
+  --cx-ok: #8dbb7f;
+  --cx-ok-soft: #1f2a1c;
+  --cx-warn: #e0a94a;
+  --cx-warn-soft: #2d2414;
+  --cx-bad: #ff7f6a;
+  --cx-bad-soft: #351b16;
   --cx-shadow: none;
+
+  --cx-chart-1: #a9c09a;
+  --cx-chart-2: #aab3c5;
+  --cx-chart-3: #e0b25e;
+  --cx-chart-4: #d0764f;
+  --cx-chart-5: #86a6b2;
+  --cx-chart-6: #e5533d;
+  --cx-chart-7: #a39e92;
+  --cx-chart-8: #6b675e;
 
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  .app-theme:not([data-theme="light"]) {
-    --cx-canvas: #0e1014;
-    --cx-surface: #161920;
-    --cx-surface-2: #1c2028;
-    --cx-surface-3: #232833;
-    --cx-ink: #eceef2;
-    --cx-ink-2: #c5cad3;
-    --cx-muted: #8b93a0;
-    --cx-line: #262b34;
-    --cx-line-strong: #363c47;
-    --cx-accent: #7d97ff;
-    --cx-accent-ink: #0e1014;
-    --cx-accent-soft: #1e2747;
-    --cx-floor: #ff5a4e;
-    --cx-ok: #4cc38a;
-    --cx-ok-soft: #12291f;
-    --cx-warn: #e6a23c;
-    --cx-warn-soft: #2b2213;
-    --cx-bad: #ff6b5e;
-    --cx-bad-soft: #311815;
+  .app-theme:not([data-theme="light"]):not([data-ag-theme-mode="console-light"]) {
+    --cx-canvas: #161512;
+    --cx-surface: #1d1c18;
+    --cx-surface-2: #24231e;
+    --cx-surface-3: #2b2924;
+    --cx-ink: #f2efe8;
+    --cx-ink-2: #c8c4b9;
+    --cx-muted: #9a958a;
+    --cx-line: #2e2c27;
+    --cx-line-strong: #3d3a33;
+    --cx-hair: rgba(242, 239, 232, 0.1);
+    --cx-hair-2: rgba(242, 239, 232, 0.17);
+    --cx-accent: #f2efe8;
+    --cx-accent-ink: #161512;
+    --cx-accent-soft: #2e2c27;
+    --cx-ring: #e5533d;
+    --cx-ring-ink: #f07a63;
+    --cx-ring-soft: rgba(229, 83, 61, 0.14);
+    --cx-floor: #e5533d;
+    --cx-ok: #8dbb7f;
+    --cx-ok-soft: #1f2a1c;
+    --cx-warn: #e0a94a;
+    --cx-warn-soft: #2d2414;
+    --cx-bad: #ff7f6a;
+    --cx-bad-soft: #351b16;
     --cx-shadow: none;
+
+    --cx-chart-1: #a9c09a;
+    --cx-chart-2: #aab3c5;
+    --cx-chart-3: #e0b25e;
+    --cx-chart-4: #d0764f;
+    --cx-chart-5: #86a6b2;
+    --cx-chart-6: #e5533d;
+    --cx-chart-7: #a39e92;
+    --cx-chart-8: #6b675e;
 
     color-scheme: dark;
   }

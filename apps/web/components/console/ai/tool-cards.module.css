@@ -39,7 +39,7 @@
 }
 
 .link:hover { text-decoration: underline; text-underline-offset: 3px; }
-.link:focus-visible { outline: 2px solid var(--cx-accent); outline-offset: 2px; border-radius: 3px; }
+.link:focus-visible { outline: 2px solid var(--cx-ring); outline-offset: 2px; border-radius: 3px; }
 
 .confirm,
 .negotiation {
@@ -106,7 +106,7 @@
 .secondary:disabled { opacity: 0.6; cursor: progress; }
 
 .primary:focus-visible,
-.secondary:focus-visible { outline: 2px solid var(--cx-accent); outline-offset: 2px; }
+.secondary:focus-visible { outline: 2px solid var(--cx-ring); outline-offset: 2px; }
 
 .outcome { margin: 4px 0 0; font-size: 12.5px; font-weight: 500; }
 .outcome[data-status="shipped"] { color: var(--cx-ok); }

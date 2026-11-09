@@ -421,7 +421,7 @@
 .form textarea::placeholder { color: var(--cx-muted); }
 
 .form textarea:focus-visible {
-  outline: 2px solid var(--cx-accent);
+  outline: 2px solid var(--cx-ring);
   outline-offset: 0;
   border-color: transparent;
 }
@@ -500,7 +500,7 @@
 .connect summary:focus-visible,
 .stripLinks a:focus-visible,
 .cardBody a:focus-visible {
-  outline: 2px solid var(--cx-accent);
+  outline: 2px solid var(--cx-ring);
   outline-offset: 2px;
 }
 

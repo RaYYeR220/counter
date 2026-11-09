@@ -468,7 +468,7 @@
   cursor: pointer;
 }
 
-.fileButton:focus-within { outline: 2px solid var(--cx-accent); outline-offset: 2px; }
+.fileButton:focus-within { outline: 2px solid var(--cx-ring); outline-offset: 2px; }
 
 .linkButton {
   padding: 0;
@@ -526,7 +526,7 @@
   cursor: pointer;
 }
 
-.field input[type="file"]:focus-visible { outline: 2px solid var(--cx-accent); outline-offset: 2px; border-radius: var(--cx-radius-control); }
+.field input[type="file"]:focus-visible { outline: 2px solid var(--cx-ring); outline-offset: 2px; border-radius: var(--cx-radius-control); }
 
 .inline {
   display: flex;
@@ -552,7 +552,7 @@
 .tabs button:focus-visible,
 .comparables summary:focus-visible,
 .sectionBody a:focus-visible {
-  outline: 2px solid var(--cx-accent);
+  outline: 2px solid var(--cx-ring);
   outline-offset: 2px;
 }
 
@@ -561,7 +561,7 @@
 .nameField input:focus-visible,
 .stock:focus-visible,
 .money:focus-within {
-  outline: 2px solid var(--cx-accent);
+  outline: 2px solid var(--cx-ring);
   outline-offset: -1px;
 }
 

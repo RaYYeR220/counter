@@ -2,23 +2,13 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import "@/lib/app-theme/tokens.css";
 import { THEME_BOOT_SCRIPT } from "@/lib/app-theme/theme";
+import { CounterMark } from "@/components/brand/CounterMark";
 import { ThemeToggle } from "./ThemeToggle";
 import s from "./shell.module.css";
 
 export type AppSurface = "playground" | "studio" | "console" | "docs";
 
 const DEFAULT_SHOP = "juniper-clay";
-
-/** The Console's mark: the counter line, a floor tick and a price. */
-export function CounterMark({ size = 20 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 20 20" width={size} height={size} aria-hidden>
-      <path d="M2 14h16" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M7 9v10" stroke="var(--cx-floor)" strokeWidth="1.6" />
-      <circle cx="13" cy="14" r="2.6" fill="currentColor" />
-    </svg>
-  );
-}
 
 /**
  * The frame shared by Counter's app surfaces: one header with the product

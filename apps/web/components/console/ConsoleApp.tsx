@@ -32,7 +32,9 @@ import {
 } from "@/lib/console/studio/data";
 import type { ConsoleRegistry } from "@/lib/console/studio/registry";
 import { initialReport, PAGES, type PageId } from "@/lib/console/studio/report";
-import { consoleTheme, DARK_MODE, LIGHT_MODE, tokenCss, type ConsoleMode } from "@/lib/console/theme";
+import "@/lib/app-theme/tokens.css";
+import { CounterMark } from "@/components/brand/CounterMark";
+import { consoleTheme, DARK_MODE, LIGHT_MODE, type ConsoleMode } from "@/lib/console/theme";
 import type { ConsoleActionResult, ConsoleEvent, ConsoleNegotiation, ConsoleOrder, ConsoleSummary, ConsoleVariant } from "@/lib/console/types";
 import { merchantOpsToolDisplay, ShipmentConfirm } from "./ai/ToolCards";
 import s from "./console.module.css";
@@ -106,7 +108,7 @@ export default function ConsoleApp(props: ConsoleAppProps) {
   if (boot.state === "loading") return <ConsoleSkeleton />;
   if (boot.state === "error") {
     return (
-      <div className={s.failed} role="alert">
+      <div className={`app-theme ${s.failed}`} role="alert">
         <h1>The Console couldn&rsquo;t load {props.shop}</h1>
         <p>{boot.message}</p>
         <button type="button" className={s.button} onClick={reload}>
@@ -123,11 +125,7 @@ function Identity({ summary }: { summary: ConsoleSummary }) {
   return (
     <div className={s.identity}>
       <span className={s.mark} aria-hidden>
-        <svg viewBox="0 0 20 20" width="20" height="20">
-          <path d="M2 14h16" stroke="currentColor" strokeWidth="1.6" />
-          <path d="M7 9v10" stroke="var(--cx-floor)" strokeWidth="1.6" />
-          <circle cx="13" cy="14" r="2.6" fill="currentColor" />
-        </svg>
+        <CounterMark />
       </span>
       <div className={s.shopName}>
         <strong>{summary.shop.name}</strong>
@@ -161,8 +159,7 @@ function MerchantGate({ summary, onSignedIn }: { summary: ConsoleSummary; onSign
   };
 
   return (
-    <div className={`${s.root} ag-theme-mode`} data-ag-theme-mode={themeMode}>
-      <style>{tokenCss(`.${s.root}`)}</style>
+    <div className={`app-theme ${s.root} ag-theme-mode`} data-ag-theme-mode={themeMode}>
       <header className={s.bar}>
         <Identity summary={summary} />
       </header>
@@ -190,7 +187,7 @@ function MerchantGate({ summary, onSignedIn }: { summary: ConsoleSummary; onSign
 
 export function ConsoleSkeleton() {
   return (
-    <div className={s.skeleton} aria-busy="true" aria-label="Loading the Console">
+    <div className={`app-theme ${s.skeleton}`} aria-busy="true" aria-label="Loading the Console">
       <div className={s.skeletonBar} />
       <div className={s.skeletonGrid}>
         {Array.from({ length: 7 }, (_, i) => (
@@ -562,8 +559,7 @@ function ConsoleStudio({
   const onOrders = page === "orders" || page === "order-book";
 
   return (
-    <div className={`${s.root} ag-theme-mode`} data-ag-theme-mode={themeMode}>
-      <style>{tokenCss(`.${s.root}`)}</style>
+    <div className={`app-theme ${s.root} ag-theme-mode`} data-ag-theme-mode={themeMode}>
       <header className={s.bar}>
         <Identity summary={summary} />
 

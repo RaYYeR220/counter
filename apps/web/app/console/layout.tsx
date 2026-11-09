@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
-// The Console's typeface comes from the root layout (Geist, as --font-geist-sans) through the
-// --cx-font token in lib/console/theme.ts.
+// The Console's typeface comes from the root layout (General Sans, as --font-general-sans) through
+// the --cx-font token in lib/app-theme/tokens.css.
 
 export const metadata: Metadata = {
   title: "Console | Counter",

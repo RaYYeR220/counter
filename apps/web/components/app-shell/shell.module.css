@@ -53,16 +53,14 @@
 .mark {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--cx-surface-3);
+  width: 24px;
+  height: 24px;
 }
 
 .word {
-  font-size: 15px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
 }
 
 .tabs {
@@ -121,7 +119,7 @@
 .tab:focus-visible,
 .iconButton:focus-visible,
 .copyButton:focus-visible {
-  outline: 2px solid var(--cx-accent);
+  outline: 2px solid var(--cx-ring);
   outline-offset: 2px;
 }
 
