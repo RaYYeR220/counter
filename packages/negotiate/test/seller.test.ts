@@ -164,6 +164,50 @@ describe("negotiate", () => {
     expect(r.reply).not.toContain("$0.00");
   });
 
+  it("keeps the approved deal when a later proposal cannot be read", async () => {
+    const { llm } = scripted([{ tool: { percent_off: 10 } }, { tool: "" }, { text: "$30.60 each, $91.80 total." }]);
+    const offers = new OfferBook();
+    const r = await negotiate({ ...base, buyerMessage: "10%?", llm, offers });
+    expect(r.trace.proposals.map((p) => p.evaluation.verdict)).toEqual(["accept", "refuse"]);
+    expect(r.verdict).toBe("accept");
+    expect(r.deal.discountCents).toBe(1020);
+    expect(r.offer?.discountCents).toBe(1020);
+    expect(r.trace.replySource).toBe("model");
+  });
+
+  it("tells the model to reply once the engine accepts, and offers another try only after an adjustment", async () => {
+    const { llm, requests } = scripted([
+      { tool: { lines: [{ variant_id: SAGE12, unit_price: 10 }] } },
+      { tool: { percent_off: 10 } },
+      { text: "$30.60 each." },
+    ]);
+    await negotiate({ ...base, buyerMessage: "deal?", llm });
+    const results = requests[2]!.messages.filter((m) => m.role === "tool").map((m) => JSON.parse(m.content as string));
+    expect(results.map((t) => t.result)).toEqual(["adjusted", "accepted"]);
+    expect(results[0].next).toMatch(/propose_deal again/);
+    expect(results[1].next).not.toMatch(/propose_deal/);
+    expect(results[1].next).toMatch(/reply to the buyer now/i);
+  });
+
+  it("asks for a fresh reply instead of a correction, so the buyer never sees an apology for the draft", async () => {
+    const { llm, requests } = scripted([
+      { tool: { percent_off: 10 } },
+      { text: "I can't do $5, but $30.60 each works." },
+      { text: "Here is the corrected reply:\n\nI can do $30.60 each, $91.80 for the three." },
+    ]);
+    const r = await negotiate({ ...base, buyerMessage: "$5?", llm });
+    const regen = requests[2]!.messages;
+    expect(regen.some((m) => m.role === "assistant" && m.content?.includes("I can't do $5"))).toBe(false);
+    expect(regen.at(-1)!.content).toMatch(/without repeating/i);
+    expect(r.reply).toBe("I can do $30.60 each, $91.80 for the three.");
+  });
+
+  it("tells the model to decline a buyer's number without repeating it", async () => {
+    const { llm, requests } = scripted([{ tool: { percent_off: 5 } }, { text: "$32.30 each." }]);
+    await negotiate({ ...base, buyerMessage: "$5", llm });
+    expect(requests[0]!.messages[0]!.content).toMatch(/without repeating/i);
+  });
+
   it("refuses when negotiation is off and issues no offer", async () => {
     const { llm } = scripted([{ tool: { percent_off: 10 } }, { text: "Sorry, these stay at $34.00 each, $102.00 total." }]);
     const offers = new OfferBook();
