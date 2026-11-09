@@ -99,7 +99,7 @@ pnpm install
 pnpm -r test
 ```
 
-You should see 891 tests pass across nine packages, with 3 expected failures and 6 skipped (live tests that need keys). The PayPal paths, each with its test file, are in the [PayPal Developer Platform usage](README.md#paypal-developer-platform-usage) table: Orders v2 AUTHORIZE, PATCH and authorize; capture on shipment with tracking and a 2% platform fee; void; refund; webhook signature verification and dedupe; disputes answered with a generated evidence PDF; Partner Referrals onboarding with `PayPal-Auth-Assertion`.
+You should see 918 tests pass across ten packages, with 3 expected failures and 6 skipped (live tests that need keys). The PayPal paths, each with its test file, are in the [PayPal Developer Platform usage](README.md#paypal-developer-platform-usage) table: Orders v2 AUTHORIZE, PATCH and authorize; capture on shipment with tracking and a 2% platform fee; void; refund; webhook signature verification and dedupe; disputes answered with a generated evidence PDF; Partner Referrals onboarding with `PayPal-Auth-Assertion`.
 
 The Store Sync conformance suite (`packages/store-sync/test/conformance.test.ts`) replays PayPal's own Postman collection: 166 passed and 3 expected failures. Those 3 are assertions in the collection that contradict the `@paypal/commerce-cart-zod@1.4.0` schema it loads; they are explained at https://counter-agents.vercel.app/docs/store-sync-conformance.
 

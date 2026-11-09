@@ -28,7 +28,7 @@ export const MCP_CONFIG = { mcpServers: { counter: { url: `${PUBLIC_ORIGIN}${LIN
  * Update them with the README when the suite changes.
  */
 export const TEST_COUNTS = {
-  total: 891,
+  total: 918,
   conformancePassed: 166,
   conformanceExpectedFailures: 3,
 } as const;

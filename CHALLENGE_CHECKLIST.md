@@ -32,7 +32,7 @@ Each judging criterion and each requirement, with the exact evidence. Claim numb
 | Multi-merchant: Partner Referrals onboarding, payee, `PayPal-Auth-Assertion`, BN code | `packages/paypal/src/partner.ts`, `packages/platform/src/onboarding.ts`; P12 |
 | MCP server on the current revision with MCP Apps cards and a WebMCP bridge | `apps/web/app/mcp/route.ts`, `packages/gateway/src/apps`; L2 to L4 |
 | AI with code-enforced guardrails: engine has the final word, floors never reach the model, reply amounts checked against the deal | `packages/negotiate`; `packages/negotiate/test/seller.test.ts`, `engine.test.ts`; R7, P14 to P16 |
-| 891 passing tests, no network or keys needed | `pnpm -r test` (R9) |
+| 918 passing tests, no network or keys needed | `pnpm -r test` (R9) |
 
 ### Design
 

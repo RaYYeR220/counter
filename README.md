@@ -224,11 +224,12 @@ No network, no keys: PayPal and model calls run against fixtures, and database t
 | `packages/gateway` | 99 | |
 | `packages/platform` | 88 | |
 | `packages/paypal` | 84 | 3 skipped: live sandbox test (`PAYPAL_LIVE=1`) |
-| `packages/negotiate` | 72 | |
+| `packages/negotiate` | 74 | |
 | `packages/db` | 50 | |
 | `packages/agent` | 39 | |
 | `bench` | 25 | |
-| **Total** | **891** | 3 expected failures, 6 skipped |
+| `apps/web` | 25 | |
+| **Total** | **918** | 3 expected failures, 6 skipped |
 
 The Store Sync conformance suite alone (`packages/store-sync/test/conformance.test.ts`, a Node port of PayPal's "PayPal Agentic Commerce" Postman collection) is 166 passed and 3 expected failures. `node bench/tasks/validate.mjs` checks the purchase task key against the catalog. The live sandbox test runs with:
 
