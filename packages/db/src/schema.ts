@@ -223,6 +223,7 @@ export type Variant = typeof variants.$inferSelect;
 export type NewVariant = typeof variants.$inferInsert;
 export type CartRow = typeof carts.$inferSelect;
 export type Order = typeof orders.$inferSelect;
+export type NewOrder = typeof orders.$inferInsert;
 export type EventRow = typeof events.$inferSelect;
 export type Negotiation = typeof negotiations.$inferSelect;
 export type NewNegotiation = typeof negotiations.$inferInsert;

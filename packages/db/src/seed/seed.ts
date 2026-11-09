@@ -2,6 +2,7 @@ import { getTableColumns, sql, type SQL } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import type { Db } from "../client";
 import { shops, variants, type NewShop, type NewVariant, type ShopPolicy } from "../schema";
+import { publicBaseUrl, storefrontUrl } from "../urls";
 import catalogJson from "./catalog.json" with { type: "json" };
 
 export interface CatalogFileVariant {
@@ -78,15 +79,6 @@ export function variantName(p: CatalogFileProduct, v: CatalogFileVariant): strin
   const order = p.attributes_order?.length ? p.attributes_order : Object.keys(v.attributes);
   const values = order.map((k) => v.attributes[k]).filter((x): x is string => Boolean(x));
   return values.length ? `${p.name} — ${values.join(", ")}` : p.name;
-}
-
-export function storefrontUrl(baseUrl: string, slug: string, parentId: string, variantId: string): string {
-  const base = baseUrl.replace(/\/+$/, "");
-  return `${base}/s/${encodeURIComponent(slug)}/p/${encodeURIComponent(parentId)}?v=${encodeURIComponent(variantId)}`;
-}
-
-export function publicBaseUrl(): string {
-  return process.env.PUBLIC_BASE_URL || "http://localhost:3000";
 }
 
 /** `ON CONFLICT ... DO UPDATE SET` that takes the listed columns from the incoming row. */

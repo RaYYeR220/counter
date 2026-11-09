@@ -1,7 +1,20 @@
-import type { CartRecord, CartRepo, CatalogPort, CatalogVariant, PayPalCart } from "@counter/store-sync";
-import { and, asc, eq, sql } from "drizzle-orm";
+import type { CartRecord, CartRepo, CatalogPort, CatalogVariant, OrderSink, PayPalCart } from "@counter/store-sync";
+import { and, asc, desc, eq, gt, sql } from "drizzle-orm";
 import type { Db } from "./client";
-import { carts, shops, variants, type CartRow, type Shop, type Variant } from "./schema";
+import {
+  carts,
+  events,
+  orders,
+  shops,
+  variants,
+  type CartRow,
+  type EventRow,
+  type NewOrder,
+  type Order,
+  type Shop,
+  type Variant,
+} from "./schema";
+import { orderReviewUrl, publicBaseUrl } from "./urls";
 
 // Shop ids are slugs: the `shopId` Store Sync hands to every port is the shop's
 // slug, and every `shop_id` column stores it.
@@ -128,6 +141,144 @@ export class DbCartRepo implements CartRepo {
     if (!current) throw new Error(`Cart ${r.id} does not exist`);
     throw new ConcurrentUpdateError(r.shopId, r.id, expected, current.version);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Orders
+
+function totalCentsOf(r: CartRecord): number {
+  if (r.lastTotalCents != null) return r.lastTotalCents;
+  const value = r.cart.totals?.total?.value;
+  if (!value || !/^\d+(\.\d{1,2})?$/.test(value)) throw new Error(`Cart ${r.id} has no total`);
+  const [whole, frac = ""] = value.split(".");
+  return Number(whole) * 100 + Number(frac.padEnd(2, "0"));
+}
+
+/**
+ * Books authorized carts as merchant orders numbered `<prefix>-<n>` per shop
+ * (JC-10001, JC-10002, ...). Idempotent per cart: completing the same cart
+ * again, even concurrently, returns the order booked the first time.
+ */
+export class DbOrderSink implements OrderSink {
+  private readonly db: Db;
+  private readonly baseUrl: string;
+
+  constructor(db: Db, opts: { publicBaseUrl?: string } = {}) {
+    this.db = db;
+    this.baseUrl = opts.publicBaseUrl ?? publicBaseUrl();
+  }
+
+  async onCompleted(
+    r: CartRecord,
+    auth: { authorizationId: string; payerId: string },
+  ): Promise<{ merchantOrderNumber: string; orderReviewPage: string }> {
+    const totalCents = totalCentsOf(r);
+    const payload = {
+      cartId: r.id,
+      paypalOrderId: r.paypalOrderId ?? null,
+      authorizationId: auth.authorizationId,
+      payerId: auth.payerId,
+      totalCents,
+      agentClient: r.agentClient ?? null,
+    };
+    // One statement, so the number, the order and its event land together or
+    // not at all. A cart that already has an order takes no new number.
+    const result = (await this.db.execute(sql`
+      with existing as (
+        select id from orders where cart_id = ${r.id}::text
+      ),
+      numbered as (
+        update shops set order_seq = order_seq + 1
+        where id = ${r.shopId}::text and not exists (select 1 from existing)
+        returning order_prefix || '-' || order_seq as id
+      ),
+      booked as (
+        insert into orders (id, shop_id, cart_id, paypal_order_id, authorization_id, payer_id, status, total_cents)
+        select id, ${r.shopId}::text, ${r.id}::text, ${r.paypalOrderId ?? null}::text, ${auth.authorizationId}::text,
+               ${auth.payerId}::text, 'authorized', ${totalCents}::integer
+        from numbered
+        on conflict (cart_id) do nothing
+        returning id
+      ),
+      logged as (
+        insert into events (shop_id, type, ref, payload)
+        select ${r.shopId}::text, 'order.authorized', id, ${JSON.stringify(payload)}::jsonb from booked
+      )
+      select id from booked
+      union all
+      select id from existing
+    `)) as unknown as { rows: Array<{ id: string }> };
+
+    let id = result.rows[0]?.id;
+    if (!id) {
+      // Either the shop is unknown, or a concurrent completion of this cart booked it first.
+      const booked = await getOrderByCart(this.db, r.id);
+      if (!booked) throw new Error(`Cannot book cart ${r.id}: shop ${r.shopId} does not exist`);
+      id = booked.id;
+    }
+    return { merchantOrderNumber: id, orderReviewPage: orderReviewUrl(this.baseUrl, r.shopId, id) };
+  }
+}
+
+export async function getOrderByCart(db: Db, cartId: string): Promise<Order | null> {
+  const [row] = await db.select().from(orders).where(eq(orders.cartId, cartId)).limit(1);
+  return row ?? null;
+}
+
+export type OrderPatch = Partial<
+  Pick<
+    NewOrder,
+    "status" | "paypalOrderId" | "authorizationId" | "captureId" | "payerId" | "totalCents" | "platformFeeCents" | "tracking"
+  >
+>;
+
+/** Applies a patch to an order and stamps `updated_at`; null if there is no such order. */
+export async function updateOrder(db: Db, id: string, patch: OrderPatch): Promise<Order | null> {
+  const [row] = await db
+    .update(orders)
+    .set({ ...patch, updatedAt: sql`now()` })
+    .where(eq(orders.id, id))
+    .returning();
+  return row ?? null;
+}
+
+// ---------------------------------------------------------------------------
+// Events
+
+export async function logEvent(
+  db: Db,
+  shopId: string,
+  type: string,
+  ref: string | null,
+  payload: Record<string, unknown> = {},
+): Promise<EventRow> {
+  const [row] = await db.insert(events).values({ shopId, type, ref, payload }).returning();
+  return row!;
+}
+
+export interface ListEventsOptions {
+  /** Only events after this id (exclusive), oldest first: pass the last id seen to page forward. */
+  sinceId?: number;
+  /** 1 to 500; default 50. */
+  limit?: number;
+}
+
+/**
+ * A shop's events in the order they happened. Without `sinceId`, the latest
+ * `limit` events; with it, the next `limit` events after that id.
+ */
+export async function listEvents(db: Db, shopId: string, opts: ListEventsOptions = {}): Promise<EventRow[]> {
+  const limit = Math.min(Math.max(Math.trunc(opts.limit ?? 50), 1), 500);
+  if (opts.sinceId != null) {
+    return db
+      .select()
+      .from(events)
+      .where(and(eq(events.shopId, shopId), gt(events.id, opts.sinceId)))
+      .orderBy(asc(events.id))
+      .limit(limit);
+  }
+  const latest = await db.select().from(events).where(eq(events.shopId, shopId)).orderBy(desc(events.id)).limit(limit);
+  return latest.reverse();
 }
 
 // ---------------------------------------------------------------------------
