@@ -107,8 +107,14 @@ describe("tools/list", () => {
     const { tools } = await client.listTools();
     const byName = Object.fromEntries(tools.map((t) => [t.name, t]));
     for (const name of ["search_products", "create_cart"]) {
-      expect(byName[name]!.description).toMatch(/exactly match/i);
-      expect(byName[name]!.description).toMatch(/out of stock/i);
+      const d = byName[name]!.description!;
+      // The shop's own words count when matching what the user asked for...
+      expect(d).toMatch(/shop's own words/i);
+      expect(d).toMatch(/creamy off-white/);
+      // ...but nothing the user did not ask for is swapped in.
+      for (const kind of [/size/, /grind/, /decaf/, /seconds/, /dye lot/]) expect(d).toMatch(kind);
+      expect(d).toMatch(/out of stock/i);
+      expect(d).toMatch(/don't buy/i);
     }
     expect(byName.checkout!.description).toMatch(/approve_url/);
   });
@@ -160,6 +166,25 @@ describe("discovery", () => {
     expect(r.structuredContent!.variants).toHaveLength(12);
     expect(text(r)).toMatch(/JC-MUG-SPECKLE-INK-16.*out of stock/);
     expect(text(r)).toContain("2026-11-18");
+  });
+
+  it("search_products names each hit's product, so get_product can be called with it", async () => {
+    const r = await call("search_products", { query: "green speckled mug 12 oz", shop: SHOP, limit: 3 });
+    expect(r.structuredContent!.results[0]).toMatchObject({ variant_id: SAGE_12, parent_id: "JC-MUG-SPECKLE" });
+    const line = text(r).split("\n").find((l) => l.startsWith(SAGE_12))!;
+    expect(line).toMatch(/product JC-MUG-SPECKLE\b/);
+  });
+
+  it("get_product also takes a variant id and shows that variant's product", async () => {
+    const r = await call("get_product", { shop: SHOP, parent_id: "JC-POUROVER-OAT" });
+    expect(r.isError ?? false).toBe(false);
+    expect(r.structuredContent!.parent_id).toBe("JC-POUROVER");
+    expect(text(r)).toMatch(/JC-POUROVER-OAT/);
+  });
+
+  it("get_product gives the agent the shop's description, which says what each glaze looks like", async () => {
+    const r = await call("get_product", { shop: SHOP, parent_id: "JC-POUROVER" });
+    expect(text(r)).toContain("oat (creamy off-white)");
   });
 
   it("get_product reports an unknown product as an error", async () => {

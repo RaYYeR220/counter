@@ -90,6 +90,7 @@ export interface SearchQuery {
 export interface ShopDirectory {
   listShops(): Promise<ShopSummary[]>;
   search(q: SearchQuery): Promise<ProductHit[]>;
+  /** `parentId` may also be one of the product's variant ids. */
   getProduct(shop: string, parentId: string): Promise<ProductDetail | null>;
 }
 
@@ -358,7 +359,10 @@ export class JsonShopDirectory implements ShopDirectory {
   async getProduct(shopSlug: string, parentId: string): Promise<ProductDetail | null> {
     const shop = this.feed.shops.find((s) => s.slug === shopSlug);
     const want = parentId.trim().toUpperCase();
-    const product = shop?.products.find((p) => p.parent_id.toUpperCase() === want);
+    // A variant id works too: it opens the product the variant belongs to.
+    const product =
+      shop?.products.find((p) => p.parent_id.toUpperCase() === want) ??
+      shop?.products.find((p) => p.variants.some((v) => v.variant_id.toUpperCase() === want));
     if (!shop || !product) return null;
     return {
       shop: shop.slug,

@@ -152,4 +152,15 @@ describe("getProduct", () => {
     expect(await dir.getProduct("juniper-clay", "NOPE")).toBeNull();
     expect(await dir.getProduct("nope", "JC-MUG-SPECKLE")).toBeNull();
   });
+
+  it("resolves a variant id to the product it belongs to", async () => {
+    const p = await dir.getProduct("juniper-clay", "JC-POUROVER-OAT");
+    expect(p).toMatchObject({ parent_id: "JC-POUROVER", name: "Pour-over set" });
+    expect(p!.variants.map((v) => v.variant_id)).toContain("JC-POUROVER-OAT");
+    expect((await dir.getProduct("juniper-clay", "jc-pourover-oat"))?.parent_id).toBe("JC-POUROVER");
+  });
+
+  it("does not resolve a variant id from another shop", async () => {
+    expect(await dir.getProduct("northpaw-roasters", "JC-POUROVER-OAT")).toBeNull();
+  });
 });

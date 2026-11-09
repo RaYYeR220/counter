@@ -55,11 +55,13 @@ export const COUNTER_INSTRUCTIONS =
   "pays with PayPal and approves every payment themselves. Only buy exactly what the user asked for.";
 
 const BUYING_RULES =
-  "Buying rules: only buy a variant whose attributes exactly match what the user asked for (size, colour or glaze, " +
-  "roast, grind, weight, pack size, quantity). A near match (another size or colour, a 'seconds' piece, decaf " +
-  "instead of regular, a made-to-order lead time) is a different product: offer it to the user, never buy it " +
-  "silently. If nothing matches, or the matching variant is out of stock or not purchasable, tell the user " +
-  "instead of buying.";
+  "Buying rules: buy the variant that is what the user asked for. The shop's own words count: a colour, size or " +
+  "style word matches a variant when the shop's attribute values or product description say so (a user's 'cream' " +
+  "is the oat glaze the shop describes as 'creamy off-white'); get_product shows the description. Never swap in " +
+  "anything the user didn't ask for: another product, size, pack size, roast, grind, decaf for regular (or the " +
+  "reverse), seconds for firsts (or the reverse), a made-to-order piece, or another dye lot. If two variants could " +
+  "both be what the user means, ask; if you can't ask, don't buy. If nothing matches, or the match is out of " +
+  "stock, not purchasable or can't arrive in time, don't buy: tell the user why.";
 
 // ---------------------------------------------------------------------------
 // Input schemas
@@ -313,7 +315,8 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
     {
       title: "Search products",
       description:
-        "Search the shops' catalogs. Each result is one exact variant (variant_id) with its attributes, unit " +
+        "Search the shops' catalogs. Each result is one exact variant (variant_id, with the parent_id of its " +
+        "product) with its attributes, unit " +
         "price in USD, stock and flags (seconds = cosmetic flaw at a lower price, made_to_order, " +
         "subscription_only, decaf, limited). Results are ranked by match; out of stock variants are included " +
         "with in_stock=false, never hidden, and variants with purchasable=false cannot be bought. Leave `shop` " +
@@ -341,7 +344,7 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
       const text = results
         .map(
           (h) =>
-            `${h.variant_id} [${h.shop}] ${h.name}: ${usd(h.price)}, ${h.availability}` +
+            `${h.variant_id} (product ${h.parent_id}) [${h.shop}] ${h.name}: ${usd(h.price)}, ${h.availability}` +
             (h.flags.length ? ` (flags: ${h.flags.join(", ")})` : ""),
         )
         .join("\n");
@@ -354,13 +357,17 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
     {
       title: "Get product",
       description:
-        "Full details of one product: description and every variant with variant_id, attributes, price, " +
-        "stock (in_stock), purchasable, flags, lead_time_days and estimated delivery dates for STANDARD and " +
-        "EXPRESS shipping to a US address if ordered today. Use it to confirm the exact variant before " +
-        "creating a cart.",
+        "Full details of one product: the shop's description (what each colour or style looks like) and every " +
+        "variant with variant_id, attributes, price, stock (in_stock), purchasable, flags, lead_time_days and " +
+        "estimated delivery dates for STANDARD and EXPRESS shipping to a US address if ordered today. Use it to " +
+        "confirm the exact variant before creating a cart.",
       inputSchema: z.strictObject({
         shop: shopArg,
-        parent_id: z.string().min(1).max(127).describe("parent_id from search_products"),
+        parent_id: z
+          .string()
+          .min(1)
+          .max(127)
+          .describe("parent_id from search_products; a variant_id also works and opens its product"),
       }),
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
@@ -374,6 +381,9 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
         });
       }
       const lines = [`${p.name} [${p.parent_id}] at ${p.shop_name}`];
+      if (p.parent_id.toUpperCase() !== parent_id.trim().toUpperCase()) {
+        lines.push(`(${parent_id.trim()} is a variant of this product.)`);
+      }
       if (p.description) lines.push(p.description);
       for (const v of p.variants) {
         const ship = v.delivery.map((d) => `${d.id} ${usd(d.price)} est. ${d.estimated_delivery}`).join(", ");
