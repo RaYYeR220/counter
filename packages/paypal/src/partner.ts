@@ -15,7 +15,6 @@ export const DEFAULT_REFERRAL_FEATURES = [
   "READ_SELLER_DISPUTE",
   "UPDATE_SELLER_DISPUTE",
   "ADVANCED_TRANSACTIONS_SEARCH",
-  "TRACKING_SHIPMENT_READWRITE",
 ] as const;
 
 export interface PartnerReferralParams {

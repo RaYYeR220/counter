@@ -72,7 +72,7 @@ describe("startOnboarding", () => {
     });
     const features = body.operations[0].api_integration_preference.rest_api_integration.third_party_details.features;
     expect(features).toEqual([...ONBOARDING_FEATURES]);
-    for (const f of ["PAYMENT", "REFUND", "PARTNER_FEE", "READ_SELLER_DISPUTE", "UPDATE_SELLER_DISPUTE", "TRACKING_SHIPMENT_READWRITE"]) {
+    for (const f of ["PAYMENT", "REFUND", "PARTNER_FEE", "READ_SELLER_DISPUTE", "UPDATE_SELLER_DISPUTE"]) {
       expect(features).toContain(f);
     }
   });

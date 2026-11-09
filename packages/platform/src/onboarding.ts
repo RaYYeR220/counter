@@ -17,7 +17,8 @@ export const ONBOARDING_FEATURES = [
   "ACCESS_MERCHANT_INFORMATION",
   "READ_SELLER_DISPUTE",
   "UPDATE_SELLER_DISPUTE",
-  "TRACKING_SHIPMENT_READWRITE",
+  // PayPal refuses TRACKING_SHIPMENT_READWRITE for partner referrals in sandbox
+  // (FEATURES_UNAUTHORIZED); tracking is added with the payment permission instead.
 ] as const;
 
 export type OnboardingStatus = "active" | "pending";

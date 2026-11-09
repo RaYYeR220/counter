@@ -56,7 +56,6 @@ describe("createPartnerReferral", () => {
                   "READ_SELLER_DISPUTE",
                   "UPDATE_SELLER_DISPUTE",
                   "ADVANCED_TRANSACTIONS_SEARCH",
-                  "TRACKING_SHIPMENT_READWRITE",
                 ],
               },
             },
