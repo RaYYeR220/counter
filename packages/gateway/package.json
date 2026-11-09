@@ -10,7 +10,8 @@
   },
   "scripts": {
     "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "gen-key": "node scripts/gen-key.ts"
   },
   "dependencies": {
     "@counter/store-sync": "workspace:^",
