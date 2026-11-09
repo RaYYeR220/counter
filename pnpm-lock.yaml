@@ -136,12 +136,18 @@ importers:
       '@counter/gateway':
         specifier: workspace:^
         version: link:../gateway
+      '@counter/negotiate':
+        specifier: workspace:^
+        version: link:../negotiate
       '@counter/paypal':
         specifier: workspace:^
         version: link:../paypal
       '@counter/store-sync':
         specifier: workspace:^
         version: link:../store-sync
+      drizzle-orm:
+        specifier: ^0.45
+        version: 0.45.4(@electric-sql/pglite@0.5.15)(@neondatabase/serverless@1.2.0)
 
   packages/store-sync:
     dependencies:

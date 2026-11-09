@@ -197,6 +197,25 @@ export const negotiations = pgTable(
   (t) => [index("negotiations_shop_idx").on(t.shopId, t.createdAt.desc())],
 );
 
+/** A deal the seller agent offered a buyer agent; applied as a cart discount while it is live. */
+export const offers = pgTable(
+  "offers",
+  {
+    /** `OFF-XXXXXXXX`, also the discount code on the cart. */
+    id: text("id").primaryKey(),
+    shopId: text("shop_id")
+      .notNull()
+      .references(() => shops.id),
+    agentClient: text("agent_client").notNull(),
+    /** Offered lines: variant, quantity, unit price and list price in cents. */
+    lines: jsonb("lines").$type<Array<{ variantId: string; quantity: number; unitCents: number; listCents?: number }>>().notNull(),
+    discountCents: integer("discount_cents").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  },
+  (t) => [index("offers_agent_idx").on(t.shopId, t.agentClient, t.expiresAt.desc())],
+);
+
 /** A PayPal dispute against one of a shop's orders; `id` is PayPal's dispute id. */
 export const disputes = pgTable(
   "disputes",
@@ -227,5 +246,6 @@ export type NewOrder = typeof orders.$inferInsert;
 export type EventRow = typeof events.$inferSelect;
 export type Negotiation = typeof negotiations.$inferSelect;
 export type NewNegotiation = typeof negotiations.$inferInsert;
+export type OfferRow = typeof offers.$inferSelect;
 export type Dispute = typeof disputes.$inferSelect;
 export type NewDispute = typeof disputes.$inferInsert;
