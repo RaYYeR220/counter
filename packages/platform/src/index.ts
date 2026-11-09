@@ -4,3 +4,5 @@ export * from "./directory";
 export * from "./negotiation";
 export * from "./errors";
 export * from "./fulfilment";
+export * from "./webhooks";
+export * from "./onboarding";
