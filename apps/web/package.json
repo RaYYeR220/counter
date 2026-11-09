@@ -21,6 +21,7 @@
     "@modelcontextprotocol/server": "^2.4",
     "ag-studio": "3.1.0",
     "ag-studio-react": "3.1.0",
+    "drizzle-orm": "^0.45",
     "mcp-handler": "^2.3",
     "next": "16.4.5",
     "react": "19.3.0",
