@@ -389,7 +389,11 @@ export async function checkoutCart(
       });
       const completing: CartRecord = { ...synced, status: "COMPLETED", cart: completedCart, updatedAt: deps.now() };
       const confirmation = await viaOrderSystem(() =>
-        deps.orders.onCompleted(completing, { authorizationId: auth.authorizationId, payerId: auth.payerId }),
+        deps.orders.onCompleted(completing, {
+          authorizationId: auth.authorizationId,
+          payerId: auth.payerId,
+          ...(auth.paidTo ? { paidTo: auth.paidTo } : {}),
+        }),
       );
       const response = {
         ...completedCart,

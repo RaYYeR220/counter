@@ -28,6 +28,7 @@ function order(over: Partial<Order> = {}): Order {
     authorizationId: "AUTH1",
     captureId: "CAP1",
     payerId: "PAYER9",
+    paidTo: null,
     status: "captured",
     totalCents: 7399,
     platformFeeCents: 0,
@@ -320,6 +321,46 @@ describe("respondToDispute", () => {
     const again = await respondToDispute(db, pp.client, dbShopAccounts(db), "PP-D-21");
     expect(again).toMatchObject({ alreadyResponded: true, decision: { action: "fight" } });
     expect(pp.callsTo("POST", "/v1/customer/disputes")).toHaveLength(1);
+  });
+
+  it("reads a dispute whose webhook has not arrived and answers it with supporting info while PayPal reviews", async () => {
+    const { order: o } = await bookOrder(db);
+    await updateOrder(db, o.id, { status: "captured", captureId: "CAP1", tracking: TRACKING });
+    const pp = fakePayPal({
+      "GET /v1/customer/disputes/PP-R-77": {
+        json: {
+          dispute_id: "PP-R-77",
+          reason: "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+          status: "UNDER_REVIEW",
+          dispute_life_cycle_stage: "CHARGEBACK",
+          disputed_transactions: [{ seller_transaction_id: "CAP1" }],
+          links: [{ rel: "self" }, { rel: "provide_supporting_info" }],
+        },
+      },
+      "POST /v1/customer/disputes/PP-R-77/provide-supporting-info": { json: { links: [] } },
+    });
+    const out = await respondToDispute(db, pp.client, dbShopAccounts(db), "PP-R-77");
+
+    expect(out).toMatchObject({ orderId: o.id, decision: { action: "fight", evidenceType: "PROOF_OF_FULFILLMENT" } });
+    expect(pp.callsTo("POST", "/v1/customer/disputes/PP-R-77/provide-evidence")).toHaveLength(0);
+    const form = await pp.callsTo("POST", "/v1/customer/disputes/PP-R-77/provide-supporting-info")[0]!.formData();
+    expect(JSON.parse(form.get("input") as string).notes).toContain(TRACKING.trackingNumber);
+    expect((form.get("file1") as File).name).toBe(`evidence-${o.id}.pdf`);
+    const [row] = await db.select().from(disputes).where(eq(disputes.id, "PP-R-77"));
+    expect(row).toMatchObject({ orderId: o.id, decision: "fight" });
+    expect((row!.evidence as Array<{ channel?: string }>)[0]!.channel).toBe("supporting_info");
+  });
+
+  it("refuses to answer when PayPal takes no seller response", async () => {
+    await disputed({ tracking: true });
+    const pp = fakePayPal({
+      "GET /v1/customer/disputes/PP-D-21": {
+        json: { dispute_id: "PP-D-21", reason: "MERCHANDISE_OR_SERVICE_NOT_RECEIVED", status: "RESOLVED", disputed_transactions: [{ seller_transaction_id: "CAP1" }], links: [{ rel: "self" }] },
+      },
+    });
+    const err = await respondToDispute(db, pp.client, dbShopAccounts(db), "PP-D-21").catch((e: unknown) => e);
+    expect((err as PlatformError).code).toBe("conflict");
+    expect(pp.callsTo("POST", "/v1/customer/disputes")).toHaveLength(0);
   });
 
   it("answers not_found for an unknown dispute and conflict for one not matched to an order", async () => {

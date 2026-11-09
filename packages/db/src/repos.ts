@@ -183,7 +183,7 @@ export class DbOrderSink implements OrderSink {
 
   async onCompleted(
     r: CartRecord,
-    auth: { authorizationId: string; payerId: string },
+    auth: { authorizationId: string; payerId: string; paidTo?: string },
   ): Promise<{ merchantOrderNumber: string; orderReviewPage: string }> {
     const totalCents = totalCentsOf(r);
     const payload = {
@@ -206,9 +206,9 @@ export class DbOrderSink implements OrderSink {
         returning order_prefix || '-' || order_seq as id
       ),
       booked as (
-        insert into orders (id, shop_id, cart_id, paypal_order_id, authorization_id, payer_id, status, total_cents)
+        insert into orders (id, shop_id, cart_id, paypal_order_id, authorization_id, payer_id, paid_to, status, total_cents)
         select id, ${r.shopId}::text, ${r.id}::text, ${r.paypalOrderId ?? null}::text, ${auth.authorizationId}::text,
-               ${auth.payerId}::text, 'authorized', ${totalCents}::integer
+               ${auth.payerId}::text, ${auth.paidTo ?? null}::text, 'authorized', ${totalCents}::integer
         from numbered
         on conflict (cart_id) do nothing
         returning id
@@ -241,7 +241,7 @@ export async function getOrderByCart(db: Db, cartId: string): Promise<Order | nu
 export type OrderPatch = Partial<
   Pick<
     NewOrder,
-    "status" | "paypalOrderId" | "authorizationId" | "captureId" | "payerId" | "totalCents" | "platformFeeCents" | "tracking"
+    "status" | "paypalOrderId" | "authorizationId" | "captureId" | "payerId" | "paidTo" | "totalCents" | "platformFeeCents" | "tracking"
   >
 >;
 

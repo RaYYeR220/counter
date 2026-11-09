@@ -276,6 +276,15 @@ const BUYER_WON = new Set(["RESOLVED_BUYER_FAVOUR", "ACCEPTED"]);
 /** Outcomes where the seller kept the money. */
 const SELLER_KEPT = new Set(["RESOLVED_SELLER_FAVOUR", "CANCELED_BY_BUYER", "DENIED", "RESOLVED_WITH_PAYOUT"]);
 
+/**
+ * Records a dispute read from PayPal's API the way its webhook would, for a
+ * dispute whose webhook has not arrived yet. True when it matched a shop.
+ */
+export async function recordDispute(db: Db, dispute: Resource): Promise<boolean> {
+  const out = await disputeChanged(db, dispute, "CUSTOMER.DISPUTE.UPDATED");
+  return out.handled === "dispute.recorded";
+}
+
 async function disputeChanged(db: Db, r: Resource, type: string): Promise<Outcome> {
   const disputeId = str(r.dispute_id) ?? str(r.id);
   if (!disputeId) return unmatched("dispute.unmatched");

@@ -113,7 +113,7 @@ describe("PayPalPayments", () => {
       },
     }));
     const out = await new PayPalPayments(client, shops, urls).authorizeOrder("juniper-clay", "ORDER1", "x");
-    expect(out).toEqual({ status: "COMPLETED", authorizationId: "AUTH7", payerId: "PAYER9" });
+    expect(out).toEqual({ status: "COMPLETED", authorizationId: "AUTH7", payerId: "PAYER9", paidTo: "MERCHANT123" });
   });
 
   it("patches amount and items and reports expired orders", async () => {

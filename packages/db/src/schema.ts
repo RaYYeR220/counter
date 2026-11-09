@@ -147,6 +147,8 @@ export const orders = pgTable(
     authorizationId: text("authorization_id"),
     captureId: text("capture_id"),
     payerId: text("payer_id"),
+    /** Whose PayPal account was paid: the shop's merchant id, or "platform". Null on orders booked before this was recorded. */
+    paidTo: text("paid_to"),
     status: text("status", { enum: ORDER_STATUSES }).notNull(),
     totalCents: integer("total_cents").notNull(),
     /** Set when the payment is captured. */

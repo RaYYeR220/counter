@@ -1,10 +1,11 @@
-import { carts, disputes, events, getShop, logEvent, negotiations, orders, type Db, type Order, type Tracking } from "@counter/db";
-import type { PayPal } from "@counter/paypal";
+import { carts, disputes, events, getShop, logEvent, negotiations, orders, shops as shopTable, type Db, type Order, type Tracking } from "@counter/db";
+import { PayPalApiError, type PayPal } from "@counter/paypal";
 import { fmt, type PayPalCart } from "@counter/store-sync";
-import { and, asc, desc, eq, inArray, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNotNull, or, sql } from "drizzle-orm";
 import { PlatformError } from "./errors";
 import { loadOrder } from "./fulfilment";
-import type { ShopAccounts } from "./payments";
+import { accountForOrder, type ShopAccounts } from "./payments";
+import { recordDispute } from "./webhooks";
 import { renderPdf, type PdfLine } from "./pdf";
 
 export const DISPUTE_REASON = {
@@ -454,6 +455,27 @@ interface EvidenceEntry {
   evidence_type: EvidenceType | null;
   file?: string;
   notes?: string;
+  /** How the answer reached PayPal: typed evidence, or notes and a document while PayPal reviews the case. */
+  channel?: "evidence" | "supporting_info";
+}
+
+/**
+ * Reads a dispute PayPal knows about but Counter has no record of yet (its
+ * webhook is late or was missed) and records it. Tried in the platform's own
+ * account first, then in each connected shop's.
+ */
+async function importDispute(db: Db, paypal: PayPal, disputeId: string): Promise<void> {
+  const connected = await db.select({ m: shopTable.paypalMerchantId }).from(shopTable).where(isNotNull(shopTable.paypalMerchantId));
+  const accounts: Array<string | undefined> = [undefined, ...new Set(connected.map((r) => r.m!))];
+  for (const merchantId of accounts) {
+    try {
+      const live = await paypal.getDispute(disputeId, merchantId);
+      await recordDispute(db, live.raw as Record<string, unknown>);
+      return;
+    } catch (err) {
+      if (!(err instanceof PayPalApiError && (err.status === 404 || err.status === 403))) throw err;
+    }
+  }
 }
 
 function evidenceNotes(decision: DisputeDecision, e: EvidencePacket): string {
@@ -481,7 +503,11 @@ export async function respondToDispute(
   disputeId: string,
   opts: { now?: () => Date } = {},
 ): Promise<DisputeResponse> {
-  const [row] = await db.select().from(disputes).where(eq(disputes.id, disputeId)).limit(1);
+  let [row] = await db.select().from(disputes).where(eq(disputes.id, disputeId)).limit(1);
+  if (!row) {
+    await importDispute(db, paypal, disputeId);
+    [row] = await db.select().from(disputes).where(eq(disputes.id, disputeId)).limit(1);
+  }
   if (!row) throw new PlatformError("not_found", `No dispute ${disputeId}`);
   if (!row.orderId) throw new PlatformError("conflict", `Dispute ${disputeId} is not matched to an order of ${row.shopId}`);
   if (row.decision === "fight" || row.decision === "accept") {
@@ -501,8 +527,12 @@ export async function respondToDispute(
   if (!cartRow) throw new PlatformError("conflict", `Order ${order.id} has no stored cart`);
   const cart: DisputeCart = { id: cartRow.id, cart: cartRow.cart as PayPalCart, agentClient: cartRow.agentClient, createdAt: cartRow.createdAt };
 
-  const merchantId = await shops.merchantIdFor(order.shopId);
+  const merchantId = await accountForOrder(order, shops);
   const live = await paypal.getDispute(disputeId, merchantId);
+  // What PayPal takes right now, from the dispute's links. A dispute read without links keeps the classic calls.
+  const rawLinks = (live.raw as { links?: unknown } | null)?.links;
+  const linked = Array.isArray(rawLinks) && rawLinks.length > 0;
+  const allows = (action: string) => !linked || live.allowedActions.includes(action);
   const reason = live.reason ?? row.reason;
   const request = await loadAgentRequest(db, order.shopId, cart.id);
   const negotiation = await loadNegotiation(db, order.shopId, cart);
@@ -544,23 +574,37 @@ export async function respondToDispute(
       const refundIds = refunds.map((r) => r.payload.refund_id).filter((id): id is string => typeof id === "string" && id.length > 0);
       if (refundIds.length) evidenceInfo = { refundIds };
     }
-    await paypal.provideEvidence(disputeId, merchantId, {
-      evidenceType: decision.evidenceType!,
-      notes,
-      ...(evidenceInfo ? { evidenceInfo } : {}),
-      file: { name: file, bytes: buildEvidencePdf(packet), contentType: "application/pdf" },
-    });
-    Object.assign(entry, { file, notes });
+    const pdf = { name: file, bytes: buildEvidencePdf(packet), contentType: "application/pdf" };
+    let channel: EvidenceEntry["channel"];
+    if (allows("provide_evidence")) {
+      await paypal.provideEvidence(disputeId, merchantId, {
+        evidenceType: decision.evidenceType!,
+        notes,
+        ...(evidenceInfo ? { evidenceInfo } : {}),
+        file: pdf,
+      });
+      channel = "evidence";
+    } else if (live.allowedActions.includes("provide_supporting_info")) {
+      await paypal.provideSupportingInfo(disputeId, merchantId, { notes, file: pdf });
+      channel = "supporting_info";
+    } else {
+      throw new PlatformError("conflict", `PayPal is not taking a seller response on dispute ${disputeId} right now (${live.status ?? "status unknown"})`);
+    }
+    Object.assign(entry, { file, notes, channel });
     await saveAnswer(db, disputeId, "UNDER_REVIEW", reason, entry);
     await logEvent(db, order.shopId, "dispute.evidence_submitted", disputeId, {
       order_id: order.id,
       reason,
       evidence_type: decision.evidenceType,
       file,
+      channel,
     });
     return { disputeId, orderId: order.id, decision, alreadyResponded: false, evidenceFile: file };
   }
 
+  if (!allows("accept_claim")) {
+    throw new PlatformError("conflict", `PayPal is not taking a seller response on dispute ${disputeId} right now (${live.status ?? "status unknown"})`);
+  }
   const claimType = live.acceptClaimTypes.includes("REFUND") ? "REFUND" : undefined;
   const note = `${decision.reason} Order ${order.id}.`.slice(0, 2000);
   await paypal.acceptClaim(disputeId, merchantId, note, claimType ? { acceptClaimType: claimType } : {});

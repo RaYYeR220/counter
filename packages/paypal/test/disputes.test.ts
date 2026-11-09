@@ -26,8 +26,13 @@ const DISPUTE = {
     { evidence_type: "PROOF_OF_FULFILLMENT", source: "REQUESTED_FROM_SELLER" },
   ],
   allowed_response_options: { accept_claim: { accept_claim_types: ["REFUND", "REFUND_WITH_RETURN"] } },
-  links: [],
+  links: [
+    { href: "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-D-27803", rel: "self", method: "GET" },
+    { href: "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-D-27803/provide-evidence", rel: "provide_evidence", method: "POST" },
+    { href: "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-D-27803/accept-claim", rel: "accept_claim", method: "POST" },
+  ],
 };
+const ALLOWED = ["provide_evidence", "accept_claim"];
 
 describe("listDisputes", () => {
   it("lists the merchant's disputes with filters and the next page token", async () => {
@@ -75,6 +80,7 @@ describe("listDisputes", () => {
           transactionIds: ["3BC38643YC807283D"],
           requestedEvidence: [],
           acceptClaimTypes: [],
+          allowedActions: [],
         },
       ],
       nextPageToken: "TOKEN2",
@@ -114,6 +120,7 @@ describe("getDispute", () => {
       transactionIds: ["3BC38643YC807283D"],
       requestedEvidence: ["PROOF_OF_FULFILLMENT"],
       acceptClaimTypes: ["REFUND", "REFUND_WITH_RETURN"],
+      allowedActions: ALLOWED,
       raw: DISPUTE,
     });
     expect(pp.last().headers.get("paypal-auth-assertion")).toBe(expectedAssertion());
@@ -122,6 +129,34 @@ describe("getDispute", () => {
   it("throws for an unknown dispute", async () => {
     const pp = fakePayPal();
     await expect(new PayPal(ENV, pp.fetch).getDispute("PP-D-0")).rejects.toBeInstanceOf(PayPalApiError);
+  });
+});
+
+describe("provideSupportingInfo", () => {
+  it("sends notes and the document while PayPal reviews the case", async () => {
+    const pp = fakePayPal({ "POST /v1/customer/disputes/PP-D-27803/provide-supporting-info": { json: { links: [] } } });
+    const pdf = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34, 0x0a]);
+    await new PayPal(ENV, pp.fetch).provideSupportingInfo("PP-D-27803", MERCHANT, {
+      notes: "Shipped USPS 9400111899223197428490 on Nov 3.",
+      file: { name: "evidence-JC-10002.pdf", bytes: pdf, contentType: "application/pdf" },
+    });
+    const req = pp.last();
+    expect(req.url.pathname).toBe("/v1/customer/disputes/PP-D-27803/provide-supporting-info");
+    expect(req.headers.get("paypal-auth-assertion")).toBe(expectedAssertion());
+    const form = await req.formData();
+    expect(fieldNames(form)).toEqual(["input", "file1"]);
+    expect(JSON.parse(form.get("input") as string)).toEqual({ notes: "Shipped USPS 9400111899223197428490 on Nov 3." });
+    expect((form.get("file1") as File).name).toBe("evidence-JC-10002.pdf");
+  });
+
+  it("refuses a file name PayPal would reject", async () => {
+    const pp = fakePayPal();
+    await expect(
+      new PayPal(ENV, pp.fetch).provideSupportingInfo("PP-D-27803", undefined, {
+        notes: "x",
+        file: { name: "../evidence.exe", bytes: new Uint8Array([1]), contentType: "application/pdf" },
+      }),
+    ).rejects.toBeInstanceOf(RangeError);
   });
 });
 

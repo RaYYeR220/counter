@@ -3,6 +3,7 @@ import {
   getDispute,
   listDisputes,
   provideEvidence,
+  provideSupportingInfo,
   type DisputeDetails,
   type DisputeView,
   type EvidenceParams,
@@ -117,6 +118,10 @@ export class PayPal {
 
   provideEvidence(disputeId: string, merchantId: string | undefined, p: EvidenceParams): Promise<void> {
     return provideEvidence(this.t, disputeId, merchantId, p);
+  }
+
+  provideSupportingInfo(disputeId: string, merchantId: string | undefined, p: { notes: string; file?: EvidenceParams["file"] }): Promise<void> {
+    return provideSupportingInfo(this.t, disputeId, merchantId, p);
   }
 
   acceptClaim(

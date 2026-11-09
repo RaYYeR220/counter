@@ -3,7 +3,7 @@ import { PayPalApiError, type OrderItem, type PayPal } from "@counter/paypal";
 import { fmt, type CartRecord, type OrderSink, type PayPalCart } from "@counter/store-sync";
 import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { PlatformError } from "./errors";
-import type { ShopAccounts } from "./payments";
+import { accountForOrder, type ShopAccounts } from "./payments";
 
 /** 2% of the order total, taken at capture from shops paid to their own PayPal account. */
 export const DEFAULT_PLATFORM_FEE_BPS = 200;
@@ -185,7 +185,7 @@ export class StockKeepingOrderSink implements OrderSink {
 
   async onCompleted(
     r: CartRecord,
-    auth: { authorizationId: string; payerId: string },
+    auth: { authorizationId: string; payerId: string; paidTo?: string },
   ): Promise<{ merchantOrderNumber: string; orderReviewPage: string }> {
     const out = await this.inner.onCompleted(r, auth);
     await reserveStock(this.db, r.shopId, out.merchantOrderNumber, stockLinesOf(r.cart));
@@ -242,7 +242,7 @@ export class Fulfilment {
     }
     const captureId = order.captureId!;
 
-    const merchantId = await this.shops.merchantIdFor(order.shopId);
+    const merchantId = await accountForOrder(order, this.shops);
     if (order.paypalOrderId) {
       const items = trackingItems(await cartOf(this.db, order.cartId));
       await this.paypal.addTracking(order.paypalOrderId, merchantId, {
@@ -275,7 +275,7 @@ export class Fulfilment {
 
   private async capture(order: Order): Promise<Order> {
     if (!order.authorizationId) throw new PlatformError("conflict", `Order ${order.id} has no PayPal authorization to capture`);
-    const merchantId = await this.shops.merchantIdFor(order.shopId);
+    const merchantId = await accountForOrder(order, this.shops);
     const feeCents = merchantId ? Math.round((order.totalCents * this.feeBps) / 10_000) : 0;
     const { captureId, status } = await this.paypal.captureAuthorization(order.authorizationId, merchantId, {
       finalCapture: true,
@@ -311,7 +311,7 @@ export class Fulfilment {
       throw new PlatformError("conflict", `Order ${orderId} is ${order.status}; only orders that have not shipped can be cancelled (refund it instead)`);
     }
     if (order.authorizationId) {
-      const merchantId = await this.shops.merchantIdFor(order.shopId);
+      const merchantId = await accountForOrder(order, this.shops);
       try {
         await this.paypal.voidAuthorization(order.authorizationId, merchantId, `${order.id}-void`);
       } catch (err) {
@@ -345,7 +345,7 @@ export class Fulfilment {
       throw new PlatformError("invalid_request", `amountCents must be a whole number from 1 to ${order.totalCents}`);
     }
     const amount = amountCents ?? order.totalCents;
-    const merchantId = await this.shops.merchantIdFor(order.shopId);
+    const merchantId = await accountForOrder(order, this.shops);
     const { refundId, status } = await this.paypal.refundCapture(order.captureId, merchantId, {
       ...(amount < order.totalCents ? { amount: { currency: "USD", value: fmt(amount) } } : {}),
       requestId: `${order.id}-refund`,

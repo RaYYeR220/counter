@@ -53,7 +53,13 @@ export interface ComputedCartForPayment {
 }
 
 export type AuthorizeResult =
-  | { status: "COMPLETED"; authorizationId: string; payerId: string }
+  | {
+      status: "COMPLETED";
+      authorizationId: string;
+      payerId: string;
+      /** Whose PayPal account the payment was authorized to: a merchant id, or "platform". */
+      paidTo?: string;
+    }
   | { status: "DECLINED"; reason: string };
 
 /**
@@ -74,7 +80,7 @@ export interface PaymentPort {
 export interface OrderSink {
   onCompleted(
     r: CartRecord,
-    auth: { authorizationId: string; payerId: string },
+    auth: { authorizationId: string; payerId: string; paidTo?: string },
   ): Promise<{ merchantOrderNumber: string; orderReviewPage: string }>;
 }
 

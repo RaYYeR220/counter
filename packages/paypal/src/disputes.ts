@@ -20,6 +20,8 @@ export interface DisputeView {
   requestedEvidence: string[];
   /** Refund types available if the seller accepts the claim. */
   acceptClaimTypes: string[];
+  /** What PayPal accepts from the seller right now, from the dispute's HATEOAS links (e.g. provide_evidence, accept_claim, provide_supporting_info). */
+  allowedActions: string[];
 }
 
 export interface DisputeDetails extends DisputeView {
@@ -49,6 +51,7 @@ interface DisputeWire {
   disputed_transactions?: { seller_transaction_id?: string }[];
   evidences?: { evidence_type?: string; source?: string }[];
   allowed_response_options?: { accept_claim?: { accept_claim_types?: string[] } };
+  links?: { rel?: string }[];
 }
 
 function view(d: DisputeWire): DisputeView {
@@ -69,6 +72,7 @@ function view(d: DisputeWire): DisputeView {
       .filter((e) => e.source === "REQUESTED_FROM_SELLER" && e.evidence_type)
       .map((e) => e.evidence_type!),
     acceptClaimTypes: d.allowed_response_options?.accept_claim?.accept_claim_types ?? [],
+    allowedActions: (d.links ?? []).map((l) => l.rel).filter((r): r is string => !!r && r !== "self"),
   });
 }
 
@@ -125,12 +129,7 @@ export async function provideEvidence(
   merchantId: string | undefined,
   p: EvidenceParams,
 ): Promise<void> {
-  if (p.file) {
-    if (!FILE_NAME.test(p.file.name)) {
-      throw new RangeError(`evidence file name "${p.file.name}" must be letters, digits, - _ , or spaces plus a jpg/jpeg/gif/png/pdf extension`);
-    }
-    if (p.file.bytes.byteLength >= MAX_FILE_BYTES) throw new RangeError("evidence file must be under 10 MB");
-  }
+  checkFile(p.file);
   const info = p.evidenceInfo;
   const input = {
     evidences: [
@@ -150,27 +149,58 @@ export async function provideEvidence(
     ],
   };
 
+  const { body, contentType } = multipart(input, p.file);
+  await t.request("POST", `/v1/customer/disputes/${encodeURIComponent(disputeId)}/provide-evidence`, {
+    body,
+    headers: { ...t.merchantHeaders(merchantId), "Content-Type": contentType },
+  });
+}
+
+/**
+ * Sends notes and a document while PayPal reviews the case (status
+ * UNDER_REVIEW), when it no longer takes typed evidence.
+ */
+export async function provideSupportingInfo(
+  t: Transport,
+  disputeId: string,
+  merchantId: string | undefined,
+  p: { notes: string; file?: EvidenceParams["file"] },
+): Promise<void> {
+  checkFile(p.file);
+  const { body, contentType } = multipart({ notes: p.notes.slice(0, 2000) }, p.file);
+  await t.request("POST", `/v1/customer/disputes/${encodeURIComponent(disputeId)}/provide-supporting-info`, {
+    body,
+    headers: { ...t.merchantHeaders(merchantId), "Content-Type": contentType },
+  });
+}
+
+function checkFile(file: EvidenceParams["file"]): void {
+  if (!file) return;
+  if (!FILE_NAME.test(file.name)) {
+    throw new RangeError(`evidence file name "${file.name}" must be letters, digits, - _ , or spaces plus a jpg/jpeg/gif/png/pdf extension`);
+  }
+  if (file.bytes.byteLength >= MAX_FILE_BYTES) throw new RangeError("evidence file must be under 10 MB");
+}
+
+/** PayPal's dispute uploads: an `input` JSON part plus an optional document as `file1`. */
+function multipart(input: unknown, file: EvidenceParams["file"]): { body: Uint8Array<ArrayBuffer>; contentType: string } {
   const boundary = `----counter-${randomUUID()}`;
   const chunks: Buffer[] = [
     Buffer.from(
       `--${boundary}\r\nContent-Disposition: form-data; name="input"\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(input)}\r\n`,
     ),
   ];
-  if (p.file) {
+  if (file) {
     chunks.push(
       Buffer.from(
-        `--${boundary}\r\nContent-Disposition: form-data; name="file1"; filename="${p.file.name}"\r\nContent-Type: ${p.file.contentType}\r\n\r\n`,
+        `--${boundary}\r\nContent-Disposition: form-data; name="file1"; filename="${file.name}"\r\nContent-Type: ${file.contentType}\r\n\r\n`,
       ),
-      Buffer.from(p.file.bytes),
+      Buffer.from(file.bytes),
       Buffer.from("\r\n"),
     );
   }
   chunks.push(Buffer.from(`--${boundary}--\r\n`));
-
-  await t.request("POST", `/v1/customer/disputes/${encodeURIComponent(disputeId)}/provide-evidence`, {
-    body: new Uint8Array(Buffer.concat(chunks)),
-    headers: { ...t.merchantHeaders(merchantId), "Content-Type": `multipart/form-data; boundary=${boundary}` },
-  });
+  return { body: new Uint8Array(Buffer.concat(chunks)), contentType: `multipart/form-data; boundary=${boundary}` };
 }
 
 /** Accepts liability; PayPal refunds the buyer and closes the dispute. */

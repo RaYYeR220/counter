@@ -1,6 +1,6 @@
-import { DbOrderSink, type Db } from "@counter/db";
+import { DbOrderSink, updateOrder, type Db } from "@counter/db";
 import { beforeEach, describe, expect, it } from "vitest";
-import { Fulfilment, PlatformError, StockKeepingOrderSink } from "../src/index";
+import { Fulfilment, PAID_TO_PLATFORM, PlatformError, StockKeepingOrderSink } from "../src/index";
 import {
   SAGE_12,
   bookOrder,
@@ -77,6 +77,19 @@ describe("Fulfilment.ship", () => {
     });
     expect(capture.headers.get("paypal-auth-assertion")).toContain(".");
     expect((await orderRow(db, order.id))!.platformFeeCents).toBe(148);
+  });
+
+  it("keeps an order paid to the platform on the platform's account after the shop connects PayPal", async () => {
+    const { order } = await bookOrder(db);
+    await updateOrder(db, order.id, { paidTo: PAID_TO_PLATFORM });
+    await onboard(db, "juniper-clay");
+    const pp = paypalFor(order);
+    await new Fulfilment(db, pp.client, dbShopAccounts(db)).ship(order.id, { carrier: "UPS", trackingNumber: "1Z998" });
+
+    const capture = pp.calls()[0]!;
+    expect(capture.json()).toEqual({ final_capture: true });
+    expect(capture.headers.has("paypal-auth-assertion")).toBe(false);
+    expect((await orderRow(db, order.id))!.platformFeeCents).toBe(0);
   });
 
   it("honours a custom platform fee rate", async () => {

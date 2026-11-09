@@ -2,6 +2,23 @@ import { PayPalApiError, type Breakdown, type OrderItem, type OrderShipping, typ
 import { fmt, type AuthorizeResult, type ComputedCartForPayment, type PaymentPort } from "@counter/store-sync";
 
 /** Where each shop's money goes. A shop without a merchant id is paid to the platform account itself. */
+/** `orders.paid_to` for a payment that went to the platform's own PayPal account. */
+export const PAID_TO_PLATFORM = "platform";
+
+/**
+ * The PayPal account to act in for an order: the one it was paid to when that
+ * is on record (a shop that connects PayPal later keeps its earlier orders on
+ * the platform's account), else the shop's current account.
+ */
+export async function accountForOrder(
+  order: { shopId: string; paidTo?: string | null },
+  shops: Pick<ShopAccounts, "merchantIdFor">,
+): Promise<string | undefined> {
+  if (order.paidTo === PAID_TO_PLATFORM) return undefined;
+  if (order.paidTo) return order.paidTo;
+  return shops.merchantIdFor(order.shopId);
+}
+
 export interface ShopAccounts {
   merchantIdFor(shopId: string): Promise<string | undefined>;
   brandFor(shopId: string): Promise<string | undefined>;
@@ -106,7 +123,7 @@ export class PayPalPayments implements PaymentPort {
     try {
       const r = await this.paypal.authorizeOrder(orderId, merchantId, requestId);
       if (r.authorizationStatus === "DENIED") return { status: "DECLINED", reason: "AUTHORIZATION_DENIED" };
-      return { status: "COMPLETED", authorizationId: r.authorizationId, payerId: r.payerId };
+      return { status: "COMPLETED", authorizationId: r.authorizationId, payerId: r.payerId, paidTo: merchantId ?? PAID_TO_PLATFORM };
     } catch (err) {
       if (err instanceof PayPalApiError && err.status === 422) {
         const issue = err.issues.find((i) => DECLINE_ISSUES.has(i));
