@@ -107,6 +107,19 @@ describe("DbCatalog", () => {
       stock: 6,
       attributes: { glaze: "sage", size: "12 oz" },
       active: true,
+      leadTimeDays: 0,
+      handlingDays: 2,
+    });
+  });
+
+  it("carries made-to-order lead time and the shop's handling days", async () => {
+    for (const glaze of ["SAGE", "INK", "OAT", "RUST"]) {
+      const id = `JC-BOWL-SERVING-${glaze}`;
+      expect(await cat.getVariant("juniper-clay", id), id).toMatchObject({ leadTimeDays: 21, handlingDays: 2 });
+    }
+    expect(await cat.getVariant("northpaw-roasters", "NP-GUJI-LIGHT-WB-250")).toMatchObject({
+      leadTimeDays: 0,
+      handlingDays: 1,
     });
   });
 
@@ -120,6 +133,8 @@ describe("DbCatalog", () => {
             priceCents: cents(v.price),
             stock: v.stock,
             attributes: v.attributes,
+            leadTimeDays: v.lead_time_days,
+            handlingDays: shop.policy.handling_days,
           });
         }
       }

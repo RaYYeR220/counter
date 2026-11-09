@@ -22,7 +22,11 @@ import { orderReviewUrl, publicBaseUrl } from "./urls";
 // ---------------------------------------------------------------------------
 // Catalog
 
-/** Store Sync's view of the catalog: a variant can go in a cart only if it is active and sold on its own. */
+/**
+ * Store Sync's view of the catalog. A variant can go in a cart only if it is
+ * active and sold on its own (`purchasable`); subscription-only variants read
+ * as inactive. Lead time comes from the variant, handling days from the shop.
+ */
 export class DbCatalog implements CatalogPort {
   constructor(private readonly db: Db) {}
 
@@ -38,13 +42,22 @@ export class DbCatalog implements CatalogPort {
         attributes: variants.attributes,
         active: variants.active,
         purchasable: variants.purchasable,
+        leadTimeDays: variants.leadTimeDays,
+        policy: shops.policy,
       })
       .from(variants)
+      .innerJoin(shops, eq(shops.id, variants.shopId))
       .where(and(eq(variants.shopId, shopId), eq(variants.variantId, variantId)))
       .limit(1);
     if (!row) return null;
-    const { purchasable, active, ...rest } = row;
-    return { ...rest, attributes: { ...rest.attributes }, active: active && purchasable };
+    const { purchasable, active, policy, ...rest } = row;
+    const handlingDays = policy.handling_days;
+    return {
+      ...rest,
+      attributes: { ...rest.attributes },
+      active: active && purchasable,
+      ...(Number.isInteger(handlingDays) ? { handlingDays } : {}),
+    };
   }
 }
 
