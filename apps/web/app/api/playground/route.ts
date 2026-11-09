@@ -95,9 +95,15 @@ export async function POST(req: Request): Promise<Response> {
           temperature: 0,
           onStep: (step) => send({ type: "step", step: stepView(step) }),
         });
+        const fallback: Record<string, string> = {
+          max_steps: "I ran out of steps before finishing. Try a more specific request.",
+          repeated_failure: "The shop kept returning the same error, so I stopped. Nothing was bought.",
+          timeout: "That took too long, so I stopped. Nothing was bought.",
+          error: "The buyer agent stopped unexpectedly. Nothing was bought.",
+        };
         send({
           type: "final",
-          text: result.finalText,
+          text: result.finalText || fallback[result.stoppedBy] || "",
           stoppedBy: result.stoppedBy,
           steps: result.steps.length,
           costUsd: Number(result.costUsd.toFixed(5)),
