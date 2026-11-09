@@ -5,7 +5,7 @@
 export const PUBLIC_ORIGIN = "https://counter-agents.vercel.app";
 
 /** Counter's source repository. Left as a placeholder until the public URL is final. */
-export const GITHUB_URL = "#";
+export const GITHUB_URL = "https://github.com/RaYYeR220/counter";
 
 /** Demo shop the merchant surfaces open by default. */
 export const DEMO_SHOP = "juniper-clay";
