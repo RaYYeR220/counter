@@ -236,6 +236,10 @@ export function CartView({ shop, shopName, notice }: { shop: string; shopName: s
       window.location.assign(data.approval_url);
       return;
     }
+    if (data.status === "bench") {
+      window.location.assign(data.handoff_url);
+      return;
+    }
     setBusy(false);
   }
 
