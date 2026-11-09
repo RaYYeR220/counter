@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@counter/store-sync": "workspace:^",
+    "@modelcontextprotocol/ext-apps": "2.0.4",
     "@modelcontextprotocol/server": "^2.4",
     "jose": "^6",
     "zod": "^4"

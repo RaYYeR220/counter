@@ -5,3 +5,4 @@ export * from "./catalog-reader";
 export * from "./payments-view";
 export * from "./views";
 export * from "./tools";
+export * from "./apps";

@@ -4,6 +4,7 @@ import type { Customer, PayPalCart, ShippingOption, ValidationIssue } from "@cou
 import type { ShopDirectory } from "./catalog-reader";
 import type { StoreSyncClient, StoreSyncResponse } from "./client";
 import type { OrderLookup } from "./payments-view";
+import { appToolMeta, registerCounterApps } from "./apps";
 import { cartText, cartView, issueLines, totalsLine, usd, type CartView, type StoreCart } from "./views";
 
 export interface CounterToolDeps {
@@ -289,6 +290,7 @@ function needsChanges(shop: string, body: unknown): CheckoutOutcome {
 /** Registers Counter's shopping tools on an MCP server. */
 export function registerCounterTools(server: McpServer, deps: CounterToolDeps): void {
   const base = deps.publicBaseUrl.replace(/\/+$/, "");
+  registerCounterApps(server);
 
   server.registerTool(
     "list_shops",
@@ -370,6 +372,7 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
           .describe("parent_id from search_products; a variant_id also works and opens its product"),
       }),
       annotations: { readOnlyHint: true, openWorldHint: false },
+      _meta: appToolMeta("product"),
     },
     async ({ shop, parent_id }) => {
       const p = await deps.directory.getProduct(shop, parent_id);
@@ -414,6 +417,7 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
         customer: customerArg.optional().describe("The buyer; defaults to the account's buyer details"),
       }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+      _meta: appToolMeta("cart"),
     },
     async ({ shop, items, shipping_address, customer }) =>
       guard("Creating a cart", shop, async () => {
@@ -448,6 +452,7 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
         shipping_option_id: z.string().min(1).max(40).optional().describe("STANDARD or EXPRESS"),
       }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+      _meta: appToolMeta("cart"),
     },
     async ({ shop, cart_id, items, shipping_address, shipping_option_id }) =>
       guard("Updating the cart", shop, async () => {
@@ -494,6 +499,7 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
         "it again after the order is placed returns the same order.",
       inputSchema: z.strictObject({ shop: shopArg, cart_id: cartIdArg }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+      _meta: appToolMeta("approval"),
     },
     async ({ shop, cart_id }) =>
       guard("Checkout", shop, async () => {
@@ -546,6 +552,7 @@ export function registerCounterTools(server: McpServer, deps: CounterToolDeps): 
         "once the order is placed.",
       inputSchema: z.strictObject({ shop: shopArg, cart_id: cartIdArg }),
       annotations: { readOnlyHint: true, openWorldHint: true },
+      _meta: appToolMeta("approval"),
     },
     async ({ shop, cart_id }) =>
       guard("Looking up the order", shop, async () => {
