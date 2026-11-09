@@ -13,7 +13,8 @@ const handler = createMcpHandler(
     registerCounterTools(server, {
       directory: shopDirectory(),
       storeSync: storeSyncClient("Counter MCP"),
-      orders: orderLookup(),
+      // Built on first use, so discovery works even before payments are configured.
+      orders: { approvalState: (shop, orderId) => orderLookup().approvalState(shop, orderId) },
       publicBaseUrl: baseUrl(),
       defaultCustomer: {
         name: { given_name: "Sandbox", surname: "Buyer" },
