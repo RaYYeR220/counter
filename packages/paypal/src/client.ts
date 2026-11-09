@@ -8,6 +8,13 @@ import {
   type AuthorizeResult,
   type CreateAuthorizeOrderParams,
 } from "./orders";
+import {
+  createPartnerReferral,
+  merchantIntegration,
+  type MerchantRef,
+  type MerchantStatus,
+  type PartnerReferralParams,
+} from "./partner";
 import { addTracking, type TrackingParams } from "./tracking";
 import { Transport } from "./transport";
 
@@ -59,6 +66,14 @@ export class PayPal {
 
   addTracking(orderId: string, merchantId: string | undefined, p: TrackingParams): Promise<void> {
     return addTracking(this.t, orderId, merchantId, p);
+  }
+
+  createPartnerReferral(p: PartnerReferralParams): Promise<{ actionUrl: string; selfUrl?: string }> {
+    return createPartnerReferral(this.t, p);
+  }
+
+  merchantIntegration(trackingIdOrMerchantId: MerchantRef): Promise<MerchantStatus | null> {
+    return merchantIntegration(this.t, trackingIdOrMerchantId);
   }
 
   refundCapture(

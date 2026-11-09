@@ -17,3 +17,5 @@ export { REFERENCE_ID, approvalLink } from "./orders";
 export type { CreateAuthorizeOrderParams, AuthorizeResult } from "./orders";
 export type { CaptureParams } from "./payments";
 export type { TrackingParams } from "./tracking";
+export { DEFAULT_REFERRAL_FEATURES } from "./partner";
+export type { PartnerReferralParams, MerchantRef, MerchantStatus } from "./partner";
