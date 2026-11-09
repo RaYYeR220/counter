@@ -10,9 +10,16 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@counter/db": "workspace:^",
+    "@counter/gateway": "workspace:^",
+    "@counter/paypal": "workspace:^",
+    "@counter/store-sync": "workspace:^",
+    "@modelcontextprotocol/sdk": "^1.32",
+    "mcp-handler": "^2.3",
     "next": "16.4.5",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "^4"
   },
   "devDependencies": {
     "@types/node": "^24",
