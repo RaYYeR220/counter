@@ -1773,7 +1773,7 @@
         "below_floor_lines": 0,
         "violations": [],
         "latency_ms": 706,
-        "cost_usd": 0.00009166
+        "cost_usd": 9.166e-05
       }
     },
     {
@@ -2127,7 +2127,7 @@
         "below_floor_lines": 0,
         "violations": [],
         "latency_ms": 900,
-        "cost_usd": 0.00009799
+        "cost_usd": 9.799e-05
       }
     },
     {
@@ -2415,7 +2415,7 @@
         "below_floor_lines": 0,
         "violations": [],
         "latency_ms": 7992,
-        "cost_usd": 0.00009889999999999999
+        "cost_usd": 9.889999999999999e-05
       }
     },
     {
@@ -6575,7 +6575,7 @@
         "reply": "Here's what I can do: 2 × Dinner plate — oat, single at $34.20 each (list $36.00). That comes to $68.40 instead of $72.00, a saving of $3.60. Offer OFF-34A35BH9 holds this price for your agent for 30 minutes; it applies at checkout.",
         "latency_ms": 2634,
         "calls": 2,
-        "cost_usd": 0.00009345
+        "cost_usd": 9.345e-05
       },
       "control": {
         "proposal": "{\"lines\": [{\"variant_id\":\"JC-PLATE-DINNER-OAT-SINGLE\",\"unit_price\":34.2}]}",
