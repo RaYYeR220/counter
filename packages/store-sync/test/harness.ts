@@ -20,6 +20,11 @@ export class FakePayments implements PaymentPort {
   authorizeOutcome: AuthorizeResult | Error = { status: "COMPLETED", authorizationId: "AUTH-1", payerId: "QYR5Z8XDVJNXQ" };
   failCreate: Error | null = null;
   failPatch: Error | null = null;
+  /** When set, authorization fails until the buyer has approved the order. */
+  requireApproval = false;
+  readonly approved = new Set<string>();
+  /** Amount each PayPal order currently carries, in cents. */
+  readonly orderTotals = new Map<string, number>();
   private seq = 0;
   private byRequest = new Map<string, string>();
   private authByRequest = new Map<string, AuthorizeResult>();
@@ -33,6 +38,7 @@ export class FakePayments implements PaymentPort {
       this.byRequest.set(requestId, orderId);
     }
     this.created.push({ shopId, cart, requestId, orderId });
+    if (!this.orderTotals.has(orderId)) this.orderTotals.set(orderId, cart.totalCents);
     return { orderId, approveUrl: `https://www.sandbox.paypal.com/checkoutnow?token=${orderId}` };
   }
 
@@ -40,7 +46,14 @@ export class FakePayments implements PaymentPort {
     await Promise.resolve();
     if (this.failPatch) throw this.failPatch;
     this.patched.push({ shopId, orderId, cart });
-    return this.expired.has(orderId) ? ("expired" as const) : ("ok" as const);
+    if (this.expired.has(orderId)) return "expired" as const;
+    this.orderTotals.set(orderId, cart.totalCents);
+    return "ok" as const;
+  }
+
+  /** The buyer approves the order on PayPal. */
+  approve(orderId: string): void {
+    this.approved.add(orderId);
   }
 
   async authorizeOrder(shopId: string, orderId: string, requestId: string) {
@@ -48,6 +61,9 @@ export class FakePayments implements PaymentPort {
     this.authorized.push({ shopId, orderId, requestId });
     const prior = this.authByRequest.get(requestId);
     if (prior) return prior;
+    if (this.requireApproval && !this.approved.has(orderId)) {
+      return { status: "DECLINED" as const, reason: "ORDER_NOT_APPROVED" };
+    }
     if (this.authorizeOutcome instanceof Error) throw this.authorizeOutcome;
     if (this.authorizeOutcome.status === "COMPLETED") this.authByRequest.set(requestId, this.authorizeOutcome);
     return this.authorizeOutcome;
